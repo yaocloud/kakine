@@ -6,10 +6,7 @@ module Kakine
     option :tenant, type: :string, aliases: '-t'
     desc 'show', 'show Security Groups specified tenant'
     def show
-      security_groups = security_groups_on_tenant(options[:tenant]).map do |sg|
-        format_security_group(sg)
-      end
-      puts security_groups.to_yaml
+      puts security_groups(options[:tenant]).to_yaml
     end
 
     option :tenant, type: :string, aliases: "-t"
@@ -19,6 +16,16 @@ module Kakine
     end
 
     private
+
+    def security_groups(tenant_name)
+      sg_hash = {}
+
+      security_groups_on_tenant(tenant_name).each do |sg|
+        sg_hash[sg.name] = format_security_group(sg)
+      end
+
+      sg_hash
+    end
 
     def security_groups_on_tenant(tenant_name)
       security_groups = Fog::Network[:openstack].security_groups
@@ -30,9 +37,7 @@ module Kakine
     end
 
     def format_security_group(security_group)
-      sg_hash = {}
-
-      sg_hash[security_group.name] = []
+      rules = []
 
       security_group.security_group_rules.each do |rule|
         rule_hash = {}
@@ -54,10 +59,10 @@ module Kakine
           rule_hash["remote_ip"] = rule.remote_ip_prefix
         end
 
-        sg_hash[security_group.name] << rule_hash
+        rules << rule_hash
       end
 
-      sg_hash
+      rules
     end
   end
 end
