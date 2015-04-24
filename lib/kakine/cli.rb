@@ -23,11 +23,18 @@ module Kakine
         sg_name, rule_modification = *diff[1].scan(/^([\w-]+)(\[\d\])?/)[0]
 
         if rule_modification # foo[2]
+          security_group = security_groups_on_tenant(options[:tenant]).detect{|sg| sg.name == sg_name.to_s}
           case diff[0]
           when "+"
-            puts "Create Rule:"
+            puts "Create Rule: #{diff[2]}"
+            # Fog::Network[:openstack].create_security_group_rule(security_group.id, diff[2]["direction"], diff[2])
           when "-"
-            puts "Delete Rule:"
+            puts "Delete Rule: #{diff[2]}"
+            # security_group_rule = security_group.security_group_rules.detect do |sg|
+            #  sg.direction == diff[2]["direction"] &&
+            #  sg.protocol == ...
+            # end
+            # Fog::Network[:openstack].delete_security_group_rule(security_group_rule.id)
           else
             raise
           end
@@ -35,10 +42,16 @@ module Kakine
           case diff[0]
           when "+"
             puts "Create Security Group: #{sg_name}"
+            # data = {name: sg_name, description: "", tenant_id: tenant(options[:tenant]).id}
+            # response = Fog::Network[:openstack].create_security_group(security_group.name, )
+            diff[2].each do |rule|
+              puts "Create Rule: #{rule}"
+              # Fog::Network[:openstack].create_security_group_rule(response.data["body"]["security_group_id"], rule["direction"], rule)
+            end
           when "-"
-            puts sg_name
             security_group = security_groups_on_tenant(options[:tenant]).detect{|sg| sg.name == sg_name.to_s}
             puts "Delete Security Group: #{security_group.name}"
+            # Fog::Network[:openstack].delete_security_group(security_group.id)
           else
             raise
           end
@@ -60,11 +73,12 @@ module Kakine
 
     def security_groups_on_tenant(tenant_name)
       security_groups = Fog::Network[:openstack].security_groups
+      security_groups.select{|sg| sg.tenant_id == tenant(tenant_name).id}
+    end
 
+    def tenant(tenant_name)
       tenants = Fog::Identity[:openstack].tenants
-      tenant = tenants.detect{|t| t.name == tenant_name}
-
-      security_groups.select{|sg| sg.tenant_id == tenant.id}
+      tenants.detect{|t| t.name == tenant_name}
     end
 
     def format_security_group(security_group)
