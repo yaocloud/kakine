@@ -22,30 +22,30 @@ module Kakine
     def format_security_group(security_group)
       sg_hash = {}
 
-      sg_hash[:name] = security_group.name
-      sg_hash[:rule] = []
+      sg_hash["name"] = security_group.name
+      sg_hash["rule"] = []
 
       security_group.security_group_rules.each do |rule|
         rule_hash = {}
 
-        rule_hash[:direction] = rule.direction
-        rule_hash[:protocol] = rule.protocol
+        rule_hash["direction"] = rule.direction
+        rule_hash["protocol"] = rule.protocol
 
         if rule.port_range_max == rule.port_range_min
-          rule_hash[:port] = rule.port_range_max
+          rule_hash["port"] = rule.port_range_max
         else
-          rule_hash[:port_range_max] = rule.port_range_max
-          rule_hash[:port_range_min] = rule.port_range_min
+          rule_hash["port_range_max"] = rule.port_range_max
+          rule_hash["port_range_min"] = rule.port_range_min
         end
 
         if rule.remote_group_id
           response = Fog::Network[:openstack].get_security_group(rule.remote_group_id)
-          rule_hash[:remote_group] = response.data[:body]["security_group"]["name"]
+          rule_hash["remote_group"] = response.data[:body]["security_group"]["name"]
         else
-          rule_hash[:remote_ip] = rule.remote_ip_prefix
+          rule_hash["remote_ip"] = rule.remote_ip_prefix
         end
 
-        sg_hash[:rule] << rule_hash
+        sg_hash["rule"] << rule_hash
       end
 
       sg_hash
