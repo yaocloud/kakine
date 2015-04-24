@@ -32,8 +32,7 @@ module Kakine
     def format_security_group(security_group)
       sg_hash = {}
 
-      sg_hash["name"] = security_group.name
-      sg_hash["rule"] = []
+      sg_hash[security_group.name] = []
 
       security_group.security_group_rules.each do |rule|
         rule_hash = {}
@@ -55,7 +54,7 @@ module Kakine
           rule_hash["remote_ip"] = rule.remote_ip_prefix
         end
 
-        sg_hash["rule"] << rule_hash
+        sg_hash[security_group.name] << rule_hash
       end
 
       sg_hash
