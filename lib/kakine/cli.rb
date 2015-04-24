@@ -1,5 +1,7 @@
 require 'thor'
 require 'fog'
+require 'yaml'
+require 'hashdiff'
 
 module Kakine
   class CLI < Thor
@@ -11,8 +13,11 @@ module Kakine
 
     option :tenant, type: :string, aliases: "-t"
     option :dryrun, type: :boolean, aliases: "-d"
+    option :filename, type: :string, aliases: "-f"
     desc 'apply', "apply local configuration into OpenStack"
     def apply
+      options[:filename] ||= "#{options[:tenant]}.yaml"
+      puts HashDiff.diff(security_groups(options[:tenant]), YAML.load_file(options[:filename]).to_hash)
     end
 
     private
