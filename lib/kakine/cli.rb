@@ -6,7 +6,7 @@ module Kakine
     option :tenant, type: :string, aliases: '-t'
     desc 'show', 'show Security Groups specified tenant'
     def show
-      security_groups_on_tenant(option[:tenant]).each do |sg|
+      security_groups_on_tenant(options[:tenant]).each do |sg|
         puts format_security_group(sg).to_yaml
       end
     end
