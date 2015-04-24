@@ -6,16 +6,16 @@ module Kakine
     option :tenant, type: :string, aliases: '-t'
     desc 'show', 'show Security Groups specified tenant'
     def show
-      security_groups_on_tenant(options[:tenant]).each do |sg|
-        puts format_security_group(sg).to_yaml
+      security_groups = security_groups_on_tenant(options[:tenant]).map do |sg|
+        format_security_group(sg)
       end
+      puts security_groups.to_yaml
     end
 
     option :tenant, type: :string, aliases: "-t"
     option :dryrun, type: :boolean, aliases: "-d"
     desc 'apply', "apply local configuration into OpenStack"
     def apply
-
     end
 
     private
