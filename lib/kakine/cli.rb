@@ -16,8 +16,34 @@ module Kakine
     option :filename, type: :string, aliases: "-f"
     desc 'apply', "apply local configuration into OpenStack"
     def apply
-      options[:filename] ||= "#{options[:tenant]}.yaml"
-      puts HashDiff.diff(security_groups(options[:tenant]), YAML.load_file(options[:filename]).to_hash)
+      filename = options[:filename] ? options[:filename] : "#{options[:tenant]}.yaml"
+      diffs = HashDiff.diff(security_groups(options[:tenant]), YAML.load_file(filename).to_hash)
+
+      diffs.each do |diff|
+        sg_name, rule_modification = *diff[1].scan(/^([\w-]+)(\[\d\])?/)[0]
+
+        if rule_modification # foo[2]
+          case diff[0]
+          when "+"
+            puts "Create Rule:"
+          when "-"
+            puts "Delete Rule:"
+          else
+            raise
+          end
+        else # foo
+          case diff[0]
+          when "+"
+            puts "Create Security Group: #{sg_name}"
+          when "-"
+            puts sg_name
+            security_group = security_groups_on_tenant(options[:tenant]).detect{|sg| sg.name == sg_name.to_s}
+            puts "Delete Security Group: #{security_group.name}"
+          else
+            raise
+          end
+        end
+      end
     end
 
     private
