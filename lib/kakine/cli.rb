@@ -17,6 +17,13 @@ module Kakine
       end
     end
 
+    option :tenant, type: :string, aliases: "-t"
+    option :dryrun, type: :boolean, aliases: "-d"
+    desc 'apply', "apply local configuration into OpenStack"
+    def apply
+
+    end
+
     private
 
     def format_security_group(security_group)
