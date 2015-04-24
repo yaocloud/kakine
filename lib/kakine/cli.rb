@@ -6,13 +6,7 @@ module Kakine
     option :tenant, type: :string, aliases: '-t'
     desc 'show', 'show Security Groups specified tenant'
     def show
-      security_groups = Fog::Network[:openstack].security_groups
-
-      tenants = Fog::Identity[:openstack].tenants
-      tenant = tenants.detect{|t| t.name == options[:tenant]}
-
-      security_groups_on_tenant = security_groups.select{|sg| sg.tenant_id == tenant.id}
-      security_groups_on_tenant.each do |sg|
+      security_groups_on_tenant(option[:tenant]).each do |sg|
         puts format_security_group(sg).to_yaml
       end
     end
@@ -25,6 +19,15 @@ module Kakine
     end
 
     private
+
+    def security_groups_on_tenant(tenant_name)
+      security_groups = Fog::Network[:openstack].security_groups
+
+      tenants = Fog::Identity[:openstack].tenants
+      tenant = tenants.detect{|t| t.name == tenant_name}
+
+      security_groups.select{|sg| sg.tenant_id == tenant.id}
+    end
 
     def format_security_group(security_group)
       sg_hash = {}
