@@ -30,7 +30,7 @@ module Kakine
             diff[2].merge!({"ethertype" => "IPv4", "teanant_id" => Kakine::Resource.tenant(options[:tenant]).id})
             adapter.create_rule(security_group.id, diff[2]["direction"], diff[2])
           when "-"
-            security_group_rule = seucirty_group_rule(security_group, diff[2])
+            security_group_rule = Kakine::Resource.security_group_rule(security_group, diff[2])
             adapter.delete_rule(security_group_rule.id)
           else
             raise
