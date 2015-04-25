@@ -24,7 +24,7 @@ module Kakine
         sg_name, rule_modification = *diff[1].scan(/^([\w-]+)(\[\d\])?/)[0]
 
         if rule_modification # foo[2]
-          security_group = Kakine::Resource.security_groups_on_tenant(options[:tenant]).detect{|sg| sg.name == sg_name.to_s}
+          security_group = Kakine::Resource.security_group(options[:tenant], sg_name)
           case diff[0]
           when "+"
             diff[2].merge!({"ethertype" => "IPv4", "teanant_id" => Kakine::Resource.tenant(options[:tenant]).id})
@@ -56,7 +56,7 @@ module Kakine
               adapter.create_rule(security_group_id, rule["direction"], rule)
             end
           when "-"
-            security_group = Kakine::Resource.security_groups_on_tenant(options[:tenant]).detect{|sg| sg.name == sg_name.to_s}
+            security_group = Kakine::Resource.security_group(options[:tenant], sg_name)
             adapter.delete_security_group(security_group.id)
           else
             raise
