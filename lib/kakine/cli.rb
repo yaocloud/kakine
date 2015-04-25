@@ -26,14 +26,22 @@ module Kakine
           security_group = security_groups_on_tenant(options[:tenant]).detect{|sg| sg.name == sg_name.to_s}
           case diff[0]
           when "+"
-            puts "Create Rule: #{diff[2]}"
-            # Fog::Network[:openstack].create_security_group_rule(security_group.id, diff[2]["direction"], diff[2])
+            attributes = {}
+            attributes["remote_ip_prefix"] = diff[2].delete("remote_ip")
+            diff[2].delete("direction")
+            attributes.merge!(diff[2])
+            puts "Create Rule: #{attributes}"
+            # Fog::Network[:openstack].create_security_group_rule(security_group.id, diff[2]["direction"], attributes)
           when "-"
-            puts "Delete Rule: #{diff[2]}"
-            # security_group_rule = security_group.security_group_rules.detect do |sg|
-            #  sg.direction == diff[2]["direction"] &&
-            #  sg.protocol == ...
-            # end
+            security_group_rule = security_group.security_group_rules.detect do |sg|
+              sg.direction == diff[2]["direction"] &&
+              sg.protocol == diff[2]["protocol"] &&
+              sg.port_range_max == diff[2]["port_range_max"] &&
+              sg.port_range_min == diff[2]["port_range_min"] &&
+              sg.remote_ip_prefix == diff[2]["remote_ip"] &&
+              sg.remote_group_id == diff[2]["remote_group_id"]
+            end
+            puts "Delete Rule: #{security_group_rule}"
             # Fog::Network[:openstack].delete_security_group_rule(security_group_rule.id)
           else
             raise
@@ -45,8 +53,12 @@ module Kakine
             # data = {name: sg_name, description: "", tenant_id: tenant(options[:tenant]).id}
             # response = Fog::Network[:openstack].create_security_group(security_group.name, )
             diff[2].each do |rule|
-              puts "Create Rule: #{rule}"
-              # Fog::Network[:openstack].create_security_group_rule(response.data["body"]["security_group_id"], rule["direction"], rule)
+              attributes = {}
+              attributes["remote_ip_prefix"] = rule.delete("remote_ip")
+              rule.delete("direction")
+              attributes.merge!(rule)
+              puts "Create Rule: #{attributes}"
+              # Fog::Network[:openstack].create_security_group_rule(response.data["body"]["security_group_id"], rule["direction"], attributes)
             end
           when "-"
             security_group = security_groups_on_tenant(options[:tenant]).detect{|sg| sg.name == sg_name.to_s}
