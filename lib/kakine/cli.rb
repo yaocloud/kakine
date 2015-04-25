@@ -30,18 +30,7 @@ module Kakine
             diff[2].merge!({"ethertype" => "IPv4", "teanant_id" => Kakine::Resource.tenant(options[:tenant]).id})
             adapter.create_rule(security_group.id, diff[2]["direction"], diff[2])
           when "-"
-            security_group_rule = security_group.security_group_rules.detect do |sg|
-              if diff[2]["port"]
-                diff[2]["port_range_max"] = diff[2]["port_range_min"] = diff[2]["port"]
-              end
-
-              sg.direction == diff[2]["direction"] &&
-              sg.protocol == diff[2]["protocol"] &&
-              sg.port_range_max == diff[2]["port_range_max"] &&
-              sg.port_range_min == diff[2]["port_range_min"] &&
-              sg.remote_ip_prefix == diff[2]["remote_ip"] &&
-              sg.remote_group_id == diff[2]["remote_group_id"]
-            end
+            security_group_rule = seucirty_group_rule(security_group, diff[2])
             adapter.delete_rule(security_group_rule.id)
           else
             raise

@@ -10,6 +10,21 @@ module Kakine
         security_groups_on_tenant(tenant_name).detect{|sg| sg.name == security_group_name}
       end
 
+      def security_group_rule(security_group, attributes)
+        security_group.security_group_rules.detect do |sg|
+          if attributes["port"]
+            attributes["port_range_max"] = attributes["port_range_min"] = attributes["port"]
+          end
+
+          sg.direction == attributes["direction"] &&
+          sg.protocol == attributes["protocol"] &&
+          sg.port_range_max == attributes["port_range_max"] &&
+          sg.port_range_min == attributes["port_range_min"] &&
+          sg.remote_ip_prefix == attributes["remote_ip"] &&
+          sg.remote_group_id == attributes["remote_group_id"]
+        end
+      end
+
       def security_groups_on_tenant(tenant_name)
         security_groups = Fog::Network[:openstack].security_groups
         security_groups.select{|sg| sg.tenant_id == tenant(tenant_name).id}
