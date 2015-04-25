@@ -16,7 +16,12 @@ module Kakine
     option :filename, type: :string, aliases: "-f"
     desc 'apply', "apply local configuration into OpenStack"
     def apply
-      adapter = Kakine::Adapter::Mock.new
+      adapter = if options[:dryrun]
+        Kakine::Adapter::Mock.new
+      else
+        Kakine::Adapter::Real.new
+      end
+
       filename = options[:filename] ? options[:filename] : "#{options[:tenant]}.yaml"
       diffs = HashDiff.diff(Kakine::Resource.security_groups_hash(options[:tenant]), YAML.load_file(filename).to_hash)
 
