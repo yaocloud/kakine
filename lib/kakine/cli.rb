@@ -27,7 +27,7 @@ module Kakine
           security_group = security_groups_on_tenant(options[:tenant]).detect{|sg| sg.name == sg_name.to_s}
           case diff[0]
           when "+"
-            diff[2].merge!({"ethertype" => "IPv4", "teanant_id" => tenant(options[:tenant]).id})
+            diff[2].merge!({"ethertype" => "IPv4", "teanant_id" => Kakine::Resource.tenant(options[:tenant]).id})
             adapter.create_rule(security_group.id, diff[2]["direction"], diff[2])
           when "-"
             security_group_rule = security_group.security_group_rules.detect do |sg|
@@ -49,10 +49,10 @@ module Kakine
         else # foo
           case diff[0]
           when "+"
-            attributes = {name: sg_name, description: "", tenant_id: tenant(options[:tenant]).id}
+            attributes = {name: sg_name, description: "", tenant_id: Kakine::Resource.tenant(options[:tenant]).id}
             security_group_id = adapter.create_security_group(attributes)
             diff[2].each do |rule|
-              rule.merge!({"ethertype" => "IPv4", "teanant_id" => tenant(options[:tenant]).id})
+              rule.merge!({"ethertype" => "IPv4", "teanant_id" => Kakine::Resource.tenant(options[:tenant]).id})
               adapter.create_rule(security_group_id, rule["direction"], rule)
             end
           when "-"
@@ -80,11 +80,6 @@ module Kakine
     def security_groups_on_tenant(tenant_name)
       security_groups = Fog::Network[:openstack].security_groups
       security_groups.select{|sg| sg.tenant_id == tenant(tenant_name).id}
-    end
-
-    def tenant(tenant_name)
-      tenants = Fog::Identity[:openstack].tenants
-      tenants.detect{|t| t.name == tenant_name}
     end
 
     def format_security_group(security_group)
