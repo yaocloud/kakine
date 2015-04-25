@@ -56,13 +56,13 @@ module Kakine
         else # foo
           case diff[0]
           when "+"
-            puts "Create Security Group: #{sg_name}"
-            # data = {name: sg_name, description: "", tenant_id: tenant(options[:tenant]).id}
-            # response = Fog::Network[:openstack].create_security_group(security_group.name, )
+            attributes = {name: sg_name, description: "", tenant_id: tenant(options[:tenant]).id}
+            puts "Create Security Group: #{attributes}"
+            # response = Fog::Network[:openstack].create_security_group(attributes)
             diff[2].each do |rule|
               attributes = {"ethertype" => "IPv4", "teanant_id" => tenant(options[:tenant]).id}
-              if diff[2]["port"]
-                attributes["port_range_max"] = attributes["port_range_min"] = diff[2].delete("port")
+              if rule["port"]
+                attributes["port_range_max"] = attributes["port_range_min"] = rule.delete("port")
               end
               attributes["remote_ip_prefix"] = rule.delete("remote_ip")
               rule.delete("direction")
