@@ -7,7 +7,7 @@ module Kakine
       end
 
       def security_group(tenant_name, security_group_name)
-        security_groups_on_tenant(tenant_name).detect{|sg| sg.name == security_group_name)
+        security_groups_on_tenant(tenant_name).detect{|sg| sg.name == security_group_name}
       end
 
       def security_groups_on_tenant(tenant_name)
