@@ -16,8 +16,7 @@ module Kakine
 
       def create_security_group(attributes)
         puts "Create Security Group: #{attributes}"
-        tenant = Fog::Identity[:openstack].get_tenant(attributes["tenant_id"])
-        Kakine::Resource.security_group(tenant.name, attributes["name"])
+        "[Mock] #{attributes[:name]} ID"
       end
 
       def delete_security_group(security_group_id)
