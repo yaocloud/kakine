@@ -16,6 +16,7 @@ module Kakine
     option :filename, type: :string, aliases: "-f"
     desc 'apply', "apply local configuration into OpenStack"
     def apply
+      adapter = Kakine::Adapter::Mock.new
       filename = options[:filename] ? options[:filename] : "#{options[:tenant]}.yaml"
       diffs = HashDiff.diff(security_groups(options[:tenant]), YAML.load_file(filename).to_hash)
 
@@ -26,14 +27,8 @@ module Kakine
           security_group = security_groups_on_tenant(options[:tenant]).detect{|sg| sg.name == sg_name.to_s}
           case diff[0]
           when "+"
-            attributes = {"ethertype" => "IPv4", "teanant_id" => tenant(options[:tenant]).id}
-            if diff[2]["port"]
-              attributes["port_range_max"] = attributes["port_range_min"] = diff[2].delete("port")
-            end
-            attributes["remote_ip_prefix"] = diff[2].delete("remote_ip")
-            diff[2].delete("direction")
-            attributes.merge!(diff[2])
-            adapter.create_rule(security_group.id, diff[2]["direction"], attributes)
+            diff[2].merge!({"ethertype" => "IPv4", "teanant_id" => tenant(options[:tenant]).id})
+            adapter.create_rule(security_group.id, diff[2]["direction"], diff[2])
           when "-"
             security_group_rule = security_group.security_group_rules.detect do |sg|
               if diff[2]["port"]
@@ -57,14 +52,8 @@ module Kakine
             attributes = {name: sg_name, description: "", tenant_id: tenant(options[:tenant]).id}
             security_group_id = adapter.create_security_group(attributes)
             diff[2].each do |rule|
-              attributes = {"ethertype" => "IPv4", "teanant_id" => tenant(options[:tenant]).id}
-              if rule["port"]
-                attributes["port_range_max"] = attributes["port_range_min"] = rule.delete("port")
-              end
-              attributes["remote_ip_prefix"] = rule.delete("remote_ip")
-              rule.delete("direction")
-              attributes.merge!(rule)
-              adapter.create_rule(security_group_id, rule["direction"], attributes)
+              rule.merge!({"ethertype" => "IPv4", "teanant_id" => tenant(options[:tenant]).id})
+              adapter.create_rule(security_group_id, rule["direction"], rule)
             end
           when "-"
             security_group = security_groups_on_tenant(options[:tenant]).detect{|sg| sg.name == sg_name.to_s}
