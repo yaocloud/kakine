@@ -26,7 +26,10 @@ module Kakine
           security_group = security_groups_on_tenant(options[:tenant]).detect{|sg| sg.name == sg_name.to_s}
           case diff[0]
           when "+"
-            attributes = {}
+            attributes = {"ethertype" => "IPv4", "teanant_id" => tenant(options[:tenant]).id}
+            if diff[2]["port"]
+              attributes["port_range_max"] = attributes["port_range_min"] = diff[2].delete("port")
+            end
             attributes["remote_ip_prefix"] = diff[2].delete("remote_ip")
             diff[2].delete("direction")
             attributes.merge!(diff[2])
@@ -34,6 +37,10 @@ module Kakine
             # Fog::Network[:openstack].create_security_group_rule(security_group.id, diff[2]["direction"], attributes)
           when "-"
             security_group_rule = security_group.security_group_rules.detect do |sg|
+              if diff[2]["port"]
+                diff[2]["port_range_max"] = diff[2]["port_range_min"] = diff[2]["port"]
+              end
+
               sg.direction == diff[2]["direction"] &&
               sg.protocol == diff[2]["protocol"] &&
               sg.port_range_max == diff[2]["port_range_max"] &&
@@ -53,7 +60,10 @@ module Kakine
             # data = {name: sg_name, description: "", tenant_id: tenant(options[:tenant]).id}
             # response = Fog::Network[:openstack].create_security_group(security_group.name, )
             diff[2].each do |rule|
-              attributes = {}
+              attributes = {"ethertype" => "IPv4", "teanant_id" => tenant(options[:tenant]).id}
+              if diff[2]["port"]
+                attributes["port_range_max"] = attributes["port_range_min"] = diff[2].delete("port")
+              end
               attributes["remote_ip_prefix"] = rule.delete("remote_ip")
               rule.delete("direction")
               attributes.merge!(rule)
