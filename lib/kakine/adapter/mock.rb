@@ -7,6 +7,9 @@ module Kakine
           attributes["port_range_max"] = attributes["port_range_min"] = attributes.delete("port")
         end
         attributes["remote_ip_prefix"] = attributes.delete("remote_ip")
+
+        data = {}
+        attributes.each{|k,v| data[k.to_sym] = v}
         puts "Create Rule: #{security_group_id} - #{direction}: #{attributes}"
       end
 
@@ -15,7 +18,9 @@ module Kakine
       end
 
       def create_security_group(attributes)
-        puts "Create Security Group: #{attributes}"
+        data = {}
+        attributes.each{|k,v| data[k.to_sym] = v}
+        puts "Create Security Group: #{data}"
         "[Mock] #{attributes[:name]} ID"
       end
 

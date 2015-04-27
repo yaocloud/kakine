@@ -7,7 +7,10 @@ module Kakine
           attributes["port_range_max"] = attributes["port_range_min"] = attributes.delete("port")
         end
         attributes["remote_ip_prefix"] = attributes.delete("remote_ip")
-        Fog::Network[:openstack].create_security_group_rule(security_group_id, direction, attributes)
+
+        data = {}
+        attributes.each{|k,v| data[k.to_sym] = v}
+        Fog::Network[:openstack].create_security_group_rule(security_group_id, direction, data)
       end
 
       def delete_rule(security_group_rule_id)
@@ -15,7 +18,9 @@ module Kakine
       end
 
       def create_security_group(attributes)
-        response = Fog::Network[:openstack].create_security_group(attributes)
+        data = {}
+        attributes.each{|k,v| data[k.to_sym] = v}
+        response = Fog::Network[:openstack].create_security_group(data)
         response.data[:body]["security_group"]["id"]
       end
 
