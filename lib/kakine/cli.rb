@@ -30,13 +30,13 @@ module Kakine
 
         if rule_modification # foo[2]
           security_group = Kakine::Resource.security_group(options[:tenant], sg_name)
+          if diff[2]["remote_group"]
+            security_group = Kakine::Resource.security_group(diff[2]["remote_group"], options[:tenant])
+            diff[2]["remote_group_id"] = security_group.id
+          end
           case diff[0]
           when "+"
             diff[2].merge!({"ethertype" => "IPv4", "teanant_id" => Kakine::Resource.tenant(options[:tenant]).id})
-            if diff[2]["remote_group"]
-              security_group = Kakine::Resource.security_group(diff[2]["remote_group"], options[:tenant])
-              diff[2]["remote_group_id"] = security_group.id
-            end
             adapter.create_rule(security_group.id, diff[2]["direction"], diff[2])
           when "-"
             security_group_rule = Kakine::Resource.security_group_rule(security_group, diff[2])
