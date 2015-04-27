@@ -36,7 +36,7 @@ module Kakine
           end
           case diff[0]
           when "+"
-            diff[2].merge!({"ethertype" => "IPv4", "teanant_id" => Kakine::Resource.tenant(options[:tenant]).id})
+            diff[2].merge!({"ethertype" => "IPv4", "tenant_id" => Kakine::Resource.tenant(options[:tenant]).id})
             adapter.create_rule(security_group.id, diff[2]["direction"], diff[2])
           when "-"
             security_group_rule = Kakine::Resource.security_group_rule(security_group, diff[2])
@@ -50,7 +50,7 @@ module Kakine
             attributes = {name: sg_name, description: "", tenant_id: Kakine::Resource.tenant(options[:tenant]).id}
             security_group_id = adapter.create_security_group(attributes)
             diff[2].each do |rule|
-              rule.merge!({"ethertype" => "IPv4", "teanant_id" => Kakine::Resource.tenant(options[:tenant]).id})
+              rule.merge!({"ethertype" => "IPv4", "tenant_id" => Kakine::Resource.tenant(options[:tenant]).id})
               if rule["remote_group"]
                 security_group = Kakine::Resource.security_group(options[:tenant], diff[2].delete("remote_group"))
                 rule["remote_group_id"] = security_group.id
