@@ -1,8 +1,8 @@
 # Kakine
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/kakine`. To experiment with that code, run `bin/console` for an interactive prompt.
+[![Build Status](https://secure.travis-ci.org/hsbt/kaname.png)](https://travis-ci.org/hsbt/kaname)
 
-TODO: Delete this and the text above, and describe your gem
+Kakine(垣根) is configuration management tool of Security Group on OpenStack.
 
 ## Installation
 
@@ -22,7 +22,51 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+You can define Security Group configuration for OpenStack via YAML format. Like following syntax.
+
+```yaml
+app:
+  - direction: ingress
+    protocol: tcp
+    port: 443
+    remote_ip: 0.0.0.0/0
+  - direction: ingress
+    protocol: tcp
+    port: 80
+    remote_ip: 0.0.0.0/0
+rails:
+  - direction: ingress
+    protocol: tcp
+    port: 3000
+    remote_ip: 0.0.0.0/0
+```
+
+You need to put fog configuration to home directory.
+
+```sh
+% cat ~/.fog
+default:
+  openstack_auth_url: "http://your-openstack-endpoint/v2.0/tokens"
+  openstack_username: "admin"
+  openstack_tenant: "admin"
+  openstack_api_key: "admin-no-password"
+```
+
+run following command.
+
+```sh
+$ kakine show tenant_name # show Security Group of tenant_name
+$ kaname apply tenant_name --dryrun # You can see all of invoke commands(dryrun)
+$ kaname apply tenant_name # apply configuration into OpenStack
+```
+
+You can create or change Security Group on targeting tenant.
+
+If you need to initialize your Security Gruop, you can get it via following command:
+
+```sh
+$ kaname show tenant_name > tenant_name.yaml
+```
 
 ## Development
 
@@ -32,7 +76,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/kakine/fork )
+1. Fork it ( https://github.com/hsbt/kakine/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
