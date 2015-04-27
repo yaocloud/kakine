@@ -6,7 +6,9 @@ module Kakine
         if attributes["port"]
           attributes["port_range_max"] = attributes["port_range_min"] = attributes.delete("port")
         end
-        attributes["remote_ip_prefix"] = attributes.delete("remote_ip")
+        if attributes["remote_ip"]
+          attributes["remote_ip_prefix"] = attributes.delete("remote_ip")
+        end
 
         data = {}
         attributes.each{|k,v| data[k.to_sym] = v}
