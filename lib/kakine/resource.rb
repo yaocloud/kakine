@@ -1,6 +1,10 @@
 module Kakine
   class Resource
     class << self
+      def yaml(filename)
+        YAML.load_file(filename).to_hash
+      end
+
       def tenant(tenant_name)
         tenants = Fog::Identity[:openstack].tenants
         tenants.detect{|t| t.name == tenant_name}

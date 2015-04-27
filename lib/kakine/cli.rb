@@ -23,7 +23,7 @@ module Kakine
       end
 
       filename = options[:filename] ? options[:filename] : "#{options[:tenant]}.yaml"
-      diffs = HashDiff.diff(Kakine::Resource.security_groups_hash(options[:tenant]), YAML.load_file(filename).to_hash)
+      diffs = HashDiff.diff(Kakine::Resource.security_groups_hash(options[:tenant]), Kakine::Resource.yaml(filename))
 
       diffs.each do |diff|
         sg_name, rule_modification = *diff[1].scan(/^([\w-]+)(\[\d\])?/)[0]
