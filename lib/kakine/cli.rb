@@ -31,8 +31,8 @@ module Kakine
         if rule_modification # foo[2]
           security_group = Kakine::Resource.security_group(options[:tenant], sg_name)
           if diff[2]["remote_group"]
-            security_group = Kakine::Resource.security_group(options[:tenant], diff[2].delete("remote_group"))
-            diff[2]["remote_group_id"] = security_group.id
+            remote_security_group = Kakine::Resource.security_group(options[:tenant], diff[2].delete("remote_group"))
+            diff[2]["remote_group_id"] = remote_security_group.id
           end
           case diff[0]
           when "+"
@@ -52,8 +52,8 @@ module Kakine
             diff[2].each do |rule|
               rule.merge!({"ethertype" => "IPv4", "tenant_id" => Kakine::Resource.tenant(options[:tenant]).id})
               if rule["remote_group"]
-                security_group = Kakine::Resource.security_group(options[:tenant], rule.delete("remote_group"))
-                rule["remote_group_id"] = security_group.id
+                remote_security_group = Kakine::Resource.security_group(options[:tenant], rule.delete("remote_group"))
+                rule["remote_group_id"] = remote_security_group.id
               end
               adapter.create_rule(security_group_id, rule["direction"], rule)
             end if diff[2]
