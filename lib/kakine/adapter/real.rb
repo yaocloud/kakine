@@ -16,7 +16,7 @@ module Kakine
 
       def create_security_group(attributes)
         response = Fog::Network[:openstack].create_security_group(attributes)
-        response.data[:body]["security_group_id"]
+        response.data[:body]["security_group"]["id"]
       end
 
       def delete_security_group(security_group_id)
