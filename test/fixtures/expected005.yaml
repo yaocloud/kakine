@@ -1,0 +1,10 @@
+bob-b:
+- direction: ingress
+  protocol: tcp
+  port: 443
+  remote_ip: 0.0.0.0/0
+bob-c:
+- direction: ingress
+  protocol: tcp
+  port: 443
+  remote_ip: 0.0.0.0/0
