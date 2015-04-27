@@ -2,7 +2,7 @@ require 'minitest_helper'
 
 class TestKakineCLI < Minitest::Test
   def setup
-    Kakine::Resource.stubs(:security_groups_hash).returns(YAML.load_file('test/fixtures/actual.yml'))
+    Kakine::Resource.stubs(:security_groups_hash).returns(YAML.load_file('test/fixtures/actual.yaml'))
   end
 
   def test_create_security_group
