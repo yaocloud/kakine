@@ -6,7 +6,7 @@ module Kakine
           remote_security_group = Kakine::Resource.security_group(tenant, rule.delete("remote_group"))
           rule["remote_group_id"] = remote_security_group.id
         end
-      end unless modify_content["rules"].nil?
+      end if modify_content["rules"].detect {|v| v.size > 0}
       modify_content
     end
 
@@ -17,7 +17,7 @@ module Kakine
       #delete default rule
       r = { "rules" => [] }
       ["IPv4", "IPv6"].each do |ip|
-          r << {"direction"=>"egress", "protocol"=>nil, "port"=>nil, "remote_ip"=>nil, "ethertype"=>ip}
+          r["rules"] << {"direction"=>"egress", "protocol"=>nil, "port"=>nil, "remote_ip"=>nil, "ethertype"=>ip}
       end
       delete_security_rule(sg_name, r, tenant, adapter)
       security_group_id
@@ -28,7 +28,7 @@ module Kakine
       modify_content["rules"].each do |rule|
         security_group_rule = Kakine::Resource.security_group_rule(security_group, rule)
         adapter.delete_rule(security_group_rule.id)
-      end
+      end if modify_content["rules"].detect {|v| v.size > 0}
     end
   end
 end
