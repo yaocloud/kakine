@@ -31,14 +31,13 @@ module Kakine
       diffs.each do |diff|
         sg_name, rule_modification = *diff[1].scan(/^([\w-]+)(\[\d\])?/)[0]
 
-        modify_content = Kakine::Resource.format_modify_contents(sg_name, reg_sg, diff)
+        modify_content = Kakine::Resource.format_modify_contents(options[:tenant], sg_name, reg_sg, diff)
         if rule_modification # foo[2]
           security_group = Kakine::Resource.security_group(options[:tenant], sg_name)
           mod_content = set_remote_security_group_id(mod_content, options[:tenant])
 
           case mod_content["div"]
           when "+"
-            mod_content["rules"].merge!({"tenant_id" => Kakine::Resource.tenant(options[:tenant]).id})
             adapter.create_rule(security_group.id, mod_content["rules"]["direction"], mod_content["rules"])
           when "-"
             security_group_rule = Kakine::Resource.security_group_rule(security_group, mod_content["rules"])
@@ -55,7 +54,6 @@ module Kakine
             mod_content = set_remote_security_group_id(mod_content, options[:tenant])
 
             mod_content["rules"].each do |rule|
-              rule.merge!({"tenant_id" => Kakine::Resource.tenant(options[:tenant]).id})
               adapter.create_rule(security_group_id, rule["direction"], rule)
             end if mod_content["rules"]
           when "-"

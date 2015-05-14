@@ -69,9 +69,11 @@ module Kakine
         rules
       end
 
-      def format_modify_contents(sg_name, reg_sg, diff)
+      def format_modify_contents(tenant_name, sg_name, reg_sg, diff)
         Hash.new.tap do |sg|
-          sg["div"] = diff[0]
+          sg["div"]       = diff[0]
+          sg["tenant_id"] = Kakine::Resource.tenant(tenant_name).id
+
           if ["+", "-"].include?(sg["div"])
             # ["+", "sg_name", {"rules"=>[{"direction"=>"egress" ~ }]}] 
             if diff[2]["rules"]
