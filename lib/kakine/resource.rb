@@ -24,7 +24,8 @@ module Kakine
           sg.port_range_max == attributes["port_range_max"] &&
           sg.port_range_min == attributes["port_range_min"] &&
           sg.remote_ip_prefix == attributes["remote_ip"] &&
-          sg.remote_group_id == attributes["remote_group_id"]
+          sg.remote_group_id == attributes["remote_group_id"] &&
+          sg.ethertype == attributes["ethertype"]
         end
       end
 
@@ -87,7 +88,7 @@ module Kakine
             end
           else
             # ["~", "sg_name.description", "before_value", "after_value"]
-            if m = diff[1].match(/^([\w-]+).([\w-]+)$/)
+            if m = diff[1].match(/^([\w-]+)\.([\w]+)$/)
               sg["description"] = reg_sg[sg_name]["description"]
               sg["rules"]       = reg_sg[sg_name]["rules"]
               sg["discription"] = diff[3]

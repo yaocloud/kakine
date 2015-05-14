@@ -52,8 +52,8 @@ module Kakine
         else # foo
           case modify_content["div"]
           when "+"
-            create_security_group(sg_name, modify_content, options[:tenant], adapter)
 
+            security_group_id = create_security_group(sg_name, modify_content, options[:tenant], adapter)
             modify_content["rules"].each do |rule|
               adapter.create_rule(security_group_id, rule["direction"], rule)
             end if modify_content["rules"]
