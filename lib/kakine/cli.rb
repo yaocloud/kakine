@@ -32,6 +32,7 @@ module Kakine
       diffs.each do |diff|
         sg_name, rule_modification = *diff[1].scan(/^([\w-]+)(\[\d\])?/)[0]
 
+        (sg_name, rule_modification) = diff[1].split(/[\.\[]/, 2)
         modify_content = Kakine::Resource.format_modify_contents(options[:tenant], sg_name, reg_sg, diff)
 
         if rule_modification # foo[2]
