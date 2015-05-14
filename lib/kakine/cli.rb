@@ -40,7 +40,9 @@ module Kakine
           modify_content = set_remote_security_group_id(modify_content, options[:tenant])
           case modify_content["div"]
           when "+"
-            adapter.create_rule(security_group.id, modify_content["rules"]["direction"], modify_content["rules"])
+            modify_content["rules"].each do |rule|
+              adapter.create_rule(security_group.id, rule["direction"], rule)
+            end
           when "-"
             security_group_rule = Kakine::Resource.security_group_rule(security_group, modify_content["rules"])
             adapter.delete_rule(security_group_rule.id)
