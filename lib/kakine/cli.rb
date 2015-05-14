@@ -28,9 +28,7 @@ module Kakine
 
       reg_sg = Kakine::Resource.security_groups_hash(options[:tenant])
       diffs = HashDiff.diff(reg_sg, Kakine::Resource.yaml(filename))
-
       diffs.each do |diff|
-        sg_name, rule_modification = *diff[1].scan(/^([\w-]+)(\[\d\])?/)[0]
 
         (sg_name, rule_modification) = diff[1].split(/[\.\[]/, 2)
         modify_content = Kakine::Resource.format_modify_contents(options[:tenant], sg_name, reg_sg, diff)
@@ -44,15 +42,15 @@ module Kakine
               adapter.create_rule(security_group.id, rule["direction"], rule)
             end
           when "-"
-            security_group_rule = Kakine::Resource.security_group_rule(security_group, modify_content["rules"])
-            adapter.delete_rule(security_group_rule.id)
+            delete_security_rule(sg_name, modify_content, options[:tenant], adapter)
+          when "~"
           else
             raise
           end
+
         else # foo
           case modify_content["div"]
           when "+"
-
             security_group_id = create_security_group(sg_name, modify_content, options[:tenant], adapter)
             modify_content["rules"].each do |rule|
               adapter.create_rule(security_group_id, rule["direction"], rule)

@@ -15,15 +15,20 @@ module Kakine
       security_group_id = adapter.create_security_group(attributes)
 
       #delete default rule
-      security_group      = Kakine::Resource.security_group(tenant, sg_name)
+      r = { "rules" => [] }
       ["IPv4", "IPv6"].each do |ip|
-        security_group_rule = Kakine::Resource.security_group_rule(
-          security_group,
-          {"direction"=>"egress", "protocol"=>nil, "port"=>nil, "remote_ip"=>nil, "ethertype"=>ip},
-        )
+          r << {"direction"=>"egress", "protocol"=>nil, "port"=>nil, "remote_ip"=>nil, "ethertype"=>ip}
+      end
+      delete_security_rule(sg_name, r, tenant, adapter)
+      security_group_id
+    end
+
+    def delete_security_rule(sg_name, modify_content, tenant, adapter)
+      security_group      = Kakine::Resource.security_group(tenant, sg_name)
+      modify_content["rules"].each do |rule|
+        security_group_rule = Kakine::Resource.security_group_rule(security_group, rule)
         adapter.delete_rule(security_group_rule.id)
       end
-      security_group_id
     end
   end
 end
