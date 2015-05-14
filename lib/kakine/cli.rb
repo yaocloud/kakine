@@ -5,6 +5,7 @@ require 'hashdiff'
 
 module Kakine
   class CLI < Thor
+    Include Kakine::Operation
     option :tenant, type: :string, aliases: '-t'
     desc 'show', 'show Security Groups specified tenant'
     def show
@@ -33,11 +34,7 @@ module Kakine
         modify_content = Kakine::Resource.format_modify_contents(sg_name, reg_sg, diff)
         if rule_modification # foo[2]
           security_group = Kakine::Resource.security_group(options[:tenant], sg_name)
-          if diff[2]["remote_group"]
-            remote_security_group = Kakine::Resource.security_group(options[:tenant], diff[2].delete("remote_group"))
-            diff[2]["remote_group_id"] = remote_security_group.id
-          end
-          case diff[0]
+          mod_content = set_remote_security_group_id(mod_content, options[:tenant])
 
           case mod_content["div"]
           when "+"
@@ -54,6 +51,9 @@ module Kakine
           when "+"
             attributes = {name: sg_name, description: mod_content["description"], tenant_id: Kakine::Resource.tenant(options[:tenant]).id}
             security_group_id = adapter.create_security_group(attributes)
+
+            mod_content = set_remote_security_group_id(mod_content, options[:tenant])
+
             mod_content["rules"].each do |rule|
               rule.merge!({"tenant_id" => Kakine::Resource.tenant(options[:tenant]).id})
               adapter.create_rule(security_group_id, rule["direction"], rule)
