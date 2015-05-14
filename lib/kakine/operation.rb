@@ -23,7 +23,7 @@ module Kakine
         )
         adapter.delete_rule(security_group_rule.id)
       end
-      sucurity_group_id
+      security_group_id
     end
   end
 end
