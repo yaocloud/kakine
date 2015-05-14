@@ -32,15 +32,13 @@ module Kakine
 
         (sg_name, rule_modification) = diff[1].split(/[\.\[]/, 2)
         modify_content = Kakine::Resource.format_modify_contents(options[:tenant], sg_name, reg_sg, diff)
+        modify_content = set_remote_security_group_id(modify_content, options[:tenant])
 
         if rule_modification # foo[2]
-          security_group = Kakine::Resource.security_group(options[:tenant], sg_name)
-          modify_content = set_remote_security_group_id(modify_content, options[:tenant])
+
           case modify_content["div"]
           when "+"
-            modify_content["rules"].each do |rule|
-              adapter.create_rule(security_group.id, rule["direction"], rule)
-            end
+            create_security_rule(sg_name, modify_content, options[:tenant], adapter)
           when "-"
             delete_security_rule(sg_name, modify_content, options[:tenant], adapter)
           when "~"
@@ -52,12 +50,11 @@ module Kakine
           case modify_content["div"]
           when "+"
             security_group_id = create_security_group(sg_name, modify_content, options[:tenant], adapter)
-            modify_content["rules"].each do |rule|
-              adapter.create_rule(security_group_id, rule["direction"], rule)
-            end if modify_content["rules"]
+            create_security_rule(sg_name, modify_content, options[:tenant], adapter)
           when "-"
             security_group = Kakine::Resource.security_group(options[:tenant], sg_name)
             adapter.delete_security_group(security_group.id)
+          when "~"
           else
             raise
           end
