@@ -1,12 +1,29 @@
 module Kakine
   module Operation
+    def set_remote_security_group_id(modify_content, tenant)
+      modify_content["rules"].each do |rule|
+        unless rule['remote_group'].nil?
+          remote_security_group = Kakine::Resource.security_group(tenant, rule.delete("remote_group"))
+          rule["remote_group_id"] = remote_security_group.id
+        end
+      end unless modify_content["rules"].nil?
+      modify_content
+    end
 
-    def set_remote_security_group_id(mod_content, tenant)
-      if mod_content["rules"]["remote_group"]
-        remote_security_group = Kakine::Resource.security_group(tenant, mod_content["rules"].delete("remote_group"))
-        mod_content["rules"]["remote_group_id"] = remote_security_group.id
-      end
-      mod_content
+    def create_security_group(sg_name ,modify_content, tenant, adapter)
+      attributes = {name: sg_name, description: modify_content["description"], tenant_id: Kakine::Resource.tenant(tenant).id}
+      security_group_id = adapter.create_security_group(attributes)
+
+      #delete default rule
+      security_group = Kakine::Resource.security_group(tenant, sg_name)
+      security_group_rule = Kakine::Resource.security_group_rule(
+        security_group,
+        [
+          {"direction"=>"egress", "protocol"=>nil, "port"=>nil, "remote_ip"=>nil, "ethertype"=>"IPv4"},
+          {"direction"=>"egress", "protocol"=>nil, "port"=>nil, "remote_ip"=>nil, "ethertype"=>"IPv6"}
+        ]
+      )
+      adapter.delete_rule(security_group_rule.id)
     end
   end
 end

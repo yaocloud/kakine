@@ -83,7 +83,7 @@ module Kakine
             # ["-", "sg_namerules[0]", {"direction"=>"egress" ~ }]
             else
               sg["description"] = reg_sg[sg_name]["description"]
-              sg["rules"]       = diff[2]
+              sg["rules"]       = [diff[2]]
             end
           else
             # ["~", "sg_name.description", "before_value", "after_value"]
