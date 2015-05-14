@@ -33,12 +33,12 @@ module Kakine
       end
 
       def security_groups_hash(tenant_name)
-        sg_hash = {}
+        sg_hash = Hash.new { |h,k| h[k] = {} }
 
         security_groups_on_tenant(tenant_name).each do |sg|
-          sg_hash[sg.name] = format_security_group(sg)
+          sg_hash[sg.name]["rules"]       = format_security_group(sg)
+          sg_hash[sg.name]["description"] = sg.description
         end
-
         sg_hash
       end
 
@@ -47,7 +47,6 @@ module Kakine
 
         security_group.security_group_rules.each do |rule|
           rule_hash = {}
-
           rule_hash["direction"] = rule.direction
           rule_hash["protocol"] = rule.protocol
 
@@ -63,11 +62,10 @@ module Kakine
             rule_hash["remote_group"] = response.data[:body]["security_group"]["name"]
           else
             rule_hash["remote_ip"] = rule.remote_ip_prefix
+            rule_hash["ethertype"] = rule.ethertype
           end
-
           rules << rule_hash
         end
-
         rules
       end
     end
