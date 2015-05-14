@@ -55,9 +55,9 @@ default:
 run following command.
 
 ```sh
-$ kakine show tenant_name # show Security Group of tenant_name
-$ kaname apply tenant_name --dryrun # You can see all of invoke commands(dryrun)
-$ kaname apply tenant_name # apply configuration into OpenStack
+$ kakine show -t tenant_name # show Security Group of tenant_name
+$ kaname apply -t tenant_name --dryrun # You can see all of invoke commands(dryrun)
+$ kaname apply -t tenant_name # apply configuration into OpenStack
 ```
 
 You can create or change Security Group on targeting tenant.
@@ -65,7 +65,7 @@ You can create or change Security Group on targeting tenant.
 If you need to initialize your Security Gruop, you can get it via following command:
 
 ```sh
-$ kaname show tenant_name > tenant_name.yaml
+$ kaname show -t tenant_name > tenant_name.yaml
 ```
 
 ## Development
