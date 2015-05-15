@@ -4,17 +4,18 @@ module Kakine
     def initialize(tenant_name, diff)
       @diff         = diff
       @tenant_name  = tenant_name
+      tenant_name  = tenant_name
       registered_sg = Kakine::Resource.security_groups_hash(@tenant_name)
       unset_security_rules
 
       if ["+", "-"].include?(type)
         # ["+", "sg_name", {"rules"=>[{"direction"=>"egress" ~ }]}]
         if diff[2] && diff[2]["rules"]
-          @description  = diff[2]["description"]
+          description  = diff[2]["description"]
           add_security_rules(diff[2]["rules"])
         # ["-", "sg_namerules[0]", {"direction"=>"egress" ~ }]
         elsif diff[2]
-          @description = registered_sg[name]["description"]
+          description = registered_sg[name]["description"]
           add_security_rules(diff[2])
         end
         # ["+", "sg_name", nil]
@@ -22,11 +23,11 @@ module Kakine
       else
         # ["~", "sg_name.description", "before_value", "after_value"]
         if m = diff[1].match(/^([\w-]+)\.([\w]+)$/)
-          @description = diff[3]
+          description = diff[3]
           add_security_rules(registered_sg[name]["rules"])
         # ["~", "sg_name.rules[0].port", before_value, after_value]
         elsif m = diff[1].match(/^([\w-]+).([\w]+)\[(\d)\].([\w]+)$/)
-          @description    = registered_sg[name]["description"]
+          description    = registered_sg[name]["description"]
           registered_sg[name]["rules"][m[3].to_i][m[4]] = diff[3]
           add_security_rules(registered_sg[name]["rules"][m[3].to_i])
         else
@@ -53,26 +54,26 @@ module Kakine
     end
 
     def get_security_rules
-      @@rules
+      @rules
     end
 
     def add_security_rules(rule)
       case
         when rule.instance_of?(Array)
-          @@rules = rule
+          @rules = rule
         when rule.instance_of?(Hash)
-          @@rules << rule
+          @rules << rule
         else
           raise
       end
     end
 
     def unset_security_rules
-      @@rules = []
+      @rules = []
     end
 
     def has_rules?
-      @@rules.detect {|v| !v.nil? && v.size > 0}
+      @rules.detect {|v| !v.nil? && v.size > 0}
     end
 
     def is_add?
