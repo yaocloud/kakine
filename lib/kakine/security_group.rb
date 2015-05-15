@@ -1,8 +1,9 @@
 module Kakine
   class SecurityGroup
-    attr_accessor :name, :div, :description, :tenant_id, :tenant_name, :rules, :modify
+    attr_accessor :name, :div, :description, :tenant_id, :tenant_name, :rules
     def initialize(tenant_name, diff)
-      (@name, @modify) = diff[1].split(/[\.\[]/, 2)
+      @diff            = diff
+      @name            = diff[1].split(/[\.\[]/, 2)[0]
       @div             = diff[0]
       @tenant_name     = tenant_name
       @tenant_id       = Kakine::Resource.tenant(tenant_name).id
@@ -49,16 +50,16 @@ module Kakine
       self.rules.detect {|v| v.size > 0}
     end
 
-    def is_rule_modify?
-      self.modify.size > 0
-    end
-
     def is_add?
       self.div == "+"
     end
 
     def is_delete?
       self.div == "-"
+    end
+
+    def is_modify?
+      !@diff[1].split(/[\.\[]/, 2)[1].nil?
     end
   end
 end

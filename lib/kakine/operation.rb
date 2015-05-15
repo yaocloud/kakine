@@ -5,11 +5,12 @@ module Kakine
       security_group_id = adapter.create_security_group(attributes)
 
       #delete default rule
-      r = { "rules" => [] }
+      delete_sg = sg.clone
+      delete_sg.rules = []
       ["IPv4", "IPv6"].each do |ip|
-          r["rules"] << {"direction"=>"egress", "protocol"=>nil, "port"=>nil, "remote_ip"=>nil, "ethertype"=>ip}
+          delete_sg.rules << {"direction"=>"egress", "protocol"=>nil, "port"=>nil, "remote_ip"=>nil, "ethertype"=>ip}
       end
-      delete_security_rule(sg.name, r, sg.tenant_name, adapter)
+      delete_security_rule(delete_sg, adapter)
       security_group_id
     end
 

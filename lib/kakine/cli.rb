@@ -30,7 +30,7 @@ module Kakine
       diffs.each do |diff|
         (sg_name, rule_modification) = diff[1].split(/[\.\[]/, 2)
 
-        if sg.is_rule_modify? # foo[2]
+        if sg.is_modify? # foo[2]
           case
           when sg.is_add?
             create_security_rule(sg, adapter)
