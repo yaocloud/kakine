@@ -32,13 +32,13 @@ module Kakine
 
         sg = Kakine::SecurityGroup.new(options[:tenant], diff)
 
-        if sg.is_modify? # foo[2]
+        if sg.is_modify_rule? # foo[2]
           case
           when sg.is_add?
             create_security_rule(sg, adapter)
           when sg.is_delete?
             delete_security_rule(sg,  adapter)
-          when "~"
+          when sg.is_modify_value?
             pre_sg = sg.prev_instance
             delete_security_rule(pre_sg, adapter)
             create_security_rule(sg, adapter)
@@ -52,7 +52,7 @@ module Kakine
             create_security_rule(sg, adapter)
           when sg.is_delete?
             delete_security_group(sg, adapter)
-          when "~"
+          when sg.is_modify_value?
             delete_security_group(sg, adapter)
             create_security_group(sg, adapter)
             create_security_rule(sg, adapter)

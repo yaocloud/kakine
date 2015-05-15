@@ -55,7 +55,11 @@ module Kakine
       @div == "-"
     end
 
-    def is_modify?
+    def is_modify_value?
+      @div == "~"
+    end
+
+    def is_modify_rule?
       !@diff[1].split(/[\[]/, 2)[1].nil?
     end
 
