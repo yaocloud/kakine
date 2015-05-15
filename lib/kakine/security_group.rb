@@ -12,14 +12,16 @@ module Kakine
 
       if ["+", "-"].include?(@div)
         # ["+", "sg_name", {"rules"=>[{"direction"=>"egress" ~ }]}] 
-        unless diff[2].nil? || diff[2]["rules"].nil?
+        if diff[2] && diff[2]["rules"]
           @description  = diff[2]["description"]
           @rules        = diff[2]["rules"]
         # ["-", "sg_namerules[0]", {"direction"=>"egress" ~ }]
-        else
+        elsif diff[2]
           @description = entry[@name]["description"]
           @rules      << diff[2]
         end
+        # ["+", "sg_name", nil]
+        # unmatch is no rule sg
       else
         # ["~", "sg_name.description", "before_value", "after_value"]
         if m = diff[1].match(/^([\w-]+)\.([\w]+)$/)
@@ -36,7 +38,6 @@ module Kakine
       end
       set_remote_security_group_id
     end
-
 
     def reset_rules
       @rules = []

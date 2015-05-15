@@ -29,9 +29,9 @@ module Kakine
 
       diffs = HashDiff.diff(Kakine::Resource.security_groups_hash(options[:tenant]), Kakine::Resource.yaml(filename)).reverse
       diffs.each do |diff|
-p diff
+
         sg = Kakine::SecurityGroup.new(options[:tenant], diff)
-p sg
+
         if sg.is_modify? # foo[2]
           case
           when sg.is_add?
