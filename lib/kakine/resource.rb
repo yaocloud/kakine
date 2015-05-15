@@ -27,7 +27,7 @@ module Kakine
             (
               sg.remote_ip_prefix == attributes["remote_ip"] &&
               sg.ethertype == attributes["ethertype"]
-            ) || 
+            ) ||
             (
               sg.remote_group_id == attributes["remote_group_id"] &&
               !attributes["remote_group_id"].nil?
