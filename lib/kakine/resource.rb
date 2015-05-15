@@ -23,9 +23,16 @@ module Kakine
           sg.protocol == attributes["protocol"] &&
           sg.port_range_max == attributes["port_range_max"] &&
           sg.port_range_min == attributes["port_range_min"] &&
-          sg.remote_ip_prefix == attributes["remote_ip"] &&
-          sg.remote_group_id == attributes["remote_group_id"] &&
-          sg.ethertype == attributes["ethertype"]
+          (
+            (
+              sg.remote_ip_prefix == attributes["remote_ip"] &&
+              sg.ethertype == attributes["ethertype"]
+            ) || 
+            (
+              sg.remote_group_id == attributes["remote_group_id"] &&
+              !attributes["remote_group_id"].nil?
+            )
+          )
         end
       end
 
