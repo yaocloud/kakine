@@ -46,7 +46,7 @@ class TestKakineCLI < Minitest::Test
     Kakine::Resource.stubs(:security_group).returns(Dummy.new)
     Kakine::Resource.stubs(:security_group_rule).returns(Dummy.new)
 
-    Kakine::Adapter::Mock.any_instance.expects(:create_rule).twice
+    Kakine::Adapter::Mock.any_instance.expects(:create_rule).once
 
     Kakine::CLI.new.invoke(:apply, [], {dryrun: true})
   end

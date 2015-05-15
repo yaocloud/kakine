@@ -19,4 +19,4 @@ bob-c:
     protocol: tcp
     port: 443
     remote_ip: 0.0.0.0/0
-  description: bob-b
+  description: bob-c
