@@ -27,7 +27,6 @@ module Kakine
 
       filename = options[:filename] ? options[:filename] : "#{options[:tenant]}.yaml"
 
-      diffs = HashDiff.diff(Kakine::Resource.security_groups_hash(options[:tenant]), Kakine::Resource.yaml(filename)).reverse
       diffs = HashDiff.diff(Kakine::Resource.security_groups_hash(options[:tenant]), Kakine::Resource.yaml(filename)).sort.reverse
       diffs.each do |diff|
 
@@ -39,8 +38,8 @@ module Kakine
             create_security_rule(sg, adapter)
           when sg.is_delete?
             delete_security_rule(sg,  adapter)
-          when sg.is_modify_value?
-            pre_sg = sg.prev_instance
+          when sg.is_modify_attr?
+            pre_sg = sg.get_prev_instance
             delete_security_rule(pre_sg, adapter)
             create_security_rule(sg, adapter)
           else
@@ -53,7 +52,7 @@ module Kakine
             create_security_rule(sg, adapter)
           when sg.is_delete?
             delete_security_group(sg, adapter)
-          when sg.is_modify_value?
+          when sg.is_modify_attr?
             delete_security_group(sg, adapter)
             create_security_group(sg, adapter)
             create_security_rule(sg, adapter)

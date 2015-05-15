@@ -1,23 +1,20 @@
 module Kakine
   class SecurityGroup
-    attr_accessor :name, :div, :description, :tenant_id, :tenant_name, :rules
+    attr_accessor :description, :tenant_name, :rules
     def initialize(tenant_name, diff)
-      @diff            = diff
-      @name            = diff[1].split(/[\.\[]/, 2)[0]
-      @div             = diff[0]
-      @tenant_name     = tenant_name
-      @tenant_id       = Kakine::Resource.tenant(tenant_name).id
-      entry            = Kakine::Resource.security_groups_hash(@tenant_name)
-      reset_rules
+      @diff         = diff
+      @tenant_name  = tenant_name
+      registered_sg = Kakine::Resource.security_groups_hash(@tenant_name)
+      unset_security_rules
 
-      if ["+", "-"].include?(@div)
-        # ["+", "sg_name", {"rules"=>[{"direction"=>"egress" ~ }]}] 
+      if ["+", "-"].include?(type)
+        # ["+", "sg_name", {"rules"=>[{"direction"=>"egress" ~ }]}]
         if diff[2] && diff[2]["rules"]
           @description  = diff[2]["description"]
           @rules        = diff[2]["rules"]
         # ["-", "sg_namerules[0]", {"direction"=>"egress" ~ }]
         elsif diff[2]
-          @description = entry[@name]["description"]
+          @description = registered_sg[name]["description"]
           @rules      << diff[2]
         end
         # ["+", "sg_name", nil]
@@ -26,11 +23,11 @@ module Kakine
         # ["~", "sg_name.description", "before_value", "after_value"]
         if m = diff[1].match(/^([\w-]+)\.([\w]+)$/)
           @description = diff[3]
-          @rules       = entry[@name]["rules"]
+          @rules       = registered_sg[name]["rules"]
         # ["~", "sg_name.rules[0].port", before_value, after_value]
         elsif m = diff[1].match(/^([\w-]+).([\w]+)\[(\d)\].([\w]+)$/)
-          @description    = entry[@name]["description"]
-          @rules         << entry[@name]["rules"][m[3].to_i]
+          @description    = registered_sg[name]["description"]
+          @rules         << registered_sg[name]["rules"][m[3].to_i]
           @rules[0][m[4]] = diff[3]
         else
           raise
@@ -39,7 +36,19 @@ module Kakine
       set_remote_security_group_id
     end
 
-    def reset_rules
+    def type
+      @diff[0]
+    end
+
+    def name
+      @diff[1].split(/[\.\[]/, 2)[0]
+    end
+
+    def tenant_id
+      @tenant_id ||= Kakine::Resource.tenant(tenant_name).id
+    end
+
+    def unset_security_rules
       @rules = []
     end
 
@@ -48,24 +57,24 @@ module Kakine
     end
 
     def is_add?
-      @div == "+"
+      type == "+"
     end
 
     def is_delete?
-      @div == "-"
+      type == "-"
     end
 
-    def is_modify_value?
-      @div == "~"
+    def is_modify_attr?
+      type == "~"
     end
 
     def is_modify_rule?
       !@diff[1].split(/[\[]/, 2)[1].nil?
     end
 
-    def prev_instance
+    def get_prev_instance
       prev_sg = self.clone
-      prev_sg.reset_rules
+      prev_sg.unset_security_rules
       prev_sg.rules << get_prev_rules
       prev_sg
     end
@@ -82,9 +91,9 @@ module Kakine
     end
 
     def get_prev_rules
-      entry = Kakine::Resource.security_groups_hash(@tenant_name)
+      registered_sg = Kakine::Resource.security_groups_hash(@tenant_name)
       if m = @diff[1].match(/^([\w-]+).([\w]+)\[(\d)\].([\w]+)$/)
-        entry[@name]["rules"][m[3].to_i]
+        registered_sg[name]["rules"][m[3].to_i]
       end
     end
   end
