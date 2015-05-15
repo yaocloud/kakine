@@ -37,10 +37,7 @@ module Kakine
           when sg.is_delete?
             delete_security_rule(sg,  adapter)
           when "~"
-            pre_sg = sg.clone
-            pre_sg.rules = []
-            pre_sg.rules << sg.prev_rules
-
+            pre_sg = sg.prev_instance
             delete_security_rule(pre_sg, adapter)
             create_security_rule(sg, adapter)
           else

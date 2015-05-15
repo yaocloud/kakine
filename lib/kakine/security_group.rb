@@ -65,12 +65,18 @@ module Kakine
       !@diff[1].split(/[\[]/, 2)[1].nil?
     end
 
-    def prev_rules
-      entry = Kakine::Resource.security_groups_hash(self.tenant_name)
+    def prev_instance
+      prev_sg = self.clone
+      prev_sg.reset_rules
+      prev_sg.rules << get_prev_rules
+      prev_sg
+    end
+    private
+    def get_prev_rules
+      entry = Kakine::Resource.security_groups_hash(@tenant_name)
       if m = @diff[1].match(/^([\w-]+).([\w]+)\[(\d)\].([\w]+)$/)
-        entry[self.name]["rules"][m[3].to_i]
+        entry[@name]["rules"][m[3].to_i]
       end
     end
-
   end
 end
