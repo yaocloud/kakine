@@ -23,6 +23,11 @@ module Kakine
       security_group_id
     end
 
+    def delete_security_group(sg_name , tenant, adapter)
+      security_group = Kakine::Resource.security_group(options[:tenant], sg_name)
+      adapter.delete_security_group(security_group.id)
+    end
+
     def create_security_rule(sg_name, modify_content, tenant, adapter)
       security_group      = Kakine::Resource.security_group(tenant, sg_name)
       modify_content["rules"].each do |rule|

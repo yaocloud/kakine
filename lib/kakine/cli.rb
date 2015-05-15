@@ -49,11 +49,10 @@ module Kakine
         else # foo
           case modify_content["div"]
           when "+"
-            security_group_id = create_security_group(sg_name, modify_content, options[:tenant], adapter)
+            create_security_group(sg_name, modify_content, options[:tenant], adapter)
             create_security_rule(sg_name, modify_content, options[:tenant], adapter)
           when "-"
-            security_group = Kakine::Resource.security_group(options[:tenant], sg_name)
-            adapter.delete_security_group(security_group.id)
+            delete_security_group(sg_name, options[:tenant], adapter)
           when "~"
           else
             raise
