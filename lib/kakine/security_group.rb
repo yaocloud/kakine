@@ -37,28 +37,21 @@ module Kakine
       set_remote_security_group_id
     end
 
-    def set_remote_security_group_id
-      self.rules.each do |rule|
-        unless rule['remote_group'].nil?
-          remote_security_group = Kakine::Resource.security_group(self.tenant_name, rule.delete("remote_group"))
-          rule["remote_group_id"] = remote_security_group.id
-        end
-      end if has_rules?
 
     def reset_rules
       @rules = []
     end
 
     def has_rules?
-      self.rules.detect {|v| v.size > 0}
+      @rules.detect {|v| v.size > 0}
     end
 
     def is_add?
-      self.div == "+"
+      @div == "+"
     end
 
     def is_delete?
-      self.div == "-"
+      @div == "-"
     end
 
     def is_modify?
@@ -71,7 +64,18 @@ module Kakine
       prev_sg.rules << get_prev_rules
       prev_sg
     end
+
     private
+
+    def set_remote_security_group_id
+      @rules.each do |rule|
+        unless rule['remote_group'].nil?
+          remote_security_group = Kakine::Resource.security_group(@tenant_name, rule.delete("remote_group"))
+          rule["remote_group_id"] = remote_security_group.id
+        end
+      end if has_rules?
+    end
+
     def get_prev_rules
       entry = Kakine::Resource.security_groups_hash(@tenant_name)
       if m = @diff[1].match(/^([\w-]+).([\w]+)\[(\d)\].([\w]+)$/)
