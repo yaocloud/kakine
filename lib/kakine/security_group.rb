@@ -12,7 +12,7 @@ module Kakine
 
       if ["+", "-"].include?(@div)
         # ["+", "sg_name", {"rules"=>[{"direction"=>"egress" ~ }]}] 
-        unless diff[2]["rules"].nil?
+        unless diff[2].nil? || diff[2]["rules"].nil?
           @description  = diff[2]["description"]
           @rules        = diff[2]["rules"]
         # ["-", "sg_namerules[0]", {"direction"=>"egress" ~ }]
@@ -43,7 +43,7 @@ module Kakine
     end
 
     def has_rules?
-      @rules.detect {|v| v.size > 0}
+      @rules.detect {|v| !v.nil? && v.size > 0}
     end
 
     def is_add?
