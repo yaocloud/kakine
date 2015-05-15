@@ -7,8 +7,8 @@ module Kakine
       @div             = diff[0]
       @tenant_name     = tenant_name
       @tenant_id       = Kakine::Resource.tenant(tenant_name).id
-      @rules           = []
       entry            = Kakine::Resource.security_groups_hash(@tenant_name)
+      reset_rules
 
       if ["+", "-"].include?(@div)
         # ["+", "sg_name", {"rules"=>[{"direction"=>"egress" ~ }]}] 
@@ -44,6 +44,9 @@ module Kakine
           rule["remote_group_id"] = remote_security_group.id
         end
       end if has_rules?
+
+    def reset_rules
+      @rules = []
     end
 
     def has_rules?
