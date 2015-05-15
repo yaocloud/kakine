@@ -26,7 +26,7 @@ You can define Security Group configuration for OpenStack via YAML format. Like 
 
 ```yaml
 app:
-  :rules
+  rules:
     - direction: ingress
       protocol: tcp
       port: 443
@@ -35,9 +35,9 @@ app:
       protocol: tcp
       port: 80
       remote_ip: 0.0.0.0/0
-  :description: app rules
+  description: app rules
 rails:
-  :rules
+  rules:
     - direction: ingress
       protocol: tcp
       port: 3000
