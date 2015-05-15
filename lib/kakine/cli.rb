@@ -26,33 +26,28 @@ module Kakine
 
       filename = options[:filename] ? options[:filename] : "#{options[:tenant]}.yaml"
 
-      reg_sg = Kakine::Resource.security_groups_hash(options[:tenant])
-      diffs = HashDiff.diff(reg_sg, Kakine::Resource.yaml(filename))
+      diffs = HashDiff.diff(Kakine::Resource.security_groups_hash(options[:tenant]), Kakine::Resource.yaml(filename))
       diffs.each do |diff|
-
         (sg_name, rule_modification) = diff[1].split(/[\.\[]/, 2)
-        modify_content = Kakine::Resource.format_modify_contents(options[:tenant], sg_name, reg_sg, diff)
-        modify_content = set_remote_security_group_id(modify_content, options[:tenant])
 
-        if rule_modification # foo[2]
-
-          case modify_content["div"]
-          when "+"
-            create_security_rule(sg_name, modify_content, options[:tenant], adapter)
-          when "-"
-            delete_security_rule(sg_name, modify_content, options[:tenant], adapter)
+        if sg.is_rule_modify? # foo[2]
+          case
+          when sg.is_add?
+            create_security_rule(sg, adapter)
+          when sg.is_delete?
+            delete_security_rule(sg,  adapter)
           when "~"
           else
             raise
           end
 
         else # foo
-          case modify_content["div"]
-          when "+"
-            create_security_group(sg_name, modify_content, options[:tenant], adapter)
-            create_security_rule(sg_name, modify_content, options[:tenant], adapter)
-          when "-"
-            delete_security_group(sg_name, options[:tenant], adapter)
+          case
+          when sg.is_add?
+            create_security_group(sg, adapter)
+            create_security_rule(sg, adapter)
+          when sg.is_delete?
+            delete_security_group(sg, adapter)
           when "~"
           else
             raise

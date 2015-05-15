@@ -69,39 +69,6 @@ module Kakine
         end
         rules
       end
-
-      def format_modify_contents(tenant_name, sg_name, reg_sg, diff)
-        Hash.new.tap do |sg|
-          sg["div"]       = diff[0]
-          sg["tenant_id"] = Kakine::Resource.tenant(tenant_name).id
-
-          if ["+", "-"].include?(sg["div"])
-            # ["+", "sg_name", {"rules"=>[{"direction"=>"egress" ~ }]}] 
-            if diff[2]["rules"]
-              sg["description"] = diff[2]["description"]
-              sg["rules"]       = diff[2]["rules"]
-            # ["-", "sg_namerules[0]", {"direction"=>"egress" ~ }]
-            else
-              sg["description"] = reg_sg[sg_name]["description"]
-              sg["rules"]       = [diff[2]]
-            end
-          else
-            # ["~", "sg_name.description", "before_value", "after_value"]
-            if m = diff[1].match(/^([\w-]+)\.([\w]+)$/)
-              sg["description"] = reg_sg[sg_name]["description"]
-              sg["rules"]       = reg_sg[sg_name]["rules"]
-              sg["discription"] = diff[3]
-            # ["~", "sg_name.rules[0].port", before_value, after_value]
-            elsif m = diff[1].match(/^([\w-]+).([\w]+)\[(\d)\].([\w]+)$/)
-              sg["description"]    = reg_sg[sg_name]["description"]
-              sg["rules"]          = [reg_sg[sg_name]["rules"][m[3].to_i]]
-              sg["rules"][0][m[4]] = diff[3]
-            else
-              raise
-            end
-          end
-        end
-      end
     end
   end
 end
