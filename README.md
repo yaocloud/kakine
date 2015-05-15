@@ -26,19 +26,22 @@ You can define Security Group configuration for OpenStack via YAML format. Like 
 
 ```yaml
 app:
-  - direction: ingress
-    protocol: tcp
-    port: 443
-    remote_ip: 0.0.0.0/0
-  - direction: ingress
-    protocol: tcp
-    port: 80
-    remote_ip: 0.0.0.0/0
+  :rules
+    - direction: ingress
+      protocol: tcp
+      port: 443
+      remote_ip: 0.0.0.0/0
+    - direction: ingress
+      protocol: tcp
+      port: 80
+      remote_ip: 0.0.0.0/0
+  :description: app rules
 rails:
-  - direction: ingress
-    protocol: tcp
-    port: 3000
-    remote_ip: 0.0.0.0/0
+  :rules
+    - direction: ingress
+      protocol: tcp
+      port: 3000
+      remote_ip: 0.0.0.0/0
 ```
 
 You need to put fog configuration to home directory.
