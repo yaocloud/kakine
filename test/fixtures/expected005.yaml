@@ -1,10 +1,14 @@
 bob-b:
-- direction: ingress
-  protocol: tcp
-  port: 443
-  remote_ip: 0.0.0.0/0
+  rules:
+  - direction: ingress
+    protocol: tcp
+    port: 443
+    remote_ip: 0.0.0.0/0
+  description: bob-b
 bob-c:
-- direction: ingress
-  protocol: tcp
-  port: 443
-  remote_ip: 0.0.0.0/0
+  rules:
+  - direction: ingress
+    protocol: tcp
+    port: 443
+    remote_ip: 0.0.0.0/0
+  description: bob-c
