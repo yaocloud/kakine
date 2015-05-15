@@ -23,7 +23,7 @@ module Kakine
       else
         # ["~", "sg_name.description", "before_value", "after_value"]
         if m = diff[1].match(/^([\w-]+)\.([\w]+)$/)
-          @discription = diff[3]
+          @description = diff[3]
           @rules       = entry[@name]["rules"]
         # ["~", "sg_name.rules[0].port", before_value, after_value]
         elsif m = diff[1].match(/^([\w-]+).([\w]+)\[(\d)\].([\w]+)$/)
@@ -59,7 +59,15 @@ module Kakine
     end
 
     def is_modify?
-      !@diff[1].split(/[\.\[]/, 2)[1].nil?
+      !@diff[1].split(/[\[]/, 2)[1].nil?
     end
+
+    def prev_rules
+      entry = Kakine::Resource.security_groups_hash(self.tenant_name)
+      if m = @diff[1].match(/^([\w-]+).([\w]+)\[(\d)\].([\w]+)$/)
+        entry[self.name]["rules"][m[3].to_i]
+      end
+    end
+
   end
 end

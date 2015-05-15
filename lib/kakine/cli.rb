@@ -37,10 +37,15 @@ module Kakine
           when sg.is_delete?
             delete_security_rule(sg,  adapter)
           when "~"
+            pre_sg = sg.clone
+            pre_sg.rules = []
+            pre_sg.rules << sg.prev_rules
+
+            delete_security_rule(pre_sg, adapter)
+            create_security_rule(sg, adapter)
           else
             raise
           end
-
         else # foo
           case
           when sg.is_add?
@@ -49,6 +54,9 @@ module Kakine
           when sg.is_delete?
             delete_security_group(sg, adapter)
           when "~"
+            delete_security_group(sg, adapter)
+            create_security_group(sg, adapter)
+            create_security_rule(sg, adapter)
           else
             raise
           end
