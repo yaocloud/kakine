@@ -26,7 +26,7 @@ module Kakine
 
       filename = options[:filename] ? options[:filename] : "#{options[:tenant]}.yaml"
 
-      diffs = HashDiff.diff(Kakine::Resource.security_groups_hash(options[:tenant]), Kakine::Resource.yaml(filename))
+      diffs = HashDiff.diff(Kakine::Resource.security_groups_hash(options[:tenant]), Kakine::Resource.yaml(filename)).sort.reverse
       diffs.each do |diff|
         (sg_name, rule_modification) = diff[1].split(/[\.\[]/, 2)
 
