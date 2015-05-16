@@ -6,7 +6,6 @@ module Kakine
 
       #delete default rule
       delete_sg = sg.clone
-      delete_sg.unset_security_rules
       ["IPv4", "IPv6"].each do |ip|
           delete_sg.add_security_rules({"direction"=>"egress", "protocol"=>nil, "port"=>nil, "remote_ip"=>nil, "ethertype"=>ip})
       end

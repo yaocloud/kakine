@@ -1,40 +1,17 @@
+require 'kakine/diff_parser'
 module Kakine
   class SecurityGroup
-    attr_accessor :description, :tenant_name
-    def initialize(tenant_name, diff)
-      @diff         = diff
-      @tenant_name  = tenant_name
-      tenant_name  = tenant_name
-      registered_sg = Kakine::Resource.security_groups_hash(@tenant_name)
-      unset_security_rules
+    attr_reader :description, :tenant_name
+    include DiffParser
 
-      if ["+", "-"].include?(type)
-        # ["+", "sg_name", {"rules"=>[{"direction"=>"egress" ~ }]}]
-        if diff[2] && diff[2]["rules"]
-          description  = diff[2]["description"]
-          add_security_rules(diff[2]["rules"])
-        # ["-", "sg_namerules[0]", {"direction"=>"egress" ~ }]
-        elsif diff[2]
-          description = registered_sg[name]["description"]
-          add_security_rules(diff[2])
-        end
-        # ["+", "sg_name", nil]
-        # unmatch is no rule sg
-      else
-        # ["~", "sg_name.description", "before_value", "after_value"]
-        if m = diff[1].match(/^([\w-]+)\.([\w]+)$/)
-          description = diff[3]
-          add_security_rules(registered_sg[name]["rules"])
-        # ["~", "sg_name.rules[0].port", before_value, after_value]
-        elsif m = diff[1].match(/^([\w-]+).([\w]+)\[(\d)\].([\w]+)$/)
-          description    = registered_sg[name]["description"]
-          registered_sg[name]["rules"][m[3].to_i][m[4]] = diff[3]
-          add_security_rules(registered_sg[name]["rules"][m[3].to_i])
-        else
-          raise
-        end
-      end
+    def initialize(tenant_name, diff)
+      @diff = diff
+      @registered_sg = Kakine::Resource.security_groups_hash(tenant_name)
+      unset_security_rules
+      init_parse_diff
       set_remote_security_group_id
+
+      tenant_name  = tenant_name
     end
 
     def initialize_copy(obj)
@@ -42,11 +19,11 @@ module Kakine
     end
 
     def type
-      @diff[0]
+      parse_transaction_type
     end
 
     def name
-      @diff[1].split(/[\.\[]/, 2)[0]
+      parse_security_group_name
     end
 
     def tenant_id
@@ -63,13 +40,7 @@ module Kakine
           @rules = rule
         when rule.instance_of?(Hash)
           @rules << rule
-        else
-          raise
       end
-    end
-
-    def unset_security_rules
-      @rules = []
     end
 
     def has_rules?
@@ -89,12 +60,12 @@ module Kakine
     end
 
     def is_modify_rule?
-      !@diff[1].split(/[\[]/, 2)[1].nil?
+      !parse_target_object_name.split(/[\[]/, 2)[1].nil?
     end
 
     def get_prev_instance
       prev_sg = self.clone
-      prev_sg.add_security_rules(get_prev_rules)
+      prev_sg.add_security_rules(parse_prev_rules)
       prev_sg
     end
 
@@ -109,11 +80,8 @@ module Kakine
       end if has_rules?
     end
 
-    def get_prev_rules
-      registered_sg = Kakine::Resource.security_groups_hash(@tenant_name)
-      if m = @diff[1].match(/^([\w-]+).([\w]+)\[(\d)\].([\w]+)$/)
-        registered_sg[name]["rules"][m[3].to_i]
-      end
+    def unset_security_rules
+      @rules = []
     end
   end
 end
