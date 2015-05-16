@@ -2,11 +2,11 @@ require 'minitest_helper'
 
 class TestKakineCLI < Minitest::Test
   def setup
-    Kakine::Resource.stubs(:security_groups_hash).returns(YAML.load_file('test/fixtures/actual.yaml'))
+    Kakine::Resource.stubs(:security_groups_hash).returns(YAML.load_file('test/fixtures/cli/actual.yaml'))
   end
 
   def test_create_security_group
-    Kakine::Resource.stubs(:yaml).returns(YAML.load_file('test/fixtures/expected001.yaml'))
+    Kakine::Resource.stubs(:yaml).returns(YAML.load_file('test/fixtures/cli/expected001.yaml'))
     Kakine::Resource.stubs(:tenant).returns(Dummy.new)
     Kakine::Resource.stubs(:security_group).returns(Dummy.new)
     Kakine::Resource.stubs(:security_group_rule).returns(Dummy.new)
@@ -18,7 +18,7 @@ class TestKakineCLI < Minitest::Test
   end
 
   def test_create_security_group_with_rule
-    Kakine::Resource.stubs(:yaml).returns(YAML.load_file('test/fixtures/expected002.yaml'))
+    Kakine::Resource.stubs(:yaml).returns(YAML.load_file('test/fixtures/cli/expected002.yaml'))
     Kakine::Resource.stubs(:tenant).returns(Dummy.new)
     Kakine::Resource.stubs(:security_group).returns(Dummy.new)
     Kakine::Resource.stubs(:security_group_rule).returns(Dummy.new)
@@ -31,7 +31,7 @@ class TestKakineCLI < Minitest::Test
   end
 
   def test_delete_security_group
-    Kakine::Resource.stubs(:yaml).returns(YAML.load_file('test/fixtures/expected003.yaml'))
+    Kakine::Resource.stubs(:yaml).returns(YAML.load_file('test/fixtures/cli/expected003.yaml'))
     Kakine::Resource.stubs(:security_group).returns(Dummy.new)
     Kakine::Resource.stubs(:tenant).returns(Dummy.new)
 
@@ -41,7 +41,7 @@ class TestKakineCLI < Minitest::Test
   end
 
   def test_create_security_group_rule
-    Kakine::Resource.stubs(:yaml).returns(YAML.load_file('test/fixtures/expected004.yaml'))
+    Kakine::Resource.stubs(:yaml).returns(YAML.load_file('test/fixtures/cli/expected004.yaml'))
     Kakine::Resource.stubs(:tenant).returns(Dummy.new)
     Kakine::Resource.stubs(:security_group).returns(Dummy.new)
     Kakine::Resource.stubs(:security_group_rule).returns(Dummy.new)
@@ -52,7 +52,7 @@ class TestKakineCLI < Minitest::Test
   end
 
   def test_delete_security_group_rule
-    Kakine::Resource.stubs(:yaml).returns(YAML.load_file('test/fixtures/expected005.yaml'))
+    Kakine::Resource.stubs(:yaml).returns(YAML.load_file('test/fixtures/cli/expected005.yaml'))
     Kakine::Resource.stubs(:security_group).returns(Dummy.new)
     Kakine::Resource.stubs(:tenant).returns(Dummy.new)
     Kakine::Resource.stubs(:security_group_rule).returns(Dummy.new)
@@ -63,7 +63,7 @@ class TestKakineCLI < Minitest::Test
   end
 
   def test_update_security_group_rule
-    Kakine::Resource.stubs(:yaml).returns(YAML.load_file('test/fixtures/expected006.yaml'))
+    Kakine::Resource.stubs(:yaml).returns(YAML.load_file('test/fixtures/cli/expected006.yaml'))
     Kakine::Resource.stubs(:tenant).returns(Dummy.new)
     Kakine::Resource.stubs(:security_group).returns(Dummy.new)
     Kakine::Resource.stubs(:security_group_rule).returns(Dummy.new)
@@ -75,7 +75,7 @@ class TestKakineCLI < Minitest::Test
   end
 
   def test_update_security_group_description
-    Kakine::Resource.stubs(:yaml).returns(YAML.load_file('test/fixtures/expected007.yaml'))
+    Kakine::Resource.stubs(:yaml).returns(YAML.load_file('test/fixtures/cli/expected007.yaml'))
     Kakine::Resource.stubs(:tenant).returns(Dummy.new)
     Kakine::Resource.stubs(:security_group).returns(Dummy.new)
     Kakine::Resource.stubs(:security_group_rule).returns(Dummy.new)
