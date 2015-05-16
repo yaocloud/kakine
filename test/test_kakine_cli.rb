@@ -73,4 +73,16 @@ class TestKakineCLI < Minitest::Test
 
     Kakine::CLI.new.invoke(:apply, [], {dryrun: true})
   end
+
+  def test_update_security_group_description
+    Kakine::Resource.stubs(:yaml).returns(YAML.load_file('test/fixtures/expected007.yaml'))
+    Kakine::Resource.stubs(:tenant).returns(Dummy.new)
+    Kakine::Resource.stubs(:security_group).returns(Dummy.new)
+    Kakine::Resource.stubs(:security_group_rule).returns(Dummy.new)
+
+    Kakine::Adapter::Mock.any_instance.expects(:delete_security_group).once
+    Kakine::Adapter::Mock.any_instance.expects(:create_security_group).once
+
+    Kakine::CLI.new.invoke(:apply, [], {dryrun: true})
+  end
 end
