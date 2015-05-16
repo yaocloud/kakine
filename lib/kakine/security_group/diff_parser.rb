@@ -3,26 +3,27 @@ module Kakine
     module DiffParser
       private
       def init_parse_diff
+        registered_sg = Kakine::Resource.security_groups_hash(tenant_name)
         if ["+", "-"].include?(parse_transaction_type)
           if unit_is_security_group?
             add_security_rules(parse_security_group["rules"])
             @description = parse_security_group["description"]
           elsif unit_is_security_rule?
             add_security_rules(parse_security_group_rule)
-            @description = @registered_sg[parse_security_group_name]["description"]
+            @description = registered_sg[parse_security_group_name]["description"]
           end
         else
           regex_update_description = /^[\w-]+\.[\w]+$/
           regex_update_attr        = /^[\w-]+.[\w]+\[(\d)\].([\w]+)$/
 
           if parse_target_object_name.match(regex_update_description)
-            add_security_rules(@registered_sg[parse_security_group_name]["rules"])
+            add_security_rules(registered_sg[parse_security_group_name]["rules"])
             @description = parse_after_description
           elsif m = parse_target_object_name.match(regex_update_attr)
-            rules = @registered_sg[parse_security_group_name]["rules"][m[1].to_i]
+            rules = registered_sg[parse_security_group_name]["rules"][m[1].to_i]
             rules[m[2]] = parse_after_attr
             add_security_rules(rules)
-            @description = @registered_sg[parse_security_group_name]["description"]
+            @description = registered_sg[parse_security_group_name]["description"]
           end
         end
       end
@@ -33,7 +34,8 @@ module Kakine
 
       def parse_prev_rules
         if m = parse_target_object_name.match(/^[\w-]+.[\w]+\[(\d)\].[\w]+$/)
-          @registered_sg[parse_security_group_name]["rules"][m[1].to_i]
+          registered_sg = Kakine::Resource.security_groups_hash(tenant_name)
+          registered_sg[parse_security_group_name]["rules"][m[1].to_i]
         end
       end
 

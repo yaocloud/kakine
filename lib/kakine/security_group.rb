@@ -7,7 +7,6 @@ module Kakine
     def initialize(tenant_name, diff)
       unset_security_rules
       @diff = diff
-      @registered_sg = Kakine::Resource.security_groups_hash(tenant_name)
 
       init_parse_diff
       set_remote_security_group_id
