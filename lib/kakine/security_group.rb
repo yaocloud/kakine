@@ -18,7 +18,7 @@ module Kakine
       unset_security_rules
     end
 
-    def type
+    def transaction_type
       parse_transaction_type
     end
 
@@ -48,15 +48,15 @@ module Kakine
     end
 
     def is_add?
-      type == "+"
+      transaction_type == "+"
     end
 
     def is_delete?
-      type == "-"
+      transaction_type == "-"
     end
 
     def is_modify_attr?
-      type == "~"
+      transaction_type == "~"
     end
 
     def is_modify_rule?
