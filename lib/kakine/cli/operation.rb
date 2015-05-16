@@ -10,8 +10,7 @@ module Kakine
         ["IPv4", "IPv6"].each do |ip|
             delete_sg.add_security_rules({"direction"=>"egress", "protocol"=>nil, "port"=>nil, "remote_ip"=>nil, "ethertype"=>ip})
         end
-
-        delete_security_rule(delete_sg, adapter)
+        delete_security_rule(delete_sg, adapter) unless adapter.instance_of?(Kakine::Adapter::Mock)
         security_group_id
       end
 
@@ -20,10 +19,13 @@ module Kakine
         adapter.delete_security_group(security_group.id)
       end
 
-      def create_security_rule(sg, adapter)
-        security_group      = Kakine::Resource.security_group(sg.tenant_name, sg.name)
+      def create_security_rule(sg, adapter, security_group_id=nil)
+        if security_group_id.nil?
+          security_group = Kakine::Resource.security_group(sg.tenant_name, sg.name)
+          security_group_id = security_group.id
+        end
         sg.get_security_rules.each do |rule|
-          adapter.create_rule(security_group.id, rule["direction"], rule)
+          adapter.create_rule(security_group_id, rule["direction"], rule)
         end if sg.has_rules?
       end
 

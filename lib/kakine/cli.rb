@@ -48,14 +48,14 @@ module Kakine
         else # foo
           case
           when sg.is_add?
-            create_security_group(sg, adapter)
-            create_security_rule(sg, adapter)
+            security_group_id = create_security_group(sg, adapter)
+            create_security_rule(sg, adapter, security_group_id )
           when sg.is_delete?
             delete_security_group(sg, adapter)
           when sg.is_update_attr?
             delete_security_group(sg, adapter)
-            create_security_group(sg, adapter)
-            create_security_rule(sg, adapter)
+            security_group_id = create_security_group(sg, adapter)
+            create_security_rule(sg, adapter, security_group_id )
           else
             raise
           end

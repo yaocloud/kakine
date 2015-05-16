@@ -11,7 +11,7 @@ module Kakine
       init_parse_diff
       set_remote_security_group_id
 
-      tenant_name  = tenant_name
+      @tenant_name = tenant_name
     end
 
     def initialize_copy(obj)
