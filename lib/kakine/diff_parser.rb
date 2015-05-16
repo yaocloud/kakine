@@ -13,13 +13,13 @@ module Kakine
             @description = @registered_sg[parse_security_group_name]["description"]
           end
         else
-          regex_modify_description = /^[\w-]+\.[\w]+$/
-          regex_modify_attr        = /^[\w-]+.[\w]+\[(\d)\].([\w]+)$/
+          regex_update_description = /^[\w-]+\.[\w]+$/
+          regex_update_attr        = /^[\w-]+.[\w]+\[(\d)\].([\w]+)$/
 
-          if parse_target_object_name.match(regex_modify_description)
+          if parse_target_object_name.match(regex_update_description)
             add_security_rules(@registered_sg[parse_security_group_name]["rules"])
             @description = parse_after_description
-          elsif m = parse_target_object_name.match(regex_modify_attr)
+          elsif m = parse_target_object_name.match(regex_update_attr)
             rules = @registered_sg[parse_security_group_name]["rules"][m[1].to_i]
             rules[m[2]] = parse_after_attr
             add_security_rules(rules)

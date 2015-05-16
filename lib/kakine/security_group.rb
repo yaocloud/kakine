@@ -55,11 +55,11 @@ module Kakine
       transaction_type == "-"
     end
 
-    def is_modify_attr?
+    def is_update_attr?
       transaction_type == "~"
     end
 
-    def is_modify_rule?
+    def is_update_rule?
       !parse_target_object_name.split(/[\[]/, 2)[1].nil?
     end
 
