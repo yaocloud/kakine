@@ -2,11 +2,11 @@ require 'thor'
 require 'fog'
 require 'yaml'
 require 'hashdiff'
-require 'kakine/operation'
+require 'kakine/cli/operation'
 
 module Kakine
   class CLI < Thor
-    include Kakine::Operation
+    include Operation
 
     option :tenant, type: :string, aliases: '-t'
     desc 'show', 'show Security Groups specified tenant'

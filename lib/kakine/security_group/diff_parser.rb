@@ -2,7 +2,6 @@ module Kakine
   class SecurityGroup
     module DiffParser
       private
-
       def init_parse_diff
         if ["+", "-"].include?(parse_transaction_type)
           if unit_is_security_group?
