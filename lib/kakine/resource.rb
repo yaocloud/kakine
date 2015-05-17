@@ -1,7 +1,6 @@
-require 'kakine/resource/hash_sort'
+require 'kakine/hash_sort'
 module Kakine
   class Resource
-    using   HashSort
     class << self
       def yaml(filename)
         YAML.load_file(filename).to_hash.sg_rules_sort
