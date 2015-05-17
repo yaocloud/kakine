@@ -69,7 +69,7 @@ module Kakine
           end
         end
       end
-
+      # update rule attributes delay create
       delay_create.each do |sg|
         create_security_rule(sg, adapter)
       end
