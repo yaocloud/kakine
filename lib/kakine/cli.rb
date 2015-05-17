@@ -27,9 +27,12 @@ module Kakine
 
       filename = options[:filename] ? options[:filename] : "#{options[:tenant]}.yaml"
 
-      diffs = HashDiff.diff(Kakine::Resource.security_groups_hash(options[:tenant]), Kakine::Resource.yaml(filename)).sort.reverse
-      diffs.each do |diff|
+      diffs = HashDiff.diff(
+        Kakine::Resource.security_groups_hash(options[:tenant]),
+        Kakine::Resource.yaml(filename)
+      )
 
+      diffs.each do |diff|
         sg = Kakine::SecurityGroup.new(options[:tenant], diff)
 
         if sg.is_update_rule? # foo[2]
