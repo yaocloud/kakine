@@ -27,14 +27,19 @@ module Kakine
 
       filename = options[:filename] ? options[:filename] : "#{options[:tenant]}.yaml"
 
+      security_groups = []
+      delay_create = []
+
       diffs = HashDiff.diff(
         Kakine::Resource.security_groups_hash(options[:tenant]),
         Kakine::Resource.yaml(filename)
       )
 
       diffs.each do |diff|
-        sg = Kakine::SecurityGroup.new(options[:tenant], diff)
+        security_groups <<  Kakine::SecurityGroup.new(options[:tenant], diff)
+      end
 
+      security_groups.each do |sg|
         if sg.is_update_rule? # foo[2]
           case
           when sg.is_add?
@@ -44,7 +49,7 @@ module Kakine
           when sg.is_update_attr?
             pre_sg = sg.get_prev_instance
             delete_security_rule(pre_sg, adapter)
-            create_security_rule(sg, adapter)
+            delay_create << sg # avoid duplication entry
           else
             raise
           end
@@ -58,11 +63,15 @@ module Kakine
           when sg.is_update_attr?
             delete_security_group(sg, adapter)
             security_group_id = create_security_group(sg, adapter)
-            create_security_rule(sg, adapter, security_group_id )
+            create_security_rule(sg, adapter, security_group_id)
           else
             raise
           end
         end
+      end
+
+      delay_create.each do |sg|
+        create_security_rule(sg, adapter)
       end
     end
   end

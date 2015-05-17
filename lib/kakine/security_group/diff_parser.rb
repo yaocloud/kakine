@@ -24,6 +24,7 @@ module Kakine
             description = parse_after_description
           elsif m = parse_target_object_name.match(regex_update_attr)
             rules = [registered_sg[parse_security_group_name]["rules"][m[1].to_i]]
+            prev_rules = Marshal.load(Marshal.dump(rules)) # backup before value
             rules[0][m[2]] = parse_after_attr
             description = registered_sg[parse_security_group_name]["description"]
           end
@@ -37,7 +38,8 @@ module Kakine
           tenant_id: Kakine::Resource.tenant(tenant_name).id,
           tenant_name: tenant_name,
           description: description,
-          rules: rules
+          rules: rules,
+          prev_rules: prev_rules
         }
       end
 

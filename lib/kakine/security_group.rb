@@ -1,7 +1,7 @@
 require 'kakine/security_group/diff_parser'
 module Kakine
   class SecurityGroup
-    attr_reader :target_object_name, :name, :transaction_type, :tenant_id, :tenant_name, :description, :rules
+    attr_reader :target_object_name, :name, :transaction_type, :tenant_id, :tenant_name, :description, :rules, :prev_rules
     include DiffParser
 
     def initialize(tenant_name, diff)
@@ -11,9 +11,13 @@ module Kakine
       end
       set_remote_security_group_id
     end
+
     def initialize_copy(obj)
+      @rules = Marshal.load(Marshal.dump(obj.rules))
+      @prev_rules = Marshal.load(Marshal.dump(obj.prev_rules))
       unset_security_rules
     end
+
     def has_rules?
       @rules.detect {|v| !v.nil? && v.size > 0}
     end
@@ -36,7 +40,7 @@ module Kakine
 
     def get_prev_instance
       prev_sg = self.clone
-      prev_sg.add_security_rules(get_prev_rules)
+      prev_sg.add_security_rules(@prev_rules)
       prev_sg
     end
 
@@ -69,14 +73,6 @@ module Kakine
           rule["remote_group_id"] = remote_security_group.id
         end
       end if has_rules?
-    end
-
-
-    def get_prev_rules
-      if m = @target_object_name.match(/^[\w-]+.[\w]+\[(\d)\].[\w]+$/)
-        registered_sg = Kakine::Resource.security_groups_hash(tenant_name)
-        registered_sg[parse_security_group_name]["rules"][m[1].to_i]
-      end
     end
   end
 end
