@@ -1,12 +1,10 @@
-require 'kakine/security_group/diff_parser'
 module Kakine
   class SecurityGroup
     attr_reader :target_object_name, :name, :transaction_type, :tenant_id, :tenant_name, :description, :rules, :prev_rules
-    include DiffParser
 
     def initialize(tenant_name, diff)
       unset_security_rules
-      parse_parameters(tenant_name, diff).each do|k,v|
+      Kakine::DiffParser.parse_parameters(tenant_name, diff).each do|k,v|
         instance_variable_set(eval(":@#{k.to_s}"), v)
       end
       set_remote_security_group_id

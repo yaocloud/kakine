@@ -5,7 +5,7 @@ require 'kakine/adapter'
 require 'kakine/resource'
 require 'kakine/hash_sort'
 require 'kakine/security_group'
-require 'kakine/security_group/diff_parser'
+require 'kakine/diff_parser'
 
 module Kakine
 end

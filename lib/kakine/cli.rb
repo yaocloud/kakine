@@ -2,11 +2,9 @@ require 'thor'
 require 'fog'
 require 'yaml'
 require 'hashdiff'
-require 'kakine/cli/operation'
 
 module Kakine
   class CLI < Thor
-    include Operation
 
     option :tenant, type: :string, aliases: '-t'
     desc 'show', 'show Security Groups specified tenant'
@@ -24,6 +22,9 @@ module Kakine
       else
         Kakine::Adapter::Real.new
       end
+
+      operation = Kakine::CLI::Operation.new
+      operation.set_adapter(adapter)
 
       filename = options[:filename] ? options[:filename] : "#{options[:tenant]}.yaml"
 
@@ -43,12 +44,12 @@ module Kakine
         if sg.is_update_rule? # foo[2]
           case
           when sg.is_add?
-            create_security_rule(sg, adapter)
+            operation.create_security_rule(sg)
           when sg.is_delete?
-            delete_security_rule(sg,  adapter)
+            operation.delete_security_rule(sg)
           when sg.is_update_attr?
             pre_sg = sg.get_prev_instance
-            delete_security_rule(pre_sg, adapter)
+            operation.delete_security_rule(pre_sg)
             delay_create << sg # avoid duplication entry
           else
             raise
@@ -56,14 +57,14 @@ module Kakine
         else # foo
           case
           when sg.is_add?
-            security_group_id = create_security_group(sg, adapter)
-            create_security_rule(sg, adapter, security_group_id )
+            security_group_id = operation.create_security_group(sg)
+            operation.create_security_rule(sg, security_group_id)
           when sg.is_delete?
-            delete_security_group(sg, adapter)
+            operation.delete_security_group(sg)
           when sg.is_update_attr?
-            delete_security_group(sg, adapter)
-            security_group_id = create_security_group(sg, adapter)
-            create_security_rule(sg, adapter, security_group_id)
+            operation.delete_security_group(sg)
+            security_group_id = operation.create_security_group(sg)
+            operation.create_security_rule(sg, security_group_id)
           else
             raise
           end
@@ -71,7 +72,7 @@ module Kakine
       end
       # update rule attributes delay create
       delay_create.each do |sg|
-        create_security_rule(sg, adapter)
+        operation.create_security_rule(sg)
       end
     end
   end

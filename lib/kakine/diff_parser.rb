@@ -1,7 +1,7 @@
 module Kakine
-  class SecurityGroup
-    module DiffParser
-      private
+ class DiffParser
+    @diff = ""
+    class << self
       def parse_parameters(tenant_name, diff)
         @diff = diff
 
