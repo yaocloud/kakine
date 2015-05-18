@@ -13,6 +13,8 @@ module Kakine
           elsif unit_is_security_rule?
             rules = [parse_security_group_rule]
             description = registered_sg[parse_security_group_name]["description"]
+          elsif unit_is_description?
+            raise "description is not exists"
           end
         else
           regex_update_description = /^[\w-]+\.description$/
