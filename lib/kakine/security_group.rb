@@ -20,19 +20,19 @@ module Kakine
       @rules.detect {|v| !v.nil? && v.size > 0}
     end
 
-    def is_add?
+    def add?
       @transaction_type == "+"
     end
 
-    def is_delete?
+    def delete?
       @transaction_type == "-"
     end
 
-    def is_update_attr?
+    def update_attr?
       @transaction_type == "~"
     end
 
-    def is_update_rule?
+    def update_rule?
       !@target_object_name.split(/[\[]/, 2)[1].nil?
     end
 

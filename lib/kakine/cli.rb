@@ -41,13 +41,13 @@ module Kakine
       end
 
       security_groups.each do |sg|
-        if sg.is_update_rule? # foo[2]
+        if sg.update_rule? # foo[2]
           case
-          when sg.is_add?
+          when sg.add?
             operation.create_security_rule(sg)
-          when sg.is_delete?
+          when sg.delete?
             operation.delete_security_rule(sg)
-          when sg.is_update_attr?
+          when sg.update_attr?
             pre_sg = sg.get_prev_instance
             operation.delete_security_rule(pre_sg)
             delay_create << sg # avoid duplication entry
@@ -56,12 +56,12 @@ module Kakine
           end
         else # foo
           case
-          when sg.is_add?
+          when sg.add?
             security_group_id = operation.create_security_group(sg)
             operation.create_security_rule(sg, security_group_id)
-          when sg.is_delete?
+          when sg.delete?
             operation.delete_security_group(sg)
-          when sg.is_update_attr?
+          when sg.update_attr?
             operation.delete_security_group(sg)
             security_group_id = operation.create_security_group(sg)
             operation.create_security_rule(sg, security_group_id)
