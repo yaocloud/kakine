@@ -6,7 +6,6 @@ module Kakine
         @diff = diff
 
         registered_sg = Kakine::Resource.security_groups_hash(tenant_name)
-
         if ["+", "-"].include?(parse_transaction_type)
           if unit_is_security_group?
             rules = parse_security_group["rules"]
@@ -16,12 +15,16 @@ module Kakine
             description = registered_sg[parse_security_group_name]["description"]
           end
         else
-          regex_update_description = /^[\w-]+\.[\w]+$/
+          regex_update_description = /^[\w-]+\.description$/
+          regex_update_rules       = /^[\w-]+\.rules$/
           regex_update_attr        = /^[\w-]+.[\w]+\[(\d)\].([\w]+)$/
 
           if parse_target_object_name.match(regex_update_description)
             rules = registered_sg[parse_security_group_name]["rules"]
             description = parse_after_description
+          elsif  parse_target_object_name.match(regex_update_rules)
+            rules = parse_after_rules
+            description = registered_sg[parse_security_group_name]["description"]
           elsif m = parse_target_object_name.match(regex_update_attr)
             rules = [registered_sg[parse_security_group_name]["rules"][m[1].to_i]]
             prev_rules = Marshal.load(Marshal.dump(rules)) # backup before value
@@ -65,13 +68,18 @@ module Kakine
         @diff[3]
       end
       alias :parse_after_description :parse_after_attr
+      alias :parse_after_rules       :parse_after_attr
 
       def unit_is_security_group?
         parse_security_group && parse_security_group["rules"]
       end
 
       def unit_is_security_rule?
-        !parse_security_group_rule.nil?
+        !(parse_security_group_rule.nil? || unit_is_description?)
+      end
+
+      def unit_is_description?
+        parse_target_object_name.index('description')
       end
     end
   end
