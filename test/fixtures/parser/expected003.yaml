@@ -1,0 +1,8 @@
+---
+- "+"
+- bob-b.rules[0]
+- direction: ingress
+  protocol: udp
+  port: 162
+  remote_ip: 172.17.4.0/24
+  ethertype: IPv4

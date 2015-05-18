@@ -5,6 +5,7 @@ require 'hashdiff'
 
 module Kakine
   class CLI < Thor
+
     option :tenant, type: :string, aliases: '-t'
     desc 'show', 'show Security Groups specified tenant'
     def show
@@ -22,48 +23,56 @@ module Kakine
         Kakine::Adapter::Real.new
       end
 
+      operation = Kakine::CLI::Operation.new
+      operation.set_adapter(adapter)
+
       filename = options[:filename] ? options[:filename] : "#{options[:tenant]}.yaml"
-      diffs = HashDiff.diff(Kakine::Resource.security_groups_hash(options[:tenant]), Kakine::Resource.yaml(filename))
+
+      security_groups = []
+      delay_create = []
+
+      diffs = HashDiff.diff(
+        Kakine::Resource.security_groups_hash(options[:tenant]),
+        Kakine::Resource.yaml(filename)
+      )
 
       diffs.each do |diff|
-        sg_name, rule_modification = *diff[1].scan(/^([\w-]+)(\[\d\])?/)[0]
+        security_groups <<  Kakine::SecurityGroup.new(options[:tenant], diff)
+      end
 
-        if rule_modification # foo[2]
-          security_group = Kakine::Resource.security_group(options[:tenant], sg_name)
-          if diff[2]["remote_group"]
-            remote_security_group = Kakine::Resource.security_group(options[:tenant], diff[2].delete("remote_group"))
-            diff[2]["remote_group_id"] = remote_security_group.id
-          end
-          case diff[0]
-          when "+"
-            diff[2].merge!({"ethertype" => "IPv4", "tenant_id" => Kakine::Resource.tenant(options[:tenant]).id})
-            adapter.create_rule(security_group.id, diff[2]["direction"], diff[2])
-          when "-"
-            security_group_rule = Kakine::Resource.security_group_rule(security_group, diff[2])
-            adapter.delete_rule(security_group_rule.id)
+      security_groups.each do |sg|
+        if sg.is_update_rule? # foo[2]
+          case
+          when sg.is_add?
+            operation.create_security_rule(sg)
+          when sg.is_delete?
+            operation.delete_security_rule(sg)
+          when sg.is_update_attr?
+            pre_sg = sg.get_prev_instance
+            operation.delete_security_rule(pre_sg)
+            delay_create << sg # avoid duplication entry
           else
             raise
           end
         else # foo
-          case diff[0]
-          when "+"
-            attributes = {name: sg_name, description: "", tenant_id: Kakine::Resource.tenant(options[:tenant]).id}
-            security_group_id = adapter.create_security_group(attributes)
-            diff[2].each do |rule|
-              rule.merge!({"ethertype" => "IPv4", "tenant_id" => Kakine::Resource.tenant(options[:tenant]).id})
-              if rule["remote_group"]
-                remote_security_group = Kakine::Resource.security_group(options[:tenant], rule.delete("remote_group"))
-                rule["remote_group_id"] = remote_security_group.id
-              end
-              adapter.create_rule(security_group_id, rule["direction"], rule)
-            end if diff[2]
-          when "-"
-            security_group = Kakine::Resource.security_group(options[:tenant], sg_name)
-            adapter.delete_security_group(security_group.id)
+          case
+          when sg.is_add?
+            security_group_id = operation.create_security_group(sg)
+            operation.create_security_rule(sg, security_group_id)
+          when sg.is_delete?
+            operation.delete_security_group(sg)
+          when sg.is_update_attr?
+            operation.delete_security_group(sg)
+            security_group_id = operation.create_security_group(sg)
+            operation.create_security_rule(sg, security_group_id)
           else
             raise
           end
         end
+      end
+      # update rule attributes delay create
+      delay_create.each do |sg|
+        operation.create_security_rule(sg)
       end
     end
   end

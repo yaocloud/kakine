@@ -1,13 +1,13 @@
+require 'kakine/hash_sort'
 module Kakine
   class Resource
     class << self
       def yaml(filename)
-        YAML.load_file(filename).to_hash
+        YAML.load_file(filename).to_hash.sg_rules_sort
       end
 
       def tenant(tenant_name)
-        tenants = Fog::Identity[:openstack].tenants
-        tenants.detect{|t| t.name == tenant_name}
+        @tenant ||= Fog::Identity[:openstack].tenants.detect{|t| t.name == tenant_name}
       end
 
       def security_group(tenant_name, security_group_name)
@@ -24,24 +24,31 @@ module Kakine
           sg.protocol == attributes["protocol"] &&
           sg.port_range_max == attributes["port_range_max"] &&
           sg.port_range_min == attributes["port_range_min"] &&
-          sg.remote_ip_prefix == attributes["remote_ip"] &&
-          sg.remote_group_id == attributes["remote_group_id"]
+          (
+            (
+              sg.remote_ip_prefix == attributes["remote_ip"] &&
+              sg.ethertype == attributes["ethertype"]
+            ) ||
+            (
+              sg.remote_group_id == attributes["remote_group_id"] &&
+              !attributes["remote_group_id"].nil?
+            )
+          )
         end
       end
 
       def security_groups_on_tenant(tenant_name)
-        security_groups = Fog::Network[:openstack].security_groups
-        security_groups.select{|sg| sg.tenant_id == tenant(tenant_name).id}
+        Fog::Network[:openstack].security_groups.select{|sg| sg.tenant_id == tenant(tenant_name).id}
       end
 
       def security_groups_hash(tenant_name)
-        sg_hash = {}
+        sg_hash = Hash.new { |h,k| h[k] = {} }
 
         security_groups_on_tenant(tenant_name).each do |sg|
-          sg_hash[sg.name] = format_security_group(sg)
+          sg_hash[sg.name]["rules"]       = format_security_group(sg)
+          sg_hash[sg.name]["description"] = sg.description
         end
-
-        sg_hash
+        sg_hash.sg_rules_sort
       end
 
       def format_security_group(security_group)
@@ -49,7 +56,6 @@ module Kakine
 
         security_group.security_group_rules.each do |rule|
           rule_hash = {}
-
           rule_hash["direction"] = rule.direction
           rule_hash["protocol"] = rule.protocol
 
@@ -65,11 +71,10 @@ module Kakine
             rule_hash["remote_group"] = response.data[:body]["security_group"]["name"]
           else
             rule_hash["remote_ip"] = rule.remote_ip_prefix
+            rule_hash["ethertype"] = rule.ethertype
           end
-
           rules << rule_hash
         end
-
         rules
       end
     end
