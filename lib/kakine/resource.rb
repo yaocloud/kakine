@@ -24,10 +24,10 @@ module Kakine
           sg.protocol == attributes["protocol"] &&
           sg.port_range_max == attributes["port_range_max"] &&
           sg.port_range_min == attributes["port_range_min"] &&
+          sg.ethertype == attributes["ethertype"] &&
           (
             (
-              sg.remote_ip_prefix == attributes["remote_ip"] &&
-              sg.ethertype == attributes["ethertype"]
+              sg.remote_ip_prefix == attributes["remote_ip"]
             ) ||
             (
               sg.remote_group_id == attributes["remote_group_id"] &&
@@ -58,6 +58,7 @@ module Kakine
           rule_hash = {}
           rule_hash["direction"] = rule.direction
           rule_hash["protocol"] = rule.protocol
+          rule_hash["ethertype"] = rule.ethertype
 
           if rule.port_range_max == rule.port_range_min
             rule_hash["port"] = rule.port_range_max
@@ -71,7 +72,6 @@ module Kakine
             rule_hash["remote_group"] = response.data[:body]["security_group"]["name"]
           else
             rule_hash["remote_ip"] = rule.remote_ip_prefix
-            rule_hash["ethertype"] = rule.ethertype
           end
           rules << rule_hash
         end
