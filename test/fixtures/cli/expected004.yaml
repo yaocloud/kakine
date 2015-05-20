@@ -4,14 +4,17 @@ bob-b:
     protocol: tcp
     port: 443
     remote_ip: 0.0.0.0/0
+    ethertype: IPv4
   - direction: ingress
     protocol: tcp
     port: 80
     remote_ip: 0.0.0.0/0
+    ethertype: IPv4
   - direction: ingress
     protocol: tcp
     port: 3000
     remote_ip: 0.0.0.0/0
+    ethertype: IPv4
   description: bob-b
 bob-c:
   rules:
@@ -19,4 +22,5 @@ bob-c:
     protocol: tcp
     port: 443
     remote_ip: 0.0.0.0/0
+    ethertype: IPv4
   description: bob-c
