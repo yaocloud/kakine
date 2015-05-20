@@ -17,17 +17,15 @@ module Kakine
             raise "description is not exists"
           end
         else
-          regex_update_description = /^[\w-]+\.description$/
-          regex_update_rules       = /^[\w-]+\.rules$/
-          regex_update_attr        = /^[\w-]+.[\w]+\[(\d)\].([\w]+)$/
 
-          if parse_target_object_name.match(regex_update_description)
+          if parse_target_object_name.match(update_description_matcher)
             rules = registered_sg[parse_security_group_name]["rules"]
             description = parse_after_description
-          elsif  parse_target_object_name.match(regex_update_rules)
+          elsif  parse_target_object_name.match(update_rules_matcher)
+            prev_rules = registered_sg[parse_security_group_name]["rules"]
             rules = parse_after_rules
             description = registered_sg[parse_security_group_name]["description"]
-          elsif m = parse_target_object_name.match(regex_update_attr)
+          elsif m = parse_target_object_name.match(update_attr_matcher)
             rules = [registered_sg[parse_security_group_name]["rules"][m[1].to_i]]
             prev_rules = Marshal.load(Marshal.dump(rules)) # backup before value
             rules[0][m[2]] = parse_after_attr
@@ -82,6 +80,18 @@ module Kakine
 
       def unit_is_description?
         parse_target_object_name.index('description')
+      end
+
+      def update_description_matcher
+        /^[\w-]+\.description$/
+      end
+
+      def update_rules_matcher
+        /^[\w-]+\.rules$/
+      end
+
+      def update_attr_matcher
+        /^[\w-]+.[\w]+\[(\d)\].([\w]+)$/
       end
     end
   end
