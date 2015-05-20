@@ -30,11 +30,10 @@ module Kakine
 
       security_groups = []
       delay_create = []
-
       diffs = HashDiff.diff(
         Kakine::Resource.security_groups_hash(options[:tenant]),
         Kakine::Resource.yaml(filename)
-      )
+      ).sort.reverse
 
       diffs.each do |diff|
         security_groups <<  Kakine::SecurityGroup.new(options[:tenant], diff)
