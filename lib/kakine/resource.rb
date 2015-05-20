@@ -3,7 +3,7 @@ module Kakine
   class Resource
     class << self
       def yaml(filename)
-        YAML.load_file(filename).to_hash.sg_rules_sort
+        Hash[YAML.load_file(filename).to_hash.sort].sg_rules_sort
       end
 
       def tenant(tenant_name)
@@ -48,7 +48,7 @@ module Kakine
           sg_hash[sg.name]["rules"]       = format_security_group(sg)
           sg_hash[sg.name]["description"] = sg.description
         end
-        sg_hash.sg_rules_sort
+        Hash[sg_hash.sort].sg_rules_sort
       end
 
       def format_security_group(security_group)
@@ -58,7 +58,6 @@ module Kakine
           rule_hash = {}
           rule_hash["direction"] = rule.direction
           rule_hash["protocol"] = rule.protocol
-          rule_hash["ethertype"] = rule.ethertype
 
           if rule.port_range_max == rule.port_range_min
             rule_hash["port"] = rule.port_range_max
@@ -73,6 +72,7 @@ module Kakine
           else
             rule_hash["remote_ip"] = rule.remote_ip_prefix
           end
+          rule_hash["ethertype"] = rule.ethertype
           rules << rule_hash
         end
         rules
