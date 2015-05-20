@@ -6,7 +6,7 @@ class Hash
           ascii += v.ord.to_i unless v.nil?
           ascii
         end
-      end unless sg[1].nil? || sg[1]['rules'].nil?
+      end if !sg[1].nil? && !sg[1]['rules'].nil?
     end
     Hash[self]
   end
