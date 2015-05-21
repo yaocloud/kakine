@@ -43,8 +43,8 @@ module Kakine
         security_groups <<  Kakine::SecurityGroup.new(options[:tenant], diff)
       end
 
-      begin
-        security_groups.each do |sg|
+      security_groups.each do |sg|
+        begin
           if sg.update_rule? # foo[2]
             case
             when sg.add?
@@ -74,14 +74,13 @@ module Kakine
               raise
             end
           end
+        rescue Excon::Errors::Conflict => e
+          JSON.parse(e.response[:body]).each { |e,m| puts "#{e}:#{m["message"]}" }
         end
-        # update rule delay create
-        delay_create.each do |sg|
-          operation.create_security_rule(sg)
-        end
-
-      rescue Excon::Errors::Conflict => e
-        JSON.parse(e.response[:body]).each { |e,m| puts "#{e}:#{m["message"]}" }
+      end
+      # update rule delay create
+      delay_create.each do |sg|
+        operation.create_security_rule(sg)
       end
     end
   end
