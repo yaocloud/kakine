@@ -90,6 +90,7 @@ module Kakine
         end
         rules
       end
+
     end
   end
 end
