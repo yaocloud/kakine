@@ -29,7 +29,11 @@ module Kakine
     end
 
     def update_attr?
-      @transaction_type == "~"
+      @transaction_type == "~" && !@rules.empty?
+    end
+
+    def delete_all_rules?
+      @transaction_type == "~" && @rules.empty? 
     end
 
     def update_rule?
