@@ -20,3 +20,5 @@ bob-c:
     ethertype: IPv4
   description: bob-c
 bob-a:
+  rules:
+  description: bob-a
