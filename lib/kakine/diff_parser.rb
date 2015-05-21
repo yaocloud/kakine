@@ -71,7 +71,7 @@ module Kakine
       alias :parse_after_rules       :parse_after_attr
 
       def unit_is_security_group?
-        parse_security_group && parse_security_group["rules"]
+        parse_security_group && parse_security_group.key?("rules")
       end
 
       def unit_is_security_rule?
