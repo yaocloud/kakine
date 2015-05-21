@@ -17,6 +17,9 @@ module Kakine
     option :filename, type: :string, aliases: "-f"
     desc 'apply', "apply local configuration into OpenStack"
     def apply
+      security_groups = []
+      delay_create = []
+
       adapter = if options[:dryrun]
         Kakine::Adapter::Mock.new
       else
@@ -27,12 +30,13 @@ module Kakine
       operation.set_adapter(adapter)
 
       filename = options[:filename] ? options[:filename] : "#{options[:tenant]}.yaml"
+      load_sg = Kakine::Resource.yaml(filename)
 
-      security_groups = []
-      delay_create = []
+      return unless Kakine::Validate.validate_file_input(load_sg)
+
       diffs = HashDiff.diff(
         Kakine::Resource.security_groups_hash(options[:tenant]),
-        Kakine::Resource.yaml(filename)
+        load_sg
       ).sort.reverse
 
       diffs.each do |diff|
@@ -71,7 +75,7 @@ module Kakine
             end
           end
         end
-        # update rule attributes delay create
+        # update rule delay create
         delay_create.each do |sg|
           operation.create_security_rule(sg)
         end

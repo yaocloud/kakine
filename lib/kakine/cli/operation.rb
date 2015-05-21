@@ -39,6 +39,7 @@ module Kakine
           @adapter.delete_rule(security_group_rule.id)
         end if sg.has_rules?
       end
+
     end
   end
 end
