@@ -1,6 +1,6 @@
 require 'minitest_helper'
 
-class TestKakineCLI < Minitest::Test
+class TestKakineDiffParser < Minitest::Test
   def setup
     Kakine::Resource.stubs(:security_groups_hash).returns(YAML.load_file('test/fixtures/parser/actual.yaml'))
     Kakine::Resource.stubs(:tenant).returns(Dummy.new)
@@ -54,8 +54,8 @@ class TestKakineCLI < Minitest::Test
     assert_equal(sg.tenant_id, Dummy.new.id)
     assert_equal(sg.tenant_name, Dummy.new.id)
     assert_equal(sg.description, "change_description")
-    assert_equal(sg.rules, [{"direction"=>"ingress", "protocol"=>"tcp", "port"=>443, "remote_ip"=>"0.0.0.0/0"},
-    {"direction"=>"ingress", "protocol"=>"tcp", "port"=>80, "remote_ip"=>"0.0.0.0/0"}])
+    assert_equal(sg.rules, [{"direction"=>"ingress", "protocol"=>"tcp", "port"=>443, "remote_ip"=>"0.0.0.0/0", "ethertype"=>"IPv4"},
+    {"direction"=>"ingress", "protocol"=>"tcp", "port"=>80, "remote_ip"=>"0.0.0.0/0", "ethertype"=>"IPv4"}])
   end
 
   def test_update_security_group_attributes
@@ -65,6 +65,6 @@ class TestKakineCLI < Minitest::Test
     assert_equal(sg.tenant_id, Dummy.new.id)
     assert_equal(sg.tenant_name, Dummy.new.id)
     assert_equal(sg.description, "bob-b")
-    assert_equal(sg.rules, [{"direction"=>"ingress", "protocol"=>"tcp", "port"=>1000, "remote_ip"=>"0.0.0.0/0"}])
+    assert_equal(sg.rules, [{"direction"=>"ingress", "protocol"=>"tcp", "port"=>1000, "remote_ip"=>"0.0.0.0/0", "ethertype"=>"IPv4"}])
   end
 end

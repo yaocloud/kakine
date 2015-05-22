@@ -3,7 +3,7 @@ module Kakine
   class Resource
     class << self
       def yaml(filename)
-        YAML.load_file(filename).to_hash.sg_rules_sort
+        Hash[YAML.load_file(filename).to_hash.sort].sg_rules_sort
       end
 
       def tenant(tenant_name)
@@ -24,14 +24,15 @@ module Kakine
           sg.protocol == attributes["protocol"] &&
           sg.port_range_max == attributes["port_range_max"] &&
           sg.port_range_min == attributes["port_range_min"] &&
+          sg.ethertype == attributes["ethertype"] &&
           (
             (
-              sg.remote_ip_prefix == attributes["remote_ip"] &&
-              sg.ethertype == attributes["ethertype"]
+              attributes.key?("remote_ip") &&
+              sg.remote_ip_prefix == attributes["remote_ip"]
             ) ||
             (
-              sg.remote_group_id == attributes["remote_group_id"] &&
-              !attributes["remote_group_id"].nil?
+              attributes.key?("remote_group_id") &&
+              sg.remote_group_id == attributes["remote_group_id"]
             )
           )
         end
@@ -48,7 +49,7 @@ module Kakine
           sg_hash[sg.name]["rules"]       = format_security_group(sg)
           sg_hash[sg.name]["description"] = sg.description
         end
-        sg_hash.sg_rules_sort
+        Hash[sg_hash.sort].sg_rules_sort
       end
 
       def format_security_group(security_group)
@@ -71,12 +72,13 @@ module Kakine
             rule_hash["remote_group"] = response.data[:body]["security_group"]["name"]
           else
             rule_hash["remote_ip"] = rule.remote_ip_prefix
-            rule_hash["ethertype"] = rule.ethertype
           end
+          rule_hash["ethertype"] = rule.ethertype
           rules << rule_hash
         end
         rules
       end
+
     end
   end
 end

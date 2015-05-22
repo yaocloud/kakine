@@ -4,6 +4,7 @@ bob-b:
     protocol: tcp
     port: 443
     remote_ip: 0.0.0.0/0
+    ethertype: IPv4
   description: bob-b
 bob-c:
   rules:
@@ -11,4 +12,8 @@ bob-c:
     protocol: tcp
     port: 443
     remote_ip: 0.0.0.0/0
+    ethertype: IPv4
   description: bob-c
+bob-g:
+  rules:
+  description: bob-g
