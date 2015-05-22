@@ -32,7 +32,6 @@ module Kakine
           new_sg.register!
         end
       end
-
       current_security_groups.each do | current_sg|
         registered_sg  = new_security_groups.find { |new_sg| current_sg.name == new_sg.name }
         current_sg.unregister! unless registered_sg
