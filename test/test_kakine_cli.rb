@@ -17,15 +17,15 @@ class TestKakineCLI < Minitest::Test
 
   def test_create_security_group_with_rule
 
-    Kakine::Adapter::Mock.any_instance.expects(:create_security_group).once
-    Kakine::Adapter::Mock.any_instance.expects(:create_rule).twice
+    Kakine::Adapter::Mock.any_instance.expects(:create_security_group).twice
+    Kakine::Adapter::Mock.any_instance.expects(:create_rule).times(3)
 
     Kakine::CLI.new.invoke(:apply, [], {dryrun: true, filename: "test/fixtures/cli/expected002.yaml"})
   end
 
   def test_delete_security_group
 
-    Kakine::Adapter::Mock.any_instance.expects(:delete_security_group).once
+    Kakine::Adapter::Mock.any_instance.expects(:delete_security_group).twice
 
     Kakine::CLI.new.invoke(:apply, [], {dryrun: true, filename: "test/fixtures/cli/expected003.yaml"})
   end
@@ -33,22 +33,22 @@ class TestKakineCLI < Minitest::Test
   def test_create_security_group_rule
 
     Kakine::Adapter::Mock.any_instance.expects(:delete_rule).times(2)
-    Kakine::Adapter::Mock.any_instance.expects(:create_rule).times(3)
+    Kakine::Adapter::Mock.any_instance.expects(:create_rule).times(4)
 
     Kakine::CLI.new.invoke(:apply, [], {dryrun: true, filename: "test/fixtures/cli/expected004.yaml"})
   end
 
   def test_delete_security_group_rule
 
-    Kakine::Adapter::Mock.any_instance.expects(:delete_rule).once
+    Kakine::Adapter::Mock.any_instance.expects(:delete_rule).twice
 
     Kakine::CLI.new.invoke(:apply, [], {dryrun: true, filename: "test/fixtures/cli/expected005.yaml"})
   end
 
   def test_update_security_group_rule
 
-    Kakine::Adapter::Mock.any_instance.expects(:create_rule).twice
-    Kakine::Adapter::Mock.any_instance.expects(:delete_rule).twice
+    Kakine::Adapter::Mock.any_instance.expects(:create_rule).times(3)
+    Kakine::Adapter::Mock.any_instance.expects(:delete_rule).times(3)
 
     Kakine::CLI.new.invoke(:apply, [], {dryrun: true, filename: "test/fixtures/cli/expected006.yaml"})
   end

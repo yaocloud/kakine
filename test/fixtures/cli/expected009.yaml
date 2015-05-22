@@ -9,3 +9,11 @@ bob-c:
     remote_ip: 0.0.0.0/0
     ethertype: IPv4
   description: bob-c
+bob-g:
+  rules:
+  - direction: ingress
+    protocol: tcp
+    port: 161
+    remote_group: bob-b
+    ethertype: IPv4
+  description: bob-g
