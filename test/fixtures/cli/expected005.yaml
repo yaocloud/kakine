@@ -12,3 +12,6 @@ bob-c:
     port: 443
     remote_ip: 0.0.0.0/0
   description: bob-c
+bob-g:
+  rules:
+  description: bob-g

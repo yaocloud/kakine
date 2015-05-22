@@ -22,8 +22,8 @@ class TestKakineCLI < Minitest::Test
     Kakine::Resource.stubs(:security_group).returns(Dummy.new)
     Kakine::Resource.stubs(:security_group_rule).returns(Dummy.new)
 
-    Kakine::Adapter::Mock.any_instance.expects(:create_security_group).once
-    Kakine::Adapter::Mock.any_instance.expects(:create_rule).twice
+    Kakine::Adapter::Mock.any_instance.expects(:create_security_group).twice
+    Kakine::Adapter::Mock.any_instance.expects(:create_rule).times(3)
 
     Kakine::CLI.new.invoke(:apply, [], {dryrun: true})
   end
@@ -33,7 +33,7 @@ class TestKakineCLI < Minitest::Test
     Kakine::Resource.stubs(:security_group).returns(Dummy.new)
     Kakine::Resource.stubs(:tenant).returns(Dummy.new)
 
-    Kakine::Adapter::Mock.any_instance.expects(:delete_security_group).once
+    Kakine::Adapter::Mock.any_instance.expects(:delete_security_group).twice
 
     Kakine::CLI.new.invoke(:apply, [], {dryrun: true})
   end
@@ -44,7 +44,8 @@ class TestKakineCLI < Minitest::Test
     Kakine::Resource.stubs(:security_group).returns(Dummy.new)
     Kakine::Resource.stubs(:security_group_rule).returns(Dummy.new)
 
-    Kakine::Adapter::Mock.any_instance.expects(:create_rule).once
+    Kakine::Adapter::Mock.any_instance.expects(:delete_rule).times(2)
+    Kakine::Adapter::Mock.any_instance.expects(:create_rule).times(4)
 
     Kakine::CLI.new.invoke(:apply, [], {dryrun: true})
   end
@@ -55,7 +56,7 @@ class TestKakineCLI < Minitest::Test
     Kakine::Resource.stubs(:tenant).returns(Dummy.new)
     Kakine::Resource.stubs(:security_group_rule).returns(Dummy.new)
 
-    Kakine::Adapter::Mock.any_instance.expects(:delete_rule).once
+    Kakine::Adapter::Mock.any_instance.expects(:delete_rule).twice
 
     Kakine::CLI.new.invoke(:apply, [], {dryrun: true})
   end
