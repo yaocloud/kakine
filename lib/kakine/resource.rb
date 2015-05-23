@@ -1,9 +1,8 @@
-require 'kakine/hash_sort'
 module Kakine
   class Resource
     class << self
       def yaml(filename)
-        YAML.load_file(filename).to_hash.sg_rules_sort
+        YAML.load_file(filename).to_hash
       end
 
       def tenant(tenant_name)
@@ -48,7 +47,7 @@ module Kakine
           sg_hash[sg.name]["rules"]       = format_security_group(sg)
           sg_hash[sg.name]["description"] = sg.description
         end
-        sg_hash.sg_rules_sort
+        sg_hash
       end
 
       def format_security_group(security_group)
