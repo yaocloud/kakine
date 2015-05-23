@@ -28,7 +28,7 @@ module Kakine
           security_group_id = security_group.id
         end
         sg.rules.each do |rule|
-          @adapter.create_rule(security_group_id, rule["direction"], rule)
+          @adapter.create_rule(security_group_id, rule.direction, rule)
         end if sg.has_rules?
       end
 

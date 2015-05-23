@@ -1,6 +1,22 @@
 module Kakine
   class Resource
     class << self
+      def load_security_group_by_yaml(filename, tenant_name)
+        register_sg = []
+        yaml(filename).each do |sg|
+          register_sg << Kakine::SecurityGroup.new(tenant_name, sg)
+        end
+        register_sg
+      end
+
+      def get_current(tenant_name)
+        current = []
+        Kakine::Resource.security_groups_hash(tenant_name).each do |sg|
+          current << Kakine::SecurityGroup.new(tenant_name, sg)
+        end
+        current
+      end
+
       def yaml(filename)
         YAML.load_file(filename).to_hash
       end
@@ -23,14 +39,15 @@ module Kakine
           sg.protocol == attributes["protocol"] &&
           sg.port_range_max == attributes["port_range_max"] &&
           sg.port_range_min == attributes["port_range_min"] &&
+          sg.ethertype == attributes["ethertype"] &&
           (
             (
-              sg.remote_ip_prefix == attributes["remote_ip"] &&
-              sg.ethertype == attributes["ethertype"]
+              attributes.key?("remote_ip") &&
+              sg.remote_ip_prefix == attributes["remote_ip"]
             ) ||
             (
-              sg.remote_group_id == attributes["remote_group_id"] &&
-              !attributes["remote_group_id"].nil?
+              attributes.key?("remote_group_id") &&
+              sg.remote_group_id == attributes["remote_group_id"]
             )
           )
         end
@@ -56,7 +73,8 @@ module Kakine
         security_group.security_group_rules.each do |rule|
           rule_hash = {}
           rule_hash["direction"] = rule.direction
-          rule_hash["protocol"] = rule.protocol
+          rule_hash["protocol"]  = rule.protocol
+          rule_hash["ethertype"] = rule.ethertype
 
           if rule.port_range_max == rule.port_range_min
             rule_hash["port"] = rule.port_range_max
@@ -70,7 +88,6 @@ module Kakine
             rule_hash["remote_group"] = response.data[:body]["security_group"]["name"]
           else
             rule_hash["remote_ip"] = rule.remote_ip_prefix
-            rule_hash["ethertype"] = rule.ethertype
           end
           rules << rule_hash
         end
