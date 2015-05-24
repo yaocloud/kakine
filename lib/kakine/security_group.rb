@@ -20,6 +20,25 @@ module Kakine
       @rules = Marshal.load(Marshal.dump(obj.rules))
     end
 
+    def ==(target_sg)
+      instance_variables.reject { |k| k == :@rules || k == :@operation }.each do |val|
+        return false unless self.instance_variable_get(val) == target_sg.instance_variable_get(val)
+      end
+
+      @rules.each do |rule|
+        return false unless target_sg.find_rule(rule)
+      end
+      true
+    end
+
+    def !=(target_sg)
+      !(self == target_sg)
+    end
+
+    def find_rule(target)
+      @rules.find { |rule| rule == target }
+    end
+
     def register!
       @operation.create_security_group(self)
       @rules.each { |rule| rule.register! } if has_rules?

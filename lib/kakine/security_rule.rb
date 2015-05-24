@@ -24,6 +24,15 @@ module Kakine
       @operation.delete_security_rule(@tenant_name, @sg_name, self)
     end
 
+    def ==(target_sg)
+      instance_variables.reject { |k| k == :@operation }.each do |val|
+        unless self.instance_variable_get(val) == target_sg.instance_variable_get(val)
+          return false
+        end
+      end
+      true
+    end
+
     private
 
     def convert_port_format(rule)
