@@ -54,11 +54,11 @@ module Kakine
 
     def get_default_rule_instance
       default_sg = self.clone
-      default_sg.set_default_rules
+      default_sg.set_default_rule
       default_sg
     end
 
-    def set_default_rule!
+    def set_default_rule
       @rules = [{"direction"=>"egress", "protocol"=>nil, "port"=>nil, "remote_ip"=>nil, "ethertype"=>"IPv4"},
       {"direction"=>"egress", "protocol"=>nil, "port"=>nil, "remote_ip"=>nil, "ethertype"=>"IPv6"}].inject([]) do |inc_rule,rule|
         inc_rule << SecurityRule.new(rule, @tenant_name, @name)
