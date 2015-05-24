@@ -19,11 +19,10 @@ module Kakine
       filename = options[:filename] ? options[:filename] : "#{options[:tenant]}.yaml"
       Kakine::Adapter.set_option(options[:dryrun])
 
-      register_sg = Kakine::Resource.load_security_group_by_yaml(filename, options[:tenant])
-      current = Kakine::Resource.get_current(options[:tenant])
+      new_security_groups = Kakine::Resource.load_security_group_by_yaml(filename, options[:tenant])
+      current_security_groups  = Kakine::Resource.get_current(options[:tenant])
 
-      register_sg.each do |sg|
-        pp current.find { |cur| cur.name == sg.name }
+      new_security_groups.each do |new_sg|
       end
     end
   end
