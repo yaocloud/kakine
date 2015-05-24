@@ -3,7 +3,9 @@ module Kakine
     class << self
       def load_security_group_by_yaml(filename, tenant_name)
         register_sg = []
-        yaml(filename).each do |sg|
+        load_yaml = yaml(filename)
+        return false unless Kakine::Validate.validate_file_input(load_yaml)
+        load_yaml.each do |sg|
           register_sg << Kakine::SecurityGroup.new(tenant_name, sg)
         end
         register_sg
@@ -90,7 +92,6 @@ module Kakine
         end
         rules
       end
-
     end
   end
 end
