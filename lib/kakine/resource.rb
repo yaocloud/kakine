@@ -31,23 +31,20 @@ module Kakine
 
       def security_group_rule(security_group, attributes)
         security_group.security_group_rules.detect do |sg|
-          if attributes["port"]
-            attributes["port_range_max"] = attributes["port_range_min"] = attributes["port"]
-          end
 
-          sg.direction == attributes["direction"] &&
-          sg.protocol == attributes["protocol"] &&
-          sg.port_range_max == attributes["port_range_max"] &&
-          sg.port_range_min == attributes["port_range_min"] &&
-          sg.ethertype == attributes["ethertype"] &&
+          sg.direction == attributes.direction &&
+          sg.protocol == attributes.protocol &&
+          sg.port_range_max == attributes.port_range_max &&
+          sg.port_range_min == attributes.port_range_min &&
+          sg.ethertype == attributes.ethertype &&
           (
             (
-              attributes.key?("remote_ip") &&
-              sg.remote_ip_prefix == attributes["remote_ip"]
+              attributes.remote_group_id.nil? &&
+              sg.remote_ip_prefix == attributes.remote_ip
             ) ||
             (
-              attributes.key?("remote_group_id") &&
-              sg.remote_group_id == attributes["remote_group_id"]
+              attributes.remote_ip.nil? &&
+              sg.remote_group_id == attributes.remote_group_id
             )
           )
         end

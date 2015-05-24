@@ -11,7 +11,8 @@ module Kakine
 
       #delete default rule
       delete_sg = sg.get_default_rule_instance
-      delete_sg.rules each { |rule| rule.unregister! } unless @adapter.instance_of?(Kakine::Adapter::Mock)
+
+      delete_sg.rules.each { |rule| rule.unregister! } unless @adapter.instance_of?(Kakine::Adapter::Mock)
       security_group_id
     end
 
