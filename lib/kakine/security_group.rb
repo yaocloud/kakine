@@ -42,8 +42,12 @@ module Kakine
     end
 
     def register!
-      Kakine::Operation.create_security_group(self)
-      @rules.each { |rule| rule.register! } if has_rules?
+      begin
+        Kakine::Operation.create_security_group(self)
+        @rules.each { |rule| rule.register! } if has_rules?
+      rescue Excon::Errors::Conflict => e
+        JSON.parse(e.response[:body]).each { |e,m| puts "#{e}:#{m["message"]}" }
+      end
     end
 
     def unregister!

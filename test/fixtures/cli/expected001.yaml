@@ -28,3 +28,5 @@ bob-g:
     ethertype: IPv4
   description: bob-g
 bob-a:
+  rules:
+  description:

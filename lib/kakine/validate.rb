@@ -31,8 +31,8 @@ module Kakine
           case
           when !rule.key?("port") && (!rule.key?("port_range_max") || !rule.key?("port_range_min"))
             return "[error] #{sg[0]}:rules port is required"
-          when !rule.key?("remote_ip") && !rule.key?("remote_group_id")
-            return "[error] #{sg[0]}:rules remote_ip or remote_group_id required"
+          when !rule.key?("remote_ip") && !rule.key?("remote_group")
+            return "[error] #{sg[0]}:rules remote_ip or remote_group required"
           else
             %w(direction protocol ethertype).each do |k|
               if !rule.key?(k)
