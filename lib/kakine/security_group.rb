@@ -8,11 +8,11 @@ module Kakine
       @tenant_name = tenant_name
       @tenant_id = Kakine::Resource.tenant(tenant_name).id
       @description = parameter[1]["description"] || ""
-
       @rules = parameter[1]["rules"].inject([]) do |rules,rule|
         rules << SecurityRule.new(rule, @tenant_name, @name)
         rules
       end unless parameter[1]["rules"].nil?
+      @rules ||= []
 
     end
 
@@ -24,7 +24,6 @@ module Kakine
       instance_variables.reject{ |k| k == :@rules }.each do |val|
         return false unless self.instance_variable_get(val) == target_sg.instance_variable_get(val)
       end
-
       @rules.each do |rule|
         return false unless target_sg.find_by_rule(rule)
       end
