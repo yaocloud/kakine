@@ -21,8 +21,12 @@ module Kakine
     end
 
     def create_security_rule(tenant_name, sg_name, rule)
-      security_group = Kakine::Resource.security_group(tenant_name, sg_name)
-      @adapter.create_rule(security_group.id, rule.direction, rule)
+      security_group_id = if @adapter.instance_of?(Kakine::Adapter::Mock)
+        "[Mock] #{sg_name} ID"
+      else
+        Kakine::Resource.security_group(tenant_name, sg_name).id
+      end
+      @adapter.create_rule(security_group_id, rule.direction, rule)
     end
 
     def delete_security_rule(tenant_name, sg_name, rule)
