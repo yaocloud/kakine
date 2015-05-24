@@ -75,7 +75,10 @@ module Kakine
           rule_hash["protocol"]  = rule.protocol
           rule_hash["ethertype"] = rule.ethertype
 
-          if rule.port_range_max == rule.port_range_min
+          if rule.protocol == "icmp"
+            rule_hash["type"] = rule.port_range_max
+            rule_hash["code"] = rule.port_range_min
+          elsif rule.port_range_max == rule.port_range_min
             rule_hash["port"] = rule.port_range_max
           else
             rule_hash["port_range_max"] = rule.port_range_max

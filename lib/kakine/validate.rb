@@ -29,8 +29,10 @@ module Kakine
       def validate_rules(sg)
         sg[1]["rules"].each do |rule|
           case
-          when !rule.key?("port") && (!rule.key?("port_range_max") || !rule.key?("port_range_min"))
-            return "[error] #{sg[0]}:rules port is required"
+          when !rule.key?("port") &&
+          (!rule.key?("port_range_max") || !rule.key?("port_range_min")) &&
+          ((!rule.key?("type") || !rule.key?("code")))
+            return "[error] #{sg[0]}:rules port(icmp code) is required"
           when !rule.key?("remote_ip") && !rule.key?("remote_group")
             return "[error] #{sg[0]}:rules remote_ip or remote_group required"
           else
