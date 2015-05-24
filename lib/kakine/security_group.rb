@@ -9,27 +9,38 @@ module Kakine
       @description = parameter[1]["description"] || ""
 
       @rules = parameter[1]["rules"].inject([]) do |rules,rule|
-        rules << SecurityRule.new(rule, @tenant_name)
+        rules << SecurityRule.new(rule, @name, @tenant_name)
         rules
       end unless parameter[1]["rules"].nil?
 
       @operation = Kakine::Operation.new
     end
 
+    def initialize_copy(obj)
+      @rules = Marshal.load(Marshal.dump(obj.rules))
+    end
+
     def register!
-      security_group_id = @operation.create_security_group(self)
-      operation.create_security_rule(self, security_group_id)
+      @operation.create_security_group(self)
+      @rules.each do |rule|
+        @operation.create_security_rule(rule)
+      end
+    end has_rules?
     end
 
     def has_rules?
       @rules.detect {|v| !v.nil?}
     end
 
-    #def set_default_rules
-    #  unset_security_rules
-    #  ["IPv4", "IPv6"].each do |ip|
-    #      add_security_rules({"direction"=>"egress", "protocol"=>nil, "port"=>nil, "remote_ip"=>nil, "ethertype"=>ip})
-    #  end
-    #end
+    def set_default_rule!
+      default = [
+        {"direction"=>"egress", "protocol"=>nil, "port"=>nil, "remote_ip"=>nil, "ethertype"=>"IPv4"},
+        {"direction"=>"egress", "protocol"=>nil, "port"=>nil, "remote_ip"=>nil, "ethertype"=>"IPv6"}
+      ]
+      @rules = default.inject([]) do |rules,rule|
+        rules << SecurityRule.new(rule, @name, @tenant_name)
+        rules
+      end
+    end
   end
 end
