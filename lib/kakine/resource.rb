@@ -1,6 +1,14 @@
 module Kakine
   class Resource
     class << self
+      def get_adapter(options)
+        @@adapter ||= if options[:dryrun]
+          Kakine::Adapter::Mock.new
+        else
+          Kakine::Adapter::Real.new
+        end
+      end
+
       def load_security_group_by_yaml(filename, tenant_name)
         register_sg = []
         yaml(filename).each do |sg|
