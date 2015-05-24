@@ -1,3 +1,4 @@
+require 'json'
 module Kakine
   class SecurityGroup
     attr_reader :name, :tenant_id, :tenant_name, :description, :rules
@@ -47,7 +48,25 @@ module Kakine
     end
 
     def unregister!
-      Kakine::Operation.delete_security_group(self)
+      begin
+        Kakine::Operation.delete_security_group(self)
+      rescue Excon::Errors::Conflict => e
+        JSON.parse(e.response[:body]).each { |e,m| puts "#{e}:#{m["message"]}" }
+      end
+    end
+
+    def convergence!(target_sg)
+      if @description != target_sg.description
+        target_sg.unregister!
+        register!
+      else
+        @rules.each do |rule|
+          rule.register! unless target_sg.find_by_rule(rule)
+        end
+        target_sg.rules.each do |rule|
+          rule.unregister! unless find_by_rule(rule)
+        end
+      end
     end
 
     def has_rules?

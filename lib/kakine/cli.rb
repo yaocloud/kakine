@@ -23,6 +23,17 @@ module Kakine
       current_security_groups  = Kakine::Resource.get_current(options[:tenant])
 
       new_security_groups.each do |new_sg|
+        registered_sg  = current_security_groups.find { |cur_sg| cur_sg.name == new_sg.name }
+        if registered_sg
+          new_sg.convergence!(registered_sg) if new_sg != registered_sg
+        else
+          new_sg.register!
+        end
+      end
+
+      current_security_groups.each do | current_sg|
+        registered_sg  = new_security_groups.find { |new_sg| current_sg.name == new_sg.name }
+        current_sg.unregister! unless registered_sg
       end
     end
   end
