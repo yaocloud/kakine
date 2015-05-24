@@ -37,8 +37,8 @@ module Kakine
       !(self == target_sg)
     end
 
-    def find_by_rule(target)
-      @rules.find { |rule| rule == target }
+    def find_by_rule(target_rule)
+      @rules.find { |rule| rule == target_rule }
     end
 
     def register!
