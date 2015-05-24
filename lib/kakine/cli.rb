@@ -18,6 +18,7 @@ module Kakine
     desc 'apply', "apply local configuration into OpenStack"
     def apply
       filename = options[:filename] ? options[:filename] : "#{options[:tenant]}.yaml"
+      Kakine::Adapter.set_option(options[:dryrun])
 
       register_sg = Kakine::Resource.load_security_group_by_yaml(filename, options[:tenant])
       current = Kakine::Resource.get_current(options[:tenant])

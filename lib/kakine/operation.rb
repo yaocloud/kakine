@@ -1,7 +1,8 @@
 module Kakine
   class Operation
-    def initialize
-      @adapter = Kakine::Resource.get_adapter
+
+    def initialize(dryrun)
+      @adapter = Kakine::Adapter.get_instance
     end
 
     def create_security_group(sg)

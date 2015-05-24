@@ -11,7 +11,7 @@ module Kakine
       end
 
       @port_range_max, @port_range_min = *convert_port_format(rule)
-      set_remote_security_group_id(@tenant_name)
+      set_remote_security_group_id
 
       @operation = Kakine::Operation.new
     end

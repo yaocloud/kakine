@@ -2,7 +2,7 @@ module Kakine
   class SecurityGroup
     attr_reader :name, :tenant_id, :tenant_name, :description, :rules
 
-    def initialize(tenant_name, parameter, adapter)
+    def initialize(tenant_name, parameter)
       @name = parameter[0]
       @tenant_name = tenant_name
       @tenant_id = Kakine::Resource.tenant(tenant_name).id
