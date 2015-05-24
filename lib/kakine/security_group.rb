@@ -9,7 +9,7 @@ module Kakine
       @description = parameter[1]["description"] || ""
 
       @rules = parameter[1]["rules"].inject([]) do |rules,rule|
-        rules << SecurityRule.new(rule, @teant_name, @name)
+        rules << SecurityRule.new(rule, @tenant_name, @name)
         rules
       end unless parameter[1]["rules"].nil?
 
