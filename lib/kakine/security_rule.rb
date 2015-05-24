@@ -1,25 +1,31 @@
 module Kakine
   class SecurityRule
-    attr_reader :direction, :protocol, :port_range_max, :port_range_min, :remote_ip,
-                :remote_group, :remote_group_id, :ethertype,:sg_name, :tenant_name
+    attr_reader :direction, :protocol, :port_range_max, :port_range_min, :remote_ip, :remote_group, :remote_group_id, :ethertype
 
-    def initialize(rule, tenant_name)
-    def initialize(rule, sg_name, tenant_name)
+    def initialize(rule, tenant_name, sg_name)
+      @tenant_name = tenant_name
+      @sg_name = sg_name
+
       rule.each do|k,v|
         instance_variable_set(eval(":@#{k.to_s}"), v) unless k.include?("port")
       end
-      @port_range_max, @port_range_min = *convert_port_format(rule)
-      set_remote_security_group_id(tenant_name)!
 
-      @sg_name = sg_name
-      @tenant_name = tenant_name
+      @port_range_max, @port_range_min = *convert_port_format(rule)
+      set_remote_security_group_id(@tenant_name)
 
       @operation = Kakine::Operation.new
     end
 
     def register!
-      @operation.create_security_rule(self)
+      @operation.create_security_rule(@tenant_name, @sg_name, self)
     end
+
+    def unregister!
+      @operation.delete_security_rule(@tenant_name, @sg_name, self)
+    end
+
+    private
+
     def convert_port_format(rule)
       case
       when rule.has_key?('port')
@@ -33,9 +39,9 @@ module Kakine
       end
     end
 
-    def set_remote_security_group_id!(tenant_name)
+    def set_remote_security_group_id
       unless @remote_group.nil?
-        remote_security_group = Kakine::Resource.security_group(tenant_name, @remote_group)
+        remote_security_group = Kakine::Resource.security_group(@tenant_name, @remote_group)
         @remote_group_id = remote_security_group.id
       end
     end
