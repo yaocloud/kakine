@@ -13,19 +13,18 @@ module Kakine
       @port_range_max, @port_range_min = *convert_port_format(rule)
       set_remote_security_group_id
 
-      @operation = Kakine::Operation.new
     end
 
     def register!
-      @operation.create_security_rule(@tenant_name, @sg_name, self)
+      Kakine::Operation.create_security_rule(@tenant_name, @sg_name, self)
     end
 
     def unregister!
-      @operation.delete_security_rule(@tenant_name, @sg_name, self)
+      Kakine::Operation.delete_security_rule(@tenant_name, @sg_name, self)
     end
 
     def ==(target_sg)
-      instance_variables.reject { |k| k == :@operation }.each do |val|
+      instance_variables.each do |val|
         unless self.instance_variable_get(val) == target_sg.instance_variable_get(val)
           return false
         end

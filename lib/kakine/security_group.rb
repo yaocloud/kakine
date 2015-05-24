@@ -13,7 +13,6 @@ module Kakine
         rules
       end unless parameter[1]["rules"].nil?
 
-      @operation = Kakine::Operation.new
     end
 
     def initialize_copy(obj)
@@ -21,12 +20,15 @@ module Kakine
     end
 
     def ==(target_sg)
-      instance_variables.reject { |k| k == :@rules || k == :@operation }.each do |val|
+      instance_variables.reject{ |k| k == :@rules }.each do |val|
         return false unless self.instance_variable_get(val) == target_sg.instance_variable_get(val)
       end
 
       @rules.each do |rule|
-        return false unless target_sg.find_rule(rule)
+        return false unless target_sg.find_by_rule(rule)
+      end
+      target_sg.rules.each do |rule|
+        return false unless find_by_rule(rule)
       end
       true
     end
@@ -35,17 +37,17 @@ module Kakine
       !(self == target_sg)
     end
 
-    def find_rule(target)
+    def find_by_rule(target)
       @rules.find { |rule| rule == target }
     end
 
     def register!
-      @operation.create_security_group(self)
+      Kakine::Operation.create_security_group(self)
       @rules.each { |rule| rule.register! } if has_rules?
     end
 
     def unregister!
-      @operation.delete_security_group(self)
+      Kakine::Operation.delete_security_group(self)
     end
 
     def has_rules?
