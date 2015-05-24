@@ -2,7 +2,6 @@ require 'thor'
 require 'fog'
 require 'yaml'
 require 'hashdiff'
-
 module Kakine
   class CLI < Thor
 
@@ -23,6 +22,8 @@ module Kakine
       register_sg = Kakine::Resource.load_security_group_by_yaml(filename, options[:tenant])
       current = Kakine::Resource.get_current(options[:tenant])
 
+      register_sg.each do |sg|
+        pp current.find { |cur| cur.name == sg.name }
       end
     end
   end

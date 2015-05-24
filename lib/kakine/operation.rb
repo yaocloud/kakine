@@ -1,7 +1,7 @@
 module Kakine
   class Operation
 
-    def initialize(dryrun)
+    def initialize
       @adapter = Kakine::Adapter.get_instance
     end
 

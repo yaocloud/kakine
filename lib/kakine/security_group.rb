@@ -22,9 +22,7 @@ module Kakine
 
     def register!
       @operation.create_security_group(self)
-      @rules.each do |rule|
-        rule.register!
-      end if has_rules?
+      @rules.each { |rule| rule.register! } if has_rules?
     end
 
     def unregister!
