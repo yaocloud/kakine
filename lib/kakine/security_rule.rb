@@ -1,4 +1,3 @@
-require 'json'
 module Kakine
   class SecurityRule
     attr_reader :direction, :protocol, :port_range_max, :port_range_min, :remote_ip, :remote_group, :remote_group_id, :ethertype
@@ -17,11 +16,7 @@ module Kakine
     end
 
     def register!
-      begin
-        Kakine::Operation.create_security_rule(@tenant_name, @sg_name, self)
-      rescue Excon::Errors::Conflict => e
-        JSON.parse(e.response[:body]).each { |e,m| puts "#{e}:#{m["message"]}" }
-      end
+      Kakine::Operation.create_security_rule(@tenant_name, @sg_name, self)
     end
 
     def unregister!
