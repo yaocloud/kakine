@@ -1,3 +1,4 @@
+require 'json'
 module Kakine
   class SecurityGroup
     attr_reader :name, :tenant_id, :tenant_name, :description, :rules
@@ -55,11 +56,11 @@ module Kakine
         target_sg.unregister!
         register!
       else
-        @rules.each do |rule|
-          rule.register! unless target_sg.find_by_rule(rule)
-        end
         target_sg.rules.each do |rule|
           rule.unregister! unless find_by_rule(rule)
+        end
+        @rules.each do |rule|
+          rule.register! unless target_sg.find_by_rule(rule)
         end
       end
     end
