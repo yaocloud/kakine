@@ -7,12 +7,9 @@ module Kakine
           err << validate_attributes(sg)
           err << validate_rules(sg)
         end
-        if err.detect {|e| !e.nil? }
-          err.map { |m| puts m unless m.nil? }
-          false
-        else
-          true
-        end
+        return true unless err.detect {|e| !e.nil? }
+        err.map { |m| puts m unless m.nil? }
+        false
       end
 
       def validate_attributes(sg)
@@ -28,19 +25,14 @@ module Kakine
 
       def validate_rules(sg)
         sg[1]["rules"].each do |rule|
-          case
-          when !rule.key?("port") &&
-          (!rule.key?("port_range_max") || !rule.key?("port_range_min")) &&
-          ((!rule.key?("type") || !rule.key?("code")))
+          if !rule.key?("port") &&
+            (!rule.key?("port_range_max") || !rule.key?("port_range_min")) &&
+            (!rule.key?("type") || !rule.key?("code"))
             return "[error] #{sg[0]}:rules port(icmp code) is required"
-          when !rule.key?("remote_ip") && !rule.key?("remote_group")
+          elsif !rule.key?("remote_ip") && !rule.key?("remote_group")
             return "[error] #{sg[0]}:rules remote_ip or remote_group required"
-          else
-            %w(direction protocol ethertype).each do |k|
-              if !rule.key?(k)
-                return "[error] #{sg[0]}:rules #{k} is required"
-              end
-            end
+          elsif col = %w(direction protocol ethertype).find { |k| !rule.key?(k) }
+            return "[error] #{sg[0]}:rules #{col} is required"
           end
         end unless sg[1]["rules"].nil?
         nil
