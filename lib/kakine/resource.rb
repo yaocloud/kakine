@@ -2,21 +2,15 @@ module Kakine
   class Resource
     class << self
       def load_security_group_by_yaml(filename, tenant_name)
-        register_sg = []
         load_yaml = yaml(filename)
         return false unless Kakine::Validate.validate_file_input(load_yaml)
-        load_yaml.each do |sg|
-          register_sg << Kakine::SecurityGroup.new(tenant_name, sg)
-        end
-        register_sg
+        load_yaml.map { |sg| Kakine::SecurityGroup.new(tenant_name, sg) }
       end
 
       def get_current(tenant_name)
-        current = []
-        Kakine::Resource.security_groups_hash(tenant_name).each do |sg|
-          current << Kakine::SecurityGroup.new(tenant_name, sg)
+        Kakine::Resource.security_groups_hash(tenant_name).map do |sg|
+          Kakine::SecurityGroup.new(tenant_name, sg)
         end
-        current
       end
 
       def yaml(filename)
@@ -67,9 +61,7 @@ module Kakine
       end
 
       def format_security_group(security_group)
-        rules = []
-
-        security_group.security_group_rules.each do |rule|
+        security_group.security_group_rules.map do |rule|
           rule_hash = {}
           rule_hash["direction"] = rule.direction
           rule_hash["protocol"]  = rule.protocol
@@ -91,9 +83,8 @@ module Kakine
           else
             rule_hash["remote_ip"] = rule.remote_ip_prefix
           end
-          rules << rule_hash
+          rule_hash
         end
-        rules
       end
     end
   end

@@ -8,12 +8,10 @@ module Kakine
       @tenant_name = tenant_name
       @tenant_id = Kakine::Resource.tenant(tenant_name).id
       @description = parameter[1]["description"] || ""
-      @rules = parameter[1]["rules"].inject([]) do |rules,rule|
-        rules << SecurityRule.new(rule, @tenant_name, @name)
-        rules
+      @rules = parameter[1]["rules"].map do |rule|
+        SecurityRule.new(rule, @tenant_name, @name)
       end unless parameter[1]["rules"].nil?
       @rules ||= []
-
     end
 
     def initialize_copy(obj)
@@ -75,11 +73,8 @@ module Kakine
     end
 
     def set_default_rule
-      @rules = [{"direction"=>"egress", "protocol"=>nil, "port"=>nil, "remote_ip"=>nil, "ethertype"=>"IPv4"},
-      {"direction"=>"egress", "protocol"=>nil, "port"=>nil, "remote_ip"=>nil, "ethertype"=>"IPv6"}].inject([]) do |inc_rule,rule|
-        inc_rule << SecurityRule.new(rule, @tenant_name, @name)
-        inc_rule
-      end
+      @rules = %w(IPv4 IPv6).map { |v| {"direction"=>"egress", "protocol" => nil, "port"=>nil, "remote_ip"=>nil, "ethertype"=>v } }.
+        map{ |rule| SecurityRule.new(rule, @tenant_name, @name) }
     end
   end
 end
