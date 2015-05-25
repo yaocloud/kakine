@@ -10,7 +10,7 @@ module Kakine
         instance_variable_set(eval(":@#{k.to_s}"), v) unless k.include?("port")
       end
 
-      @port_range_max, @port_range_min = *convert_port_format(rule)
+      @port_range_min, @port_range_max = *convert_port_format(rule)
       set_remote_security_group_id
 
     end
@@ -41,7 +41,7 @@ module Kakine
       when rule.has_key?('type'), rule.has_key?('code')
         [rule['type'] ,rule['code']]
       when rule.has_key?('port_range_max'), rule.has_key?('port_range_min')
-        [rule['port_range_max'] ,rule['port_range_min']]
+        [rule['port_range_min'] ,rule['port_range_max']]
       else
         raise "no match port format"
       end
