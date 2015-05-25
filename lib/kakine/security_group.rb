@@ -42,9 +42,8 @@ module Kakine
     end
 
     def register!
-      if Kakine::Operation.create_security_group(self)
-        @rules.each { |rule| rule.register! } if has_rules?
-      end
+      Kakine::Operation.create_security_group(self)
+      @rules.each { |rule| rule.register! } if has_rules?
     end
 
     def unregister!

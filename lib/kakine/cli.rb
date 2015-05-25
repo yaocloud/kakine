@@ -23,7 +23,6 @@ module Kakine
       new_security_groups = Kakine::Resource.load_security_group_by_yaml(filename, options[:tenant])
 
       return unless new_security_groups
-
       new_security_groups.each do |new_sg|
         registered_sg  = current_security_groups.find { |cur_sg| cur_sg.name == new_sg.name }
         if registered_sg
@@ -32,9 +31,8 @@ module Kakine
           new_sg.register!
         end
       end
-      current_security_groups.each do | current_sg|
-        registered_sg  = new_security_groups.find { |new_sg| current_sg.name == new_sg.name }
-        current_sg.unregister! unless registered_sg
+      current_security_groups.each do |current_sg|
+        current_sg.unregister! if new_security_groups.none? { |new_sg| current_sg.name == new_sg.name }
       end
     end
   end
