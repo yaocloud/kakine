@@ -18,6 +18,12 @@ bob-c:
     port: 443
     remote_ip: 0.0.0.0/0
     ethertype: IPv4
+  - direction: ingress
+    protocol: icmp
+    type: 10
+    code: 10
+    remote_ip: 0.0.0.0/0
+    ethertype: IPv4
   description: bob-c
 bob-g:
   rules:
@@ -26,25 +32,10 @@ bob-g:
     port: 161
     remote_group: bob-b
     ethertype: IPv4
+  - direction: ingress
+    protocol: icmp
+    type: 10
+    code: 10
+    remote_group: bob-b
+    ethertype: IPv4
   description: bob-g
-bob-a:
-  rules:
-  - direction: ingress
-    protocol: tcp
-    port: 80
-    remote_ip: 0.0.0.0/0
-    ethertype: IPv4
-  - direction: ingress
-    protocol: tcp
-    port: 443
-    remote_ip: 0.0.0.0/0
-    ethertype: IPv4
-  description: bob-a
-bob-e:
-  rules:
-  - direction: ingress
-    protocol: tcp
-    port: 162
-    remote_group: bob-g
-    ethertype: IPv4
-  description: bob-e

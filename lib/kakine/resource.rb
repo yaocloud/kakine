@@ -1,9 +1,20 @@
-require 'kakine/hash_sort'
 module Kakine
   class Resource
     class << self
+      def load_security_group_by_yaml(filename, tenant_name)
+        load_yaml = yaml(filename)
+        return false unless Kakine::Validate.validate_file_input(load_yaml)
+        load_yaml.map { |sg| Kakine::SecurityGroup.new(tenant_name, sg) }
+      end
+
+      def get_current(tenant_name)
+        Kakine::Resource.security_groups_hash(tenant_name).map do |sg|
+          Kakine::SecurityGroup.new(tenant_name, sg)
+        end
+      end
+
       def yaml(filename)
-        YAML.load_file(filename).to_hash.sg_rules_sort
+        YAML.load_file(filename).to_hash
       end
 
       def tenant(tenant_name)
@@ -16,22 +27,20 @@ module Kakine
 
       def security_group_rule(security_group, attributes)
         security_group.security_group_rules.detect do |sg|
-          if attributes["port"]
-            attributes["port_range_max"] = attributes["port_range_min"] = attributes["port"]
-          end
 
-          sg.direction == attributes["direction"] &&
-          sg.protocol == attributes["protocol"] &&
-          sg.port_range_max == attributes["port_range_max"] &&
-          sg.port_range_min == attributes["port_range_min"] &&
+          sg.direction == attributes.direction &&
+          sg.protocol == attributes.protocol &&
+          sg.port_range_max == attributes.port_range_max &&
+          sg.port_range_min == attributes.port_range_min &&
+          sg.ethertype == attributes.ethertype &&
           (
             (
-              sg.remote_ip_prefix == attributes["remote_ip"] &&
-              sg.ethertype == attributes["ethertype"]
+              attributes.remote_group_id.nil? &&
+              sg.remote_ip_prefix == attributes.remote_ip
             ) ||
             (
-              sg.remote_group_id == attributes["remote_group_id"] &&
-              !attributes["remote_group_id"].nil?
+              attributes.remote_ip.nil? &&
+              sg.remote_group_id == attributes.remote_group_id
             )
           )
         end
@@ -48,22 +57,24 @@ module Kakine
           sg_hash[sg.name]["rules"]       = format_security_group(sg)
           sg_hash[sg.name]["description"] = sg.description
         end
-        sg_hash.sg_rules_sort
+        sg_hash
       end
 
       def format_security_group(security_group)
-        rules = []
-
-        security_group.security_group_rules.each do |rule|
+        security_group.security_group_rules.map do |rule|
           rule_hash = {}
           rule_hash["direction"] = rule.direction
-          rule_hash["protocol"] = rule.protocol
+          rule_hash["protocol"]  = rule.protocol
+          rule_hash["ethertype"] = rule.ethertype
 
-          if rule.port_range_max == rule.port_range_min
+          if rule.protocol == "icmp"
+            rule_hash["type"] = rule.port_range_min
+            rule_hash["code"] = rule.port_range_max
+          elsif rule.port_range_max == rule.port_range_min
             rule_hash["port"] = rule.port_range_max
           else
-            rule_hash["port_range_max"] = rule.port_range_max
             rule_hash["port_range_min"] = rule.port_range_min
+            rule_hash["port_range_max"] = rule.port_range_max
           end
 
           if rule.remote_group_id
@@ -71,11 +82,9 @@ module Kakine
             rule_hash["remote_group"] = response.data[:body]["security_group"]["name"]
           else
             rule_hash["remote_ip"] = rule.remote_ip_prefix
-            rule_hash["ethertype"] = rule.ethertype
           end
-          rules << rule_hash
+          rule_hash
         end
-        rules
       end
     end
   end
