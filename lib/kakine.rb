@@ -9,4 +9,3 @@ require 'kakine/validate'
 
 module Kakine
 end
-
