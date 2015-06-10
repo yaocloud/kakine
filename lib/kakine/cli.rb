@@ -1,7 +1,7 @@
 require 'thor'
 require 'fog'
 require 'yaml'
-require 'hashdiff'
+
 module Kakine
   class CLI < Thor
 
