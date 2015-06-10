@@ -1,6 +1,5 @@
-require 'thor'
-require 'fog'
 require 'yaml'
+require 'thor'
 
 module Kakine
   class CLI < Thor
