@@ -17,9 +17,7 @@ module Kakine
         attributes.each{|k,v| data[k.to_sym] = v}
         begin
           Fog::Network[:openstack].create_security_group_rule(security_group_id, direction, data)
-        rescue Excon::Errors::Conflict => e
-          error_message(e.response[:body])
-        rescue Excon::Errors::BadRequest => e
+        rescue Excon::Errors::Conflict, Excon::Errors::BadRequest => e
           error_message(e.response[:body])
         end
       end
@@ -34,9 +32,7 @@ module Kakine
         begin
           response = Fog::Network[:openstack].create_security_group(data)
           response.data[:body]["security_group"]["id"]
-        rescue Excon::Errors::Conflict => e
-          error_message(e.response[:body])
-        rescue Excon::Errors::BadRequest => e
+        rescue Excon::Errors::Conflict, Excon::Errors::BadRequest => e
           error_message(e.response[:body])
         end
       end
@@ -44,9 +40,7 @@ module Kakine
       def delete_security_group(security_group_id)
         begin
           Fog::Network[:openstack].delete_security_group(security_group_id)
-        rescue Excon::Errors::Conflict => e
-          error_message(e.response[:body])
-        rescue Excon::Errors::BadRequest => e
+        rescue Excon::Errors::Conflict, Excon::Errors::BadRequest => e
           error_message(e.response[:body])
         end
       end
