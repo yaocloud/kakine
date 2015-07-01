@@ -89,31 +89,27 @@ class TestKakineCLI < Minitest::Test
   def test_validate_rules
 
     Kakine::Resource.get(:yaml).stubs(:yaml).returns(YAML.load_file('test/fixtures/cli/expected010.yaml'))
-    Kakine::Adapter::Mock.any_instance.expects(:delete_security_group).never
-    Kakine::Adapter::Mock.any_instance.expects(:create_security_group).never
-    Kakine::Adapter::Mock.any_instance.expects(:create_rule).never
-    Kakine::Adapter::Mock.any_instance.expects(:delete_rule).never
 
-    Kakine::CLI.new.invoke(:apply, [], {dryrun: true})
+    assert_raises Kakine::Errors::Configure do
+      Kakine::CLI.new.invoke(:apply, [], {dryrun: true})
+    end
   end
+
   def test_validate_description
     Kakine::Resource.get(:yaml).stubs(:yaml).returns(YAML.load_file('test/fixtures/cli/expected011.yaml'))
-    Kakine::Adapter::Mock.any_instance.expects(:delete_security_group).never
-    Kakine::Adapter::Mock.any_instance.expects(:create_security_group).never
-    Kakine::Adapter::Mock.any_instance.expects(:create_rule).never
-    Kakine::Adapter::Mock.any_instance.expects(:delete_rule).never
 
-    Kakine::CLI.new.invoke(:apply, [], {dryrun: true})
+    assert_raises Kakine::Errors::Configure do
+      Kakine::CLI.new.invoke(:apply, [], {dryrun: true})
+    end
   end
+
   def test_validate_attributes
 
     Kakine::Resource.get(:yaml).stubs(:yaml).returns(YAML.load_file('test/fixtures/cli/expected012.yaml'))
-    Kakine::Adapter::Mock.any_instance.expects(:delete_security_group).never
-    Kakine::Adapter::Mock.any_instance.expects(:create_security_group).never
-    Kakine::Adapter::Mock.any_instance.expects(:create_rule).never
-    Kakine::Adapter::Mock.any_instance.expects(:delete_rule).never
 
-    Kakine::CLI.new.invoke(:apply, [], {dryrun: true})
+    assert_raises Kakine::Errors::Configure do
+      Kakine::CLI.new.invoke(:apply, [], {dryrun: true})
+    end
   end
 
   def test_create_icmp_rule
