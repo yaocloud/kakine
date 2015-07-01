@@ -2,40 +2,64 @@ module Kakine
   class Validate
     class << self
       def validate_file_input(load_sg)
-        err = []
         load_sg.each do |sg|
-          err << validate_attributes(sg)
-          err << validate_rules(sg)
+          validate_attributes(sg)
+          validate_rules(sg)
         end
-        return true unless err.detect {|e| !e.nil? }
-        err.map { |m| puts m unless m.nil? }
-        false
+        true
       end
 
       def validate_attributes(sg)
+        sg_name = sg[0]
         case
         when sg[1].nil?
-          "[error] #{sg[0]}:rules and description is required"
+          raise(Kakine::Errors::Configure, "#{sg_name}:rules and description is required")
         when !sg[1].key?("rules")
-          "[error] #{sg[0]}:rules is required"
+          raise(Kakine::Errors::Configure, "#{sg_name}:rules is required")
         when !sg[1].key?("description")
-          "[error] #{sg[0]}:description is required"
+          raise(Kakine::Errors::Configure, "#{sg_name}:description is required")
         end
       end
 
       def validate_rules(sg)
+        sg_name = sg[0]
         sg[1]["rules"].each do |rule|
-          if !rule.key?("port") &&
-            (!rule.key?("port_range_max") || !rule.key?("port_range_min")) &&
-            (!rule.key?("type") || !rule.key?("code"))
-            return "[error] #{sg[0]}:rules port(icmp code) is required"
-          elsif !rule.key?("remote_ip") && !rule.key?("remote_group")
-            return "[error] #{sg[0]}:rules remote_ip or remote_group required"
-          elsif col = %w(direction protocol ethertype).find { |k| !rule.key?(k) }
-            return "[error] #{sg[0]}:rules #{col} is required"
+          case
+          when !has_port?(rule)
+            raise(Kakine::Errors::Configure,  "#{sg_name}:rules port(icmp code) is required")
+          when !has_remote?(rule)
+            raise(Kakine::Errors::Configure, "#{sg_name}:rules remote_ip or remote_group required")
+          when !has_direction?(rule)
+            raise(Kakine::Errors::Configure, "#{sg_name}:rules direction is required")
+          when !has_protocol?(rule)
+            raise(Kakine::Errors::Configure, "#{sg_name}:rules protocol is required")
+          when !has_ethertype?(rule)
+            raise(Kakine::Errors::Configure, "#{sg_name}:rules ethertype is required")
           end
         end unless sg[1]["rules"].nil?
-        nil
+        true
+      end
+
+      def has_port?(rule)
+        rule.key?("port") ||
+        ( rule.key?("port_range_max") && rule.key?("port_range_min") ) ||
+        ( rule.key?("type") && rule.key?("code") )
+      end
+
+      def has_remote?(rule)
+        rule.key?("remote_ip") || rule.key?("remote_group")
+      end
+
+      def has_directon?(rule)
+        rule.key?("direction")
+      end
+
+      def has_protocol?(rule)
+        rule.key?("protocol")
+      end
+
+      def has_ethertype?(rule)
+        rule.key?("ethertype")
       end
     end
   end

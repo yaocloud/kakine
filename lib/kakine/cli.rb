@@ -33,6 +33,8 @@ module Kakine
       current_security_groups.each do |current_sg|
         current_sg.unregister! if new_security_groups.none? { |new_sg| current_sg.name == new_sg.name }
       end
+    rescue Kakine::Errors => e
+      puts "[error] #{e}"
     end
   end
 end

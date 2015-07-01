@@ -5,7 +5,7 @@ module Kakine
     class << self
       def load_security_group_by_yaml(filename, tenant_name)
         load_yaml = yaml(filename)
-        return false unless Kakine::Validate.validate_file_input(load_yaml)
+        Kakine::Validate.validate_file_input(load_yaml)
         load_yaml.map { |sg| Kakine::SecurityGroup.new(tenant_name, sg) }
       end
 
