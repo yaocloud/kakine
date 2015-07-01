@@ -18,7 +18,7 @@ module Kakine
       Kakine::Adapter.set_option(options[:dryrun])
 
       current_security_groups  = Kakine::Resource.get_current(options[:tenant])
-      new_security_groups = Kakine::Resource.load_security_group_by_yaml(filename, options[:tenant])
+      new_security_groups      = Kakine::Resource.load_security_group_by_yaml(filename, options[:tenant])
 
       return unless new_security_groups
       new_security_groups.each do |new_sg|
