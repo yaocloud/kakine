@@ -1,6 +1,3 @@
-require 'kakine/adapter/real'
-require 'kakine/adapter/mock'
-
 module Kakine
   class Adapter
     def self.set_option(dryrun)

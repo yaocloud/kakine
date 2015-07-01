@@ -1,5 +1,4 @@
-require 'yaml'
-require 'thor'
+require 'kakine'
 
 module Kakine
   class CLI < Thor
