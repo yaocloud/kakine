@@ -50,7 +50,7 @@ module Kakine
         rule.key?("remote_ip") || rule.key?("remote_group")
       end
 
-      def has_directon?(rule)
+      def has_direction?(rule)
         rule.key?("direction")
       end
 
