@@ -6,7 +6,7 @@ module Kakine
     def initialize(tenant_name, parameter)
       @name = parameter[0]
       @tenant_name = tenant_name
-      @tenant_id = Kakine::Resource.tenant(tenant_name).id
+      @tenant_id = Kakine::Resource.get(:openstack).tenant(tenant_name).id
       @description = parameter[1]["description"] || ""
       @rules = parameter[1]["rules"].map do |rule|
         SecurityRule.new(rule, @tenant_name, @name)

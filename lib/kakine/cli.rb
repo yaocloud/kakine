@@ -6,7 +6,7 @@ module Kakine
     option :tenant, type: :string, aliases: '-t'
     desc 'show', 'show Security Groups specified tenant'
     def show
-      puts Kakine::Resource.security_groups_hash(options[:tenant]).to_yaml
+      puts Kakine::Resource.get(:openstak).security_groups_hash(options[:tenant]).to_yaml
     end
 
     option :tenant, type: :string, aliases: "-t"
@@ -17,8 +17,8 @@ module Kakine
       filename = options[:filename] ? options[:filename] : "#{options[:tenant]}.yaml"
       Kakine::Adapter.set_option(options[:dryrun])
 
-      current_security_groups  = Kakine::Resource.get_current(options[:tenant])
-      new_security_groups      = Kakine::Resource.load_security_group_by_yaml(filename, options[:tenant])
+      current_security_groups  = Kakine::Resource.get(:openstack).load_security_group(options[:tenant])
+      new_security_groups      = Kakine::Resource.get(:yaml).load_security_group(filename, options[:tenant])
 
       new_security_groups.each do |new_sg|
         registered_sg  = current_security_groups.find { |cur_sg| cur_sg.name == new_sg.name }

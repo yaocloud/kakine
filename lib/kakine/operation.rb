@@ -15,7 +15,7 @@ module Kakine
       end
 
       def delete_security_group(sg)
-        security_group = Kakine::Resource.security_group(sg.tenant_name, sg.name)
+        security_group = Kakine::Resource.get(:openstack).security_group(sg.tenant_name, sg.name)
         adapter.delete_security_group(security_group.id)
       end
 
@@ -23,14 +23,14 @@ module Kakine
         security_group_id = if adapter.instance_of?(Kakine::Adapter::Mock)
           "[Mock] #{sg_name} ID"
         else
-          Kakine::Resource.security_group(tenant_name, sg_name).id
+          Kakine::Resource.get(:openstack).security_group(tenant_name, sg_name).id
         end
         adapter.create_rule(security_group_id, rule.direction, rule)
       end
 
       def delete_security_rule(tenant_name, sg_name, rule)
-        security_group = Kakine::Resource.security_group(tenant_name, sg_name)
-        security_group_rule = Kakine::Resource.security_group_rule(security_group, rule)
+        security_group = Kakine::Resource.get(:openstack).security_group(tenant_name, sg_name)
+        security_group_rule = Kakine::Resource.get(:openstack).security_group_rule(security_group, rule)
         adapter.delete_rule(security_group_rule.id)
       end
     end
