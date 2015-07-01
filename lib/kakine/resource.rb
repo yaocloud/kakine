@@ -7,6 +7,8 @@ module Kakine
         load_yaml = yaml(filename)
         Kakine::Validate.validate_file_input(load_yaml)
         load_yaml.map { |sg| Kakine::SecurityGroup.new(tenant_name, sg) }
+        raise(Kakine::Errors::Configure, "can't load config by yaml") unless load_yaml
+        load_yaml
       end
 
       def get_current(tenant_name)

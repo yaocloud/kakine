@@ -20,7 +20,6 @@ module Kakine
       current_security_groups  = Kakine::Resource.get_current(options[:tenant])
       new_security_groups      = Kakine::Resource.load_security_group_by_yaml(filename, options[:tenant])
 
-      return unless new_security_groups
       new_security_groups.each do |new_sg|
         registered_sg  = current_security_groups.find { |cur_sg| cur_sg.name == new_sg.name }
         if registered_sg
