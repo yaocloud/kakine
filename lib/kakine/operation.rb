@@ -2,7 +2,7 @@ module Kakine
   class Operation
     class << self
       def adapter
-        @@adapter ||= Kakine::Adapter.get_instance
+        @@adapter ||= Kakine::Adapter.instance
       end
 
       def create_security_group(sg)

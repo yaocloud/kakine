@@ -1,19 +1,19 @@
+require 'singleton'
 module Kakine
   class Adapter
-    def self.set_option(dryrun)
-      @@dryrun = dryrun
-    end
-
-    def self.get_instance
-      @@adapter ||= if @@dryrun
-        Kakine::Adapter::Mock.new
-      else
-        Kakine::Adapter::Real.new
+    include Singleton
+    class << self
+      def set_option(dryrun)
+        @@dryrun = dryrun
       end
-    end
 
-    private
-    def initialize
+      def instance
+        @@adapter ||= if @@dryrun
+          Kakine::Adapter::Mock.new
+        else
+          Kakine::Adapter::Real.new
+        end
+      end
     end
   end
 end
