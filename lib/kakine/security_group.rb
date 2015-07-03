@@ -10,8 +10,16 @@ module Kakine
       @rules       = get_rules(parameter) || []
     end
 
+    def tenant_id
+      Kakine::Resource.get(:openstack).tenant(@tenant_name).id
+    end
+
     def ==(target_sg)
       same_group?(target_sg) && same_rule?(self, target_sg) && same_rule?(target_sg, self)
+    end
+
+    def !=(target_sg)
+      !(self == target_sg)
     end
 
     def same_group?(target_sg)
@@ -26,18 +34,10 @@ module Kakine
       end
     end
 
-    def tenant_id
-      Kakine::Resource.get(:openstack).tenant(@tenant_name).id
-    end
-
     def get_rules(parameter)
       parameter[1]["rules"].map do |rule|
         SecurityRule.new(rule, @tenant_name, @name)
       end unless parameter[1]["rules"].nil?
-    end
-
-    def !=(target_sg)
-      !(self == target_sg)
     end
 
     def find_by_rule(target_rule)
