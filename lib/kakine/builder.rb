@@ -10,7 +10,9 @@ module Kakine
         security_group_id = adapter.create_security_group(attributes)
 
         #delete default rule
-        sg.get_default_rule_instance.rules.each { |rule| rule.unregister! } unless adapter.instance_of?(Kakine::Adapter::Mock)
+        sg.get_default_rule_instance.rules.each do |rule| 
+          Kakine::Builder.delete_security_rule(rule.tenant_name, sg.name, rule)
+        end unless adapter.instance_of?(Kakine::Adapter::Mock)
         security_group_id
       end
 

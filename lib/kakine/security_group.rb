@@ -39,20 +39,16 @@ module Kakine
       @rules.find { |rule| rule == target_rule }
     end
 
-    def unregister!
-      Kakine::Builder.delete_security_group(self)
-    end
-
     def convergence!(target_sg)
       if @description != target_sg.description
-        target_sg.unregister!
+        Kakine::Builder.delete_security_group(target_sg)
         Kakine::Builder.create_security_group(self)
         @rules.each do |rule| 
           Kakine::Builder.create_security_rule(@tenant_name, @name, rule)
         end if has_rules?
       else
         target_sg.rules.each do |rule|
-          rule.unregister! unless find_by_rule(rule)
+          Kakine::Builder.delete_security_rule(@tenant_name, @name, rule) unless find_by_rule(rule)
         end
         @rules.each do |rule|
           unless target_sg.find_by_rule(rule)

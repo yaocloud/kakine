@@ -15,10 +15,6 @@ module Kakine
 
     end
 
-    def unregister!
-      Kakine::Builder.delete_security_rule(@tenant_name, @sg_name, self)
-    end
-
     def ==(target_sg)
       instance_variables.each do |val|
         unless self.instance_variable_get(val) == target_sg.instance_variable_get(val)
