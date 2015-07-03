@@ -14,12 +14,9 @@ module Kakine
     end
 
     def ==(target_sg)
-      instance_variables.each do |val|
-        unless self.instance_variable_get(val) == target_sg.instance_variable_get(val)
-          return false
-        end
+      instance_variables.all? do |val|
+        self.instance_variable_get(val) == target_sg.instance_variable_get(val)
       end
-      true
     end
 
     private
