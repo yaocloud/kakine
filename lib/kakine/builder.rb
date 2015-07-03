@@ -36,21 +36,33 @@ module Kakine
         adapter.delete_rule(security_group_rule.id)
       end
 
-      def convergence_security_group(new, old)
-        if new.description != old.description
-          delete_security_group(old)
-          create_security_group(new)
-          new.rules.each do |rule|
-            create_security_rule(new.tenant_name, new.name, rule)
-          end if new.has_rules?
+      def convergence_security_group(new_sg, old_sg)
+        if new_sg.description != old_sg.description
+          recreate_security_group(new_sg, old_sg)
         else
-          old.rules.each do |rule|
-            delete_security_rule(new.tenant_name, new.name, rule) unless new.find_by_rule(rule)
-          end
-          new.rules.each do |rule|
-            unless old.find_by_rule(rule)
-              create_security_rule(new.tenant_name, new.name, rule)
-            end
+          delete_not_exists_rule(new_sg, old_sg)
+          create_new_rule(new_sg, old_sg)
+        end
+      end
+
+      def recreate_security_group(new_sg, old_sg)
+        delete_security_group(old_sg)
+        create_security_group(new_sg)
+        new_sg.rules.each do |rule|
+          create_security_rule(new_sg.tenant_name, new_sg.name, rule)
+        end if new_sg.has_rules?
+      end
+
+      def delete_not_exists_rule(new_sg, old_sg)
+        old_sg.rules.each do |rule|
+          delete_security_rule(new_sg.tenant_name, new_sg.name, rule) unless new_sg.find_by_rule(rule)
+        end
+      end
+
+      def create_new_rule(new_sg, old_sg)
+        new_sg.rules.each do |rule|
+          unless old_sg.find_by_rule(rule)
+            create_security_rule(new_sg.tenant_name, new_sg.name, rule)
           end
         end
       end
