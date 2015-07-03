@@ -25,7 +25,10 @@ module Kakine
         if registered_sg
           new_sg.convergence!(registered_sg) if new_sg != registered_sg
         else
-          new_sg.register!
+          Kakine::Builder.create_security_group(new_sg)
+          new_sg.rules.each do |rule| 
+            Kakine::Builder.create_security_rule(new_sg.tenant_name, new_sg.name, rule)
+          end if new_sg.has_rules?
         end
       end
       current_security_groups.each do |current_sg|

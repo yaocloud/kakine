@@ -15,10 +15,6 @@ module Kakine
 
     end
 
-    def register!
-      Kakine::Builder.create_security_rule(@tenant_name, @sg_name, self)
-    end
-
     def unregister!
       Kakine::Builder.delete_security_rule(@tenant_name, @sg_name, self)
     end
