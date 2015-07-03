@@ -23,7 +23,7 @@ module Kakine
       new_security_groups.each do |new_sg|
         registered_sg  = current_security_groups.find { |cur_sg| cur_sg.name == new_sg.name }
         if registered_sg
-          new_sg.convergence!(registered_sg) if new_sg != registered_sg
+          Kakine::Builder.convergence_security_group(new_sg, registered_sg) if new_sg != registered_sg
         else
           Kakine::Builder.create_security_group(new_sg)
           new_sg.rules.each do |rule| 

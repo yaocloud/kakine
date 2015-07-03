@@ -35,6 +35,25 @@ module Kakine
         security_group_rule = Kakine::Resource.get(:openstack).security_group_rule(security_group, rule)
         adapter.delete_rule(security_group_rule.id)
       end
+
+      def convergence_security_group(new, old)
+        if new.description != old.description
+          Kakine::Builder.delete_security_group(old)
+          Kakine::Builder.create_security_group(new)
+          new.rules.each do |rule|
+            Kakine::Builder.create_security_rule(new.tenant_name, new.name, rule)
+          end if new.has_rules?
+        else
+          old.rules.each do |rule|
+            Kakine::Builder.delete_security_rule(new.tenant_name, new.name, rule) unless new.find_by_rule(rule)
+          end
+          new.rules.each do |rule|
+            unless old.find_by_rule(rule)
+              Kakine::Builder.create_security_rule(new.tenant_name, new.name, rule)
+            end
+          end
+        end
+      end
     end
   end
 end
