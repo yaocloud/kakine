@@ -14,10 +14,6 @@ module Kakine
       @rules ||= []
     end
 
-    def initialize_copy(obj)
-      @rules = Marshal.load(Marshal.dump(obj.rules))
-    end
-
     def ==(target_sg)
       same_group?(target_sg) && same_rule?(self, target_sg) && same_rule?(target_sg, self)
     end
@@ -44,17 +40,6 @@ module Kakine
 
     def has_rules?
       @rules.detect {|v| !v.nil?}
-    end
-
-    def get_default_rule_instance
-      default_sg = self.clone
-      default_sg.set_default_rule
-      default_sg
-    end
-
-    def set_default_rule
-      @rules = %w(IPv4 IPv6).map { |v| {"direction"=>"egress", "protocol" => nil, "port"=>nil, "remote_ip"=>nil, "ethertype"=>v } }.
-        map{ |rule| SecurityRule.new(rule, @tenant_name, @name) }
     end
   end
 end

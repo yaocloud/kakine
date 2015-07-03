@@ -8,11 +8,7 @@ module Kakine
       def create_security_group(sg)
         attributes = {name: sg.name, description: sg.description, tenant_id: sg.tenant_id}
         security_group_id = adapter.create_security_group(attributes)
-
-        #delete default rule
-        sg.get_default_rule_instance.rules.each do |rule| 
-          delete_security_rule(rule.tenant_name, sg.name, rule)
-        end unless adapter.instance_of?(Kakine::Adapter::Mock)
+        delete_default_security_rule(sg.tenant_name, sg.name)
         security_group_id
       end
 
@@ -34,6 +30,13 @@ module Kakine
         security_group = Kakine::Resource.get(:openstack).security_group(tenant_name, sg_name)
         security_group_rule = Kakine::Resource.get(:openstack).security_group_rule(security_group, rule)
         adapter.delete_rule(security_group_rule.id)
+      end
+
+      def delete_default_security_rule(tenant_name, sg_name)
+        %w(IPv4 IPv6).map { |v| {"direction"=>"egress", "protocol" => nil, "port"=>nil, "remote_ip"=>nil, "ethertype"=>v } }.
+        map{ |rule| SecurityRule.new(rule, tenant_name, sg_name) }.each do |rule|
+          delete_security_rule(rule.tenant_name, sg.name, rule)
+        end unless adapter.instance_of?(Kakine::Adapter::Mock)
       end
 
       def convergence_security_group(new_sg, old_sg)
