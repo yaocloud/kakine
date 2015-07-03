@@ -44,9 +44,10 @@ module Kakine
     end
 
     def remote_group_id
-      unless @remote_group.nil?
-        remote_security_group = Kakine::Resource.get(:openstack).security_group(@tenant_name, @remote_group)
-        raise(Kakine::Errors::SecurityRule, "not exists #{@remote_group}") unless remote_security_group
+      if @remote_group
+        unless remote_security_group = Kakine::Resource.get(:openstack).security_group(@tenant_name, @remote_group)
+          raise(Kakine::Errors::SecurityRule, "not exists #{@remote_group}")
+        end
         remote_security_group.id
       end
     end
