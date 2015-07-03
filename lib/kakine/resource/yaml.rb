@@ -48,7 +48,6 @@ module Kakine
               raise(Kakine::Errors::Configure, "#{sg_name}:rules ethertype is required")
             end
           end unless sg[1]["rules"].nil?
-          true
         end
 
         def has_port?(rule)
