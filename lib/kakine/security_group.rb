@@ -4,13 +4,10 @@ module Kakine
     attr_reader :name, :tenant_name, :description, :rules
 
     def initialize(tenant_name, parameter)
-      @name = parameter[0]
+      @name        = parameter[0]
       @tenant_name = tenant_name
       @description = parameter[1]["description"] || ""
-      @rules = parameter[1]["rules"].map do |rule|
-        SecurityRule.new(rule, @tenant_name, @name)
-      end unless parameter[1]["rules"].nil?
-      @rules ||= []
+      @rules       = get_rules(parameter) || []
     end
 
     def ==(target_sg)
@@ -31,6 +28,12 @@ module Kakine
 
     def tenant_id
       Kakine::Resource.get(:openstack).tenant(@tenant_name).id
+    end
+
+    def get_rules(parameter)
+      parameter[1]["rules"].map do |rule|
+        SecurityRule.new(rule, @tenant_name, @name)
+      end unless parameter[1]["rules"].nil?
     end
 
     def !=(target_sg)
