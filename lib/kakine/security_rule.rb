@@ -1,6 +1,6 @@
 module Kakine
   class SecurityRule
-    attr_reader :direction, :protocol, :port_range_max, :port_range_min, :remote_ip, :remote_group, :remote_group_id, :ethertype
+    attr_reader :direction, :protocol, :port_range_max, :port_range_min, :remote_ip, :remote_group, :ethertype
 
     def initialize(rule, tenant_name, sg_name)
       @tenant_name = tenant_name
@@ -11,8 +11,6 @@ module Kakine
       end
 
       @port_range_min, @port_range_max = *convert_port_format(rule)
-      set_remote_security_group_id
-
     end
 
     def ==(target_sg)
@@ -45,11 +43,11 @@ module Kakine
       Array.new(rule['port_range_min'] ,rule['port_range_max']) if rule.has_key?('port_range_max') && rule.has_key?('port_range_min')
     end
 
-    def set_remote_security_group_id
+    def remote_group_id
       unless @remote_group.nil?
         remote_security_group = Kakine::Resource.get(:openstack).security_group(@tenant_name, @remote_group)
         raise(Kakine::Errors::SecurityRule, "not exists #{@remote_group}") unless remote_security_group
-        @remote_group_id = remote_security_group.id
+        remote_security_group.id
       end
     end
   end

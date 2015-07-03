@@ -19,6 +19,8 @@ module Kakine
           Fog::Network[:openstack].create_security_group_rule(security_group_id, direction, data)
         rescue Excon::Errors::Conflict, Excon::Errors::BadRequest => e
           error_message(e.response[:body])
+        rescue Kakine::Errors::SecurityRule => e
+          puts e
         end
       end
 
