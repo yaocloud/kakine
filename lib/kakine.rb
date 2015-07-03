@@ -2,7 +2,7 @@ require 'yaml'
 require 'thor'
 require "kakine/version"
 require 'kakine/cli'
-require 'kakine/operation'
+require 'kakine/builder'
 require 'kakine/adapter'
 require 'kakine/adapter/real'
 require 'kakine/adapter/mock'

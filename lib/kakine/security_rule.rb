@@ -16,11 +16,11 @@ module Kakine
     end
 
     def register!
-      Kakine::Operation.create_security_rule(@tenant_name, @sg_name, self)
+      Kakine::Builder.create_security_rule(@tenant_name, @sg_name, self)
     end
 
     def unregister!
-      Kakine::Operation.delete_security_rule(@tenant_name, @sg_name, self)
+      Kakine::Builder.delete_security_rule(@tenant_name, @sg_name, self)
     end
 
     def ==(target_sg)

@@ -40,12 +40,12 @@ module Kakine
     end
 
     def register!
-      Kakine::Operation.create_security_group(self)
+      Kakine::Builder.create_security_group(self)
       @rules.each { |rule| rule.register! } if has_rules?
     end
 
     def unregister!
-      Kakine::Operation.delete_security_group(self)
+      Kakine::Builder.delete_security_group(self)
     end
 
     def convergence!(target_sg)

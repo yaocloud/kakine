@@ -1,5 +1,5 @@
 module Kakine
-  class Operation
+  class Builder 
     class << self
       def adapter
         @@adapter ||= Kakine::Adapter.instance
