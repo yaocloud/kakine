@@ -19,16 +19,19 @@ module Kakine
     end
 
     def ==(target_sg)
-      instance_variables.reject{ |k| k == :@rules }.each do |val|
-        return false unless self.instance_variable_get(val) == target_sg.instance_variable_get(val)
+      same_group?(target_sg) && same_rule?(self, target_sg) && same_rule?(target_sg, self)
+    end
+
+    def same_group?(target_sg)
+      instance_variables.reject{ |k| k == :@rules }.all? do |val|
+        instance_variable_get(val) == target_sg.instance_variable_get(val)
       end
-      @rules.each do |rule|
-        return false unless target_sg.find_by_rule(rule)
+    end
+
+    def same_rule?(a, b)
+      a.rules.all? do |rule|
+        b.find_by_rule(rule)
       end
-      target_sg.rules.each do |rule|
-        return false unless find_by_rule(rule)
-      end
-      true
     end
 
     def !=(target_sg)
