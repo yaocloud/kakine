@@ -11,7 +11,7 @@ module Kakine
 
         #delete default rule
         sg.get_default_rule_instance.rules.each do |rule| 
-          Kakine::Builder.delete_security_rule(rule.tenant_name, sg.name, rule)
+          delete_security_rule(rule.tenant_name, sg.name, rule)
         end unless adapter.instance_of?(Kakine::Adapter::Mock)
         security_group_id
       end
@@ -38,18 +38,18 @@ module Kakine
 
       def convergence_security_group(new, old)
         if new.description != old.description
-          Kakine::Builder.delete_security_group(old)
-          Kakine::Builder.create_security_group(new)
+          delete_security_group(old)
+          create_security_group(new)
           new.rules.each do |rule|
-            Kakine::Builder.create_security_rule(new.tenant_name, new.name, rule)
+            create_security_rule(new.tenant_name, new.name, rule)
           end if new.has_rules?
         else
           old.rules.each do |rule|
-            Kakine::Builder.delete_security_rule(new.tenant_name, new.name, rule) unless new.find_by_rule(rule)
+            delete_security_rule(new.tenant_name, new.name, rule) unless new.find_by_rule(rule)
           end
           new.rules.each do |rule|
             unless old.find_by_rule(rule)
-              Kakine::Builder.create_security_rule(new.tenant_name, new.name, rule)
+              create_security_rule(new.tenant_name, new.name, rule)
             end
           end
         end
