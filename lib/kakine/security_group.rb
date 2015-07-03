@@ -1,12 +1,11 @@
 require 'json'
 module Kakine
   class SecurityGroup
-    attr_reader :name, :tenant_id, :tenant_name, :description, :rules
+    attr_reader :name, :tenant_name, :description, :rules
 
     def initialize(tenant_name, parameter)
       @name = parameter[0]
       @tenant_name = tenant_name
-      @tenant_id = Kakine::Resource.get(:openstack).tenant(tenant_name).id
       @description = parameter[1]["description"] || ""
       @rules = parameter[1]["rules"].map do |rule|
         SecurityRule.new(rule, @tenant_name, @name)
@@ -28,6 +27,10 @@ module Kakine
       a.rules.all? do |rule|
         b.find_by_rule(rule)
       end
+    end
+
+    def tenant_id
+      Kakine::Resource.get(:openstack).tenant(@tenant_name).id
     end
 
     def !=(target_sg)
