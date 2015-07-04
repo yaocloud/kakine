@@ -6,6 +6,7 @@ class TestKakineCLI < Minitest::Test
     Kakine::Resource.get(:openstack).stubs(:tenant).returns(Dummy.new)
     Kakine::Resource.get(:openstack).stubs(:security_group).returns(Dummy.new)
     Kakine::Resource.get(:openstack).stubs(:security_group_rule).returns(Dummy.new)
+    Kakine::SecurityGroup.stubs(:tenant_name).returns(Dummy.new)
   end
 
   def test_create_security_group

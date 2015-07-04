@@ -18,11 +18,7 @@ module Kakine
       end
 
       def create_security_rule(tenant_name, sg_name, rule)
-        security_group_id = if adapter.instance_of?(Kakine::Adapter::Mock)
-          "[Mock] #{sg_name} ID"
-        else
-          Kakine::Resource.get(:openstack).security_group(tenant_name, sg_name).id
-        end
+        security_group_id = Kakine::Resource.get(:openstack).security_group(tenant_name, sg_name).id
         adapter.create_rule(security_group_id, rule.direction, rule)
       end
 

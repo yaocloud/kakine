@@ -27,6 +27,14 @@ module Kakine
       def delete_security_group(security_group_id)
         puts "Delete Security Group: #{security_group_id}"
       end
+
+      def security_group(tenant_name, sg_name)
+        self
+      end
+
+      def id
+        "[Mock] #{sg_name} ID"
+      end
     end
   end
 end
