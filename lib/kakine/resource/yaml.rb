@@ -2,10 +2,10 @@ module Kakine
   class Resource
     class Yaml
       class << self
-        def load_security_group(filename, tenant_name)
-          load_yaml = yaml(filename)
+        def load_security_group
+          load_yaml = yaml(Kakine::Options.yaml_name)
           validate_file_input(load_yaml)
-          load_yaml.map { |sg| Kakine::SecurityGroup.new(tenant_name, sg) }
+          load_yaml.map { |sg| Kakine::SecurityGroup.new(Kakine::Options.tenant_name, sg) }
         end
 
         def yaml(filename)

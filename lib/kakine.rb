@@ -4,6 +4,7 @@ require "kakine/version"
 require 'kakine/cli'
 require 'kakine/builder'
 require 'kakine/adapter'
+require 'kakine/options'
 require 'kakine/adapter/real'
 require 'kakine/adapter/mock'
 require 'kakine/resource'

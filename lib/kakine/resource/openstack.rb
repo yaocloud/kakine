@@ -2,9 +2,9 @@ module Kakine
   class Resource
     class OpenStack
       class << self
-        def load_security_group(tenant_name)
-          security_groups_hash(tenant_name).map do |sg|
-            Kakine::SecurityGroup.new(tenant_name, sg)
+        def load_security_group
+          security_groups_hash(Kakine::Options.tenant_name).map do |sg|
+            Kakine::SecurityGroup.new(Kakine::Options.tenant_name, sg)
           end
         end
 

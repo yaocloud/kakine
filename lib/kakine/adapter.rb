@@ -3,12 +3,8 @@ module Kakine
   class Adapter
     include Singleton
     class << self
-      def set_option(dryrun)
-        @@dryrun = dryrun
-      end
-
       def instance
-        @@adapter ||= if @@dryrun
+        @@adapter ||= if Kakine::Options.dryrun?
           Kakine::Adapter::Mock.new
         else
           Kakine::Adapter::Real.new

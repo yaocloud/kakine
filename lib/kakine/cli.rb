@@ -14,14 +14,13 @@ module Kakine
     option :filename, type: :string, aliases: "-f"
     desc 'apply', "apply local configuration into OpenStack"
     def apply
-      filename = options[:filename] ? options[:filename] : "#{options[:tenant]}.yaml"
-      Kakine::Adapter.set_option(options[:dryrun])
+      Kakine::Options.set_options(options)
 
-      current_security_groups  = Kakine::Resource.get(:openstack).load_security_group(options[:tenant])
-      new_security_groups      = Kakine::Resource.get(:yaml).load_security_group(filename, options[:tenant])
+      current_security_groups  = Kakine::Resource.get(:openstack).load_security_group
+      new_security_groups      = Kakine::Resource.get(:yaml).load_security_group
 
       new_security_groups.each do |new_sg|
-        registered_sg  = current_security_groups.find { |cur_sg| cur_sg.name == new_sg.name }
+        registered_sg = current_security_groups.find { |cur_sg| cur_sg.name == new_sg.name }
         if registered_sg
           Kakine::Builder.convergence_security_group(new_sg, registered_sg) if new_sg != registered_sg
         else
