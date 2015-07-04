@@ -19,10 +19,8 @@ module Kakine
       end
 
       def create_security_group(attributes)
-        data = {}
-        attributes.each{|k,v| data[k.to_sym] = v}
         begin
-          response = Fog::Network[:openstack].create_security_group(data)
+          response = Fog::Network[:openstack].create_security_group(get_group_attributes(attributes))
           response.data[:body]["security_group"]["id"]
         rescue Excon::Errors::Conflict, Excon::Errors::BadRequest => e
           error_message(e.response[:body])
@@ -43,13 +41,16 @@ module Kakine
         JSON.parse(e.response[:body]).each { |e,m| puts "#{e}:#{m["message"]}" }
       end
 
+      def get_group_attributes(attributes)
+        attributes.inject({}){|data,k,v| data[k.to_sym] = v}
+      end
+
       def get_rule_attributes(security_rule)
         attributes = {}
         %w(protocol port_range_max port_range_min remote_ip ethertype).each do |k|
           attributes[k] = security_rule.send(k)
         end
         attributes["remote_ip_prefix"] = attributes.delete("remote_ip")if attributes["remote_ip"]
-
         attributes.inject({}){|data,k,v| data[k.to_sym] = v}
       end
     end
