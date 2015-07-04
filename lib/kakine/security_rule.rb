@@ -29,15 +29,15 @@ module Kakine
     end
 
     def port?(rule)
-      Array.new(rule['port'] ,rule['port']) if rule.has_key?('port')
+      [rule['port'] ,rule['port']] if rule.has_key?('port')
     end
 
     def icmp?(rule)
-      Array.new(rule['type'] ,rule['code']) if rule.has_key?('type') && rule.has_key?('code')
+      [rule['type'] ,rule['code']] if rule.has_key?('type') && rule.has_key?('code')
     end
 
     def range?(rule)
-      Array.new(rule['port_range_min'] ,rule['port_range_max']) if rule.has_key?('port_range_max') && rule.has_key?('port_range_min')
+      [rule['port_range_min'] ,rule['port_range_max']] if rule.has_key?('port_range_max') && rule.has_key?('port_range_min')
     end
 
     def remote_group_id
