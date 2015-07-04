@@ -18,22 +18,12 @@ module Kakine
 
         def security_group_rule(security_group, attributes)
           security_group.security_group_rules.detect do |sg|
-
             sg.direction == attributes.direction &&
             sg.protocol == attributes.protocol &&
             sg.port_range_max == attributes.port_range_max &&
             sg.port_range_min == attributes.port_range_min &&
             sg.ethertype == attributes.ethertype &&
-            (
-              (
-                attributes.remote_group_id.nil? &&
-                sg.remote_ip_prefix == attributes.remote_ip
-              ) ||
-              (
-                attributes.remote_ip.nil? &&
-                sg.remote_group_id == attributes.remote_group_id
-              )
-            )
+            ( same_remote_ip?(sg, attributes) || same_remote_group?(sg, attributes) )
           end
         end
 
@@ -57,26 +47,39 @@ module Kakine
             rule_hash["direction"] = rule.direction
             rule_hash["protocol"]  = rule.protocol
             rule_hash["ethertype"] = rule.ethertype
-
-            if rule.protocol == "icmp"
-              rule_hash["type"] = rule.port_range_min
-              rule_hash["code"] = rule.port_range_max
-            elsif rule.port_range_max == rule.port_range_min
-              rule_hash["port"] = rule.port_range_max
-            else
-              rule_hash["port_range_min"] = rule.port_range_min
-              rule_hash["port_range_max"] = rule.port_range_max
-            end
-
-            if rule.remote_group_id
-              response = Fog::Network[:openstack].get_security_group(rule.remote_group_id)
-              rule_hash["remote_group"] = response.data[:body]["security_group"]["name"]
-            else
-              rule_hash["remote_ip"] = rule.remote_ip_prefix
-            end
-            rule_hash
+            rule_hash.merge!(port_hash(rule))
+            rule_hash.merge!(remote_hash(rule))
           end
         end
+
+        def port_hash(rule)
+          case
+          when rule.protocol == "icmp"
+            { "type" => rule.port_range_min, "code" => rule.port_range_max }
+          when rule.port_range_max == rule.port_range_min
+            { "port" => rule.port_range_max }
+          else
+            { "port_range_min" => rule.port_range_min, "port_range_max" => rule.port_range_max }
+          end
+        end
+
+        def remote_hash(rule)
+          case
+          when rule.remote_group_id
+            response = Fog::Network[:openstack].get_security_group(rule.remote_group_id)
+            { "remote_group" => response.data[:body]["security_group"]["name"] }
+          else
+            { "remote_ip" => rule.remote_ip_prefix }
+          end
+        end
+      end
+
+      def same_remote_ip?(sg, attributes)
+        attributes.remote_group_id.nil? && sg.remote_ip_prefix == attributes.remote_ip
+      end
+
+      def same_remote_group?(sg, attributes)
+        attributes.remote_ip.nil? && sg.remote_group_id == attributes.remote_group_id
       end
     end
   end
