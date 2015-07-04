@@ -6,7 +6,7 @@ module Kakine
     option :tenant, type: :string, aliases: '-t'
     desc 'show', 'show Security Groups specified tenant'
     def show
-      puts Kakine::Resource.get(:openstak).security_groups_hash(options[:tenant]).to_yaml
+      puts Kakine::Resource.get(:openstack).security_groups_hash(options[:tenant]).to_yaml
     end
 
     option :tenant, type: :string, aliases: "-t"
