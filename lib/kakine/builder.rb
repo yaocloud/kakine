@@ -1,31 +1,27 @@
 module Kakine
   class Builder 
     class << self
-      def adapter
-        @@adapter ||= Kakine::Adapter.instance
-      end
-
       def create_security_group(sg)
         attributes = {name: sg.name, description: sg.description, tenant_id: sg.tenant_id}
-        security_group_id = adapter.create_security_group(attributes)
+        security_group_id = Kakine::Adapter.instance.create_security_group(attributes)
         delete_default_security_rule(sg.tenant_name, sg.name)
         security_group_id
       end
 
       def delete_security_group(sg)
         security_group = Kakine::Resource.get(:openstack).security_group(sg.tenant_name, sg.name)
-        adapter.delete_security_group(security_group.id)
+        Kakine::Adapter.instance.delete_security_group(security_group.id)
       end
 
       def create_security_rule(tenant_name, sg_name, rule)
         security_group_id = Kakine::Resource.get(:openstack).security_group(tenant_name, sg_name).id
-        adapter.create_rule(security_group_id, rule.direction, rule)
+        Kakine::Adapter.instance.create_rule(security_group_id, rule.direction, rule)
       end
 
       def delete_security_rule(tenant_name, sg_name, rule)
         security_group = Kakine::Resource.get(:openstack).security_group(tenant_name, sg_name)
         security_group_rule = Kakine::Resource.get(:openstack).security_group_rule(security_group, rule)
-        adapter.delete_rule(security_group_rule.id)
+        Kakine::Adapter.instance.delete_rule(security_group_rule.id)
       end
 
       def delete_default_security_rule(tenant_name, sg_name)
