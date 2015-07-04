@@ -41,10 +41,10 @@ module Kakine
           Fog::Network[:openstack].security_groups.select{|sg| sg.tenant_id == tenant(tenant_name).id}
         end
 
-        def security_groups_hash(tenant_name)
+        def security_groups_hash
           sg_hash = Hash.new { |h,k| h[k] = {} }
 
-          security_groups_on_tenant(tenant_name).each do |sg|
+          security_groups_on_tenant(Kakine::Options.tenant_name).each do |sg|
             sg_hash[sg.name]["rules"]       = format_security_group(sg)
             sg_hash[sg.name]["description"] = sg.description
           end
