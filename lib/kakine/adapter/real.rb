@@ -5,18 +5,8 @@ module Kakine
   class Adapter
     class Real
       def create_rule(security_group_id, direction, security_rule)
-        attributes = {}
-        %w(protocol port_range_max port_range_min remote_ip ethertype).each do |k|
-          attributes[k] = eval("security_rule.#{k}")
-        end
-        if attributes["remote_ip"]
-          attributes["remote_ip_prefix"] = attributes.delete("remote_ip")
-        end
-
-        data = {}
-        attributes.each{|k,v| data[k.to_sym] = v}
         begin
-          Fog::Network[:openstack].create_security_group_rule(security_group_id, direction, data)
+          Fog::Network[:openstack].create_security_group_rule(security_group_id, direction, get_rule_attributes(security_rule))
         rescue Excon::Errors::Conflict, Excon::Errors::BadRequest => e
           error_message(e.response[:body])
         rescue Kakine::Errors::SecurityRule => e
@@ -51,6 +41,16 @@ module Kakine
 
       def error_message(errors)
         JSON.parse(e.response[:body]).each { |e,m| puts "#{e}:#{m["message"]}" }
+      end
+
+      def get_rule_attributes(security_rule)
+        attributes = {}
+        %w(protocol port_range_max port_range_min remote_ip ethertype).each do |k|
+          attributes[k] = security_rule.send(k)
+        end
+        attributes["remote_ip_prefix"] = attributes.delete("remote_ip")if attributes["remote_ip"]
+
+        attributes.inject({}){|data,k,v| data[k.to_sym] = v}
       end
     end
   end
