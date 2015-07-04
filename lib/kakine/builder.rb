@@ -35,7 +35,7 @@ module Kakine
         if new_sg.description != old_sg.description
           recreate_security_group(new_sg, old_sg)
         else
-          delete_not_exists_rule(new_sg, old_sg)
+          clean_up_security_rule(new_sg, old_sg)
           create_new_rule(new_sg, old_sg)
         end
       end
@@ -48,7 +48,7 @@ module Kakine
         end if new_sg.has_rules?
       end
 
-      def delete_not_exists_rule(new_sg, old_sg)
+      def clean_up_security_rule(new_sg, old_sg)
         old_sg.rules.each do |rule|
           delete_security_rule(new_sg.tenant_name, new_sg.name, rule) unless new_sg.find_by_rule(rule)
         end
