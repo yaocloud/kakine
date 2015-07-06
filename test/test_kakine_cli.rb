@@ -87,37 +87,4 @@ class TestKakineCLI < Minitest::Test
     Kakine::CLI.new.invoke(:apply, [], {dryrun: true})
   end
 
-  def test_validate_rules
-
-    Kakine::Resource.get(:yaml).stubs(:yaml).returns(YAML.load_file('test/fixtures/cli/expected010.yaml'))
-
-    assert_raises Kakine::Errors::Configure do
-      Kakine::CLI.new.invoke(:apply, [], {dryrun: true})
-    end
-  end
-
-  def test_validate_description
-    Kakine::Resource.get(:yaml).stubs(:yaml).returns(YAML.load_file('test/fixtures/cli/expected011.yaml'))
-
-    assert_raises Kakine::Errors::Configure do
-      Kakine::CLI.new.invoke(:apply, [], {dryrun: true})
-    end
-  end
-
-  def test_validate_attributes
-
-    Kakine::Resource.get(:yaml).stubs(:yaml).returns(YAML.load_file('test/fixtures/cli/expected012.yaml'))
-
-    assert_raises Kakine::Errors::Configure do
-      Kakine::CLI.new.invoke(:apply, [], {dryrun: true})
-    end
-  end
-
-  def test_create_icmp_rule
-    Kakine::Resource.get(:yaml).stubs(:yaml).returns(YAML.load_file('test/fixtures/cli/expected013.yaml'))
-
-    Kakine::Adapter::Mock.any_instance.expects(:create_rule).twice
-
-    Kakine::CLI.new.invoke(:apply, [], {dryrun: true})
-  end
 end
