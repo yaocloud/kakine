@@ -2,7 +2,7 @@ module Kakine
   class Builder 
     class << self
       def create_security_group(sg)
-        attributes = {name: sg.name, description: sg.description, tenant_id: sg.tenant_id}
+        attributes = { name: sg.name, description: sg.description, tenant_id: sg.tenant_id }
         security_group_id = Kakine::Adapter.instance.create_security_group(attributes)
         delete_default_security_rule(sg.tenant_name, sg.name)
         security_group_id
