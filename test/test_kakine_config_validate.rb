@@ -4,7 +4,7 @@ require 'support/config_helper'
 class TestKakineConfigValidate < Minitest::Test
   def test_validate_attributes
     # nothing raised
-    Kakine::Resource.get(:yaml).validate_attributes(Kakine::Config::Helper.full_rule_port_remote_ip)
+    Kakine::Resource.get(:yaml).validate_attributes(Kakine::Config::Helper.full_rule_security_group)
     
     assert_raises Kakine::Errors::Configure do
       Kakine::Resource.get(:yaml).validate_attributes(Kakine::Config::Helper.lost_rules_with_description)
