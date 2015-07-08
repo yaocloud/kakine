@@ -13,6 +13,18 @@ module Kakine
             }
           ]
         end
+        
+        def short_rule_security_group 
+          [
+            "test_rule",
+            {
+              "rules" => [
+              ],
+              "description" => "test_description"
+            }
+          ]
+        end
+
         def full_rule
           {
             "direction" => "ingress",
