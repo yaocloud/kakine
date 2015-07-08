@@ -7,7 +7,7 @@ module Kakine
       @name        = params[0]
       @tenant_name = tenant_name
       @description = params[1]["description"] || ""
-      @rules       = get_rules(params) || []
+      @rules       = get_rule_instances(params) || []
     end
 
     def tenant_id
@@ -34,7 +34,7 @@ module Kakine
       end
     end
 
-    def get_rules(params)
+    def get_rule_instances(params)
       params[1]["rules"].map do |rule|
         SecurityRule.new(rule, @tenant_name, @name)
       end unless params[1]["rules"].nil?
