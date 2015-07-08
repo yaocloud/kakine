@@ -1,5 +1,5 @@
 module Kakine
-  module ValidateTest
+  module Config
     class Helper
       class << self
         def full_rule_port_remote_ip
