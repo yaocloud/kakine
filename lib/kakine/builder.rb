@@ -61,6 +61,23 @@ module Kakine
           end
         end
       end
+      
+      def already_setup(current_sgs, new_sg)
+        current_sgs.find { |current_sg| current_sg.name == new_sg.name }
+      end
+
+      def create_new_security_group(new_sg)
+        create_security_group(new_sg)
+        new_sg.rules.each do |rule|
+          create_security_rule(new_sg.tenant_name, new_sg.name, rule)
+        end if new_sg.has_rules?
+      end
+
+      def clean_up_security_group(current_sgs, new_sgs)
+        current_sgs.each do |current_sg|
+          delete_security_group(current_sg) if new_sgs.none? { |new_sg| current_sg.name == new_sg.name }
+        end
+      end
     end
   end
 end
