@@ -3,11 +3,11 @@ module Kakine
   class SecurityGroup
     attr_reader :name, :tenant_name, :description, :rules
 
-    def initialize(tenant_name, parameter)
-      @name        = parameter[0]
+    def initialize(tenant_name, params)
+      @name        = params[0]
       @tenant_name = tenant_name
-      @description = parameter[1]["description"] || ""
-      @rules       = get_rules(parameter) || []
+      @description = params[1]["description"] || ""
+      @rules       = get_rules(params) || []
     end
 
     def tenant_id
@@ -34,10 +34,10 @@ module Kakine
       end
     end
 
-    def get_rules(parameter)
-      parameter[1]["rules"].map do |rule|
+    def get_rules(params)
+      params[1]["rules"].map do |rule|
         SecurityRule.new(rule, @tenant_name, @name)
-      end unless parameter[1]["rules"].nil?
+      end unless params[1]["rules"].nil?
     end
 
     def find_by_rule(target_rule)
