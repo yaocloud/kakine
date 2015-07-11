@@ -3,7 +3,7 @@ module Kakine
     class OpenStack
       class << self
         def load_security_group
-          security_groups_hash(Kakine::Options.tenant_name).map do |sg|
+          security_groups_hash.map do |sg|
             Kakine::SecurityGroup.new(Kakine::Options.tenant_name, sg)
           end
         end
