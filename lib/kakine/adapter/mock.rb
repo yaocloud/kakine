@@ -1,6 +1,7 @@
 module Kakine
   class Adapter
     class Mock
+      include Kakine::Adapter::Base
       def create_rule(security_group_id, direction, security_rule)
         attributes = {}
         %w(protocol port_range_max port_range_min remote_ip ethertype).each do |k|

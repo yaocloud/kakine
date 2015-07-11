@@ -4,6 +4,7 @@ require 'fog'
 module Kakine
   class Adapter
     class Real
+      include Kakine::Adapter::Base
       def create_rule(security_group_id, direction, security_rule)
         begin
           Fog::Network[:openstack].create_security_group_rule(security_group_id, direction, get_rule_attributes(security_rule))

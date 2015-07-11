@@ -9,7 +9,7 @@ module Kakine
         end
 
         def tenant(tenant_name)
-          @@tenant ||= Fog::Identity[:openstack].tenants.detect{|t| t.name == tenant_name}
+          @@tenant ||= Kakine::Adapter.instance.tenants.detect{|t| t.name == tenant_name}
         end
 
         def security_group(tenant_name, security_group_name)
@@ -17,7 +17,7 @@ module Kakine
         end
 
         def security_groups_on_tenant(tenant_name)
-          Fog::Network[:openstack].security_groups.select { |sg| sg.tenant_id == tenant(tenant_name).id }
+          Kakine::Adapter.instance.security_groups.select { |sg| sg.tenant_id == tenant(tenant_name).id }
         end
 
         def security_groups_hash
@@ -57,7 +57,7 @@ module Kakine
         def remote_hash(rule)
           case
           when rule.remote_group_id
-            response = Fog::Network[:openstack].get_security_group(rule.remote_group_id)
+            response = Kakine::Adapter.instance.get_security_group(rule.remote_group_id)
             { "remote_group" => response.data[:body]["security_group"]["name"] }
           else
             { "remote_ip" => rule.remote_ip_prefix }
