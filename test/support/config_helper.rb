@@ -29,6 +29,7 @@ module Kakine
 
         def full_rule_port_remote_ip
           {
+            "id"        => "test_id_1",
             "direction" => "ingress",
             "protocol"  => "tcp",
             "ethertype" => "IPv4",
@@ -39,6 +40,7 @@ module Kakine
         
         def full_rule_icmp_remote_group
           {
+            "id"            => "test_id_2",
             "direction"     => "ingress",
             "protocol"      => "tcp",
             "ethertype"     => "IPv4",

@@ -19,9 +19,7 @@ module Kakine
       end
 
       def delete_security_rule(tenant_name, sg_name, rule)
-        security_group = Kakine::Resource.get(:openstack).security_group(tenant_name, sg_name)
-        security_group_rule = Kakine::Resource.get(:openstack).security_group_rule(security_group, rule)
-        Kakine::Adapter.instance.delete_rule(security_group_rule.id)
+        Kakine::Adapter.instance.delete_rule(rule.id)
       end
 
       def delete_default_security_rule(tenant_name, sg_name)
