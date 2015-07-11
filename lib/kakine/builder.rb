@@ -4,7 +4,7 @@ module Kakine
       def create_security_group(sg)
         attributes = { name: sg.name, description: sg.description, tenant_id: sg.tenant_id }
         security_group_id = Kakine::Adapter.instance.create_security_group(attributes)
-        delete_default_security_rule(sg.tenant_name, sg.name)
+        delete_default_security_rule(sg.tenant_name, sg.name) unless Kakine::Options.dryrun?
         security_group_id
       end
 
@@ -14,7 +14,8 @@ module Kakine
       end
 
       def create_security_rule(tenant_name, sg_name, rule)
-        security_group_id = Kakine::Resource.get(:openstack).security_group(tenant_name, sg_name).id
+        sg = Kakine::Resource.get(:openstack).security_group(tenant_name, sg_name)
+        security_group_id =  Kakine::Options.dryrun? && sg.nil? ? Kakine::Adapter.instance.id(sg_name) : sg.id
         Kakine::Adapter.instance.create_rule(security_group_id, rule.direction, rule)
       end
 
