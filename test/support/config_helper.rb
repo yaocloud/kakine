@@ -9,7 +9,8 @@ module Kakine
               "rules" => [
                 full_rule_port_remote_ip
               ],
-              "description" => "test_description"
+              "description" => "test_description",
+              "id"          => "test_id"
             }
           ]
         end
@@ -20,7 +21,8 @@ module Kakine
             {
               "rules" => [
               ],
-              "description" => "test_description"
+              "description" => "test_description",
+              "id"          => "test_id"
             }
           ]
         end

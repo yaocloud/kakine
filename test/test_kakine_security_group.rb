@@ -6,6 +6,7 @@ class TestKakineSecurityGroup < Minitest::Test
   def test_accessor
     sg = Kakine::SecurityGroup.new("test_tenant", Kakine::Config::Helper.full_rule_security_group) 
     assert_equal(sg.name, "test_rule") 
+    assert_equal(sg.id, "test_id") 
     assert_equal(sg.tenant_name, "test_tenant") 
     assert_equal(sg.description, "test_description") 
     assert(sg.rules[0].instance_of?(Kakine::SecurityRule)) 

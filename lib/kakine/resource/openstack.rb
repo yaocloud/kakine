@@ -36,6 +36,7 @@ module Kakine
 
           security_groups_on_tenant(Kakine::Options.tenant_name).each do |sg|
             sg_hash[sg.name]["rules"]       = format_security_group(sg)
+            sg_hash[sg.name]["id"]          = sg.id
             sg_hash[sg.name]["description"] = sg.description
           end
           sg_hash

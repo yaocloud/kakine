@@ -1,11 +1,12 @@
 require 'json'
 module Kakine
   class SecurityGroup
-    attr_reader :name, :tenant_name, :description, :rules
+    attr_reader :id, :name, :tenant_name, :description, :rules
 
     def initialize(tenant_name, params)
       @name        = params[0]
       @tenant_name = tenant_name
+      @id          = params[1]["id"] || ""
       @description = params[1]["description"] || ""
       @rules       = get_rule_instances(params) || []
     end
