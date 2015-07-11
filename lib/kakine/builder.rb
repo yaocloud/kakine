@@ -73,7 +73,7 @@ module Kakine
         end
       end
       
-      def already_setup(new_sg, current_sgs)
+      def already_setup_security_group(new_sg, current_sgs)
         current_sgs.find { |current_sg| current_sg.name == new_sg.name }
       end
 
