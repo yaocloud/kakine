@@ -2,12 +2,17 @@ module Kakine
   module Config
     class Helper
       class << self
+        
         def full_rule_security_group
+          full_security_group(full_rule_port_remote_ip, "test_full_group")
+        end
+
+        def full_security_group(rule, name)
           [
-            "test_full_group",
+            name,
             {
               "rules" => [
-                full_rule_port_remote_ip
+                rule
               ],
               "description" => "test_description",
               "id"          => "test_id_1"
@@ -22,7 +27,7 @@ module Kakine
               "rules" => [
               ],
               "description" => "test_description",
-              "id"          => "test_id_1"
+              "id"          => "test_id_2"
             }
           ]
         end
