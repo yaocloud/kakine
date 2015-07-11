@@ -50,7 +50,7 @@ module Kakine
         %w(protocol port_range_max port_range_min remote_ip ethertype).each do |k|
           attributes[k] = security_rule.send(k)
         end
-        attributes["remote_ip_prefix"] = attributes.delete("remote_ip")if attributes["remote_ip"]
+        attributes["remote_ip_prefix"] = attributes.delete("remote_ip") if attributes["remote_ip"]
         attributes.inject({}){|data,k,v| data[k.to_sym] = v}
       end
     end
