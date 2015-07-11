@@ -38,7 +38,11 @@ module Kakine
       private
 
       def error_message(errors)
-        JSON.parse(e.response[:body]).each { |e,m| puts "#{e}:#{m["message"]}" }
+        if errors.kind_of?(JSON)
+          JSON.parse(errors.response[:body]).each { |e,m| puts "#{e}:#{m["message"]}" }
+        else
+          puts errors
+        end
       end
 
       def get_group_attributes(attributes)
