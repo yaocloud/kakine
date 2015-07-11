@@ -19,8 +19,6 @@ module Kakine
       end
     end
 
-    private
-
     def convert_port_format(rule)
       unless format = port?(rule) || icmp?(rule) || range?(rule)
         raise(Kakine::Errors::SecurityRule, "no match port format")
@@ -40,8 +38,12 @@ module Kakine
       [rule['port_range_min'] ,rule['port_range_max']] if rule.has_key?('port_range_max') && rule.has_key?('port_range_min')
     end
 
+    def has_security_group?
+      !@remote_group.nil?
+    end
+
     def remote_group_id
-      if @remote_group
+      if has_security_group?
         unless remote_security_group = Kakine::Resource.get(:openstack).security_group(@tenant_name, @remote_group)
           raise(Kakine::Errors::SecurityRule, "not exists #{@remote_group}")
         end
