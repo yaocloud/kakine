@@ -2,7 +2,7 @@ module Kakine
   class Director
     class << self
       def show_current_security_group
-        puts Kakine::Resource.get(:openstack).security_groups_hash.to_yaml
+        Kakine::Builder.show_security_groups
       end
 
       def apply
@@ -21,7 +21,6 @@ module Kakine
         rescue Kakine::Errors => e
           puts "[error] #{e}"
       end
-
     end
   end
 end

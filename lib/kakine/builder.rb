@@ -19,15 +19,29 @@ module Kakine
       end
 
       def delete_security_rule(tenant_name, sg_name, rule)
-        security_group = Kakine::Resource.get(:openstack).security_group(tenant_name, sg_name)
-        security_group_rule = Kakine::Resource.get(:openstack).security_group_rule(security_group, rule)
-        Kakine::Adapter.instance.delete_rule(security_group_rule.id)
+        Kakine::Adapter.instance.delete_rule(rule.id)
       end
 
       def delete_default_security_rule(tenant_name, sg_name)
-        %w(IPv4 IPv6).map { |v| {"direction"=>"egress", "protocol" => nil, "port" => nil, "remote_ip" => nil, "ethertype"=>v } }.
-        map{ |rule| SecurityRule.new(rule, tenant_name, sg_name) }.each do |rule|
+        target_sg = Kakine::Resource.get(:openstack).load_security_group.find do |sg|
+          sg.name == sg_name
+        end
+
+        target_sg.rules.each do |rule|
           delete_security_rule(tenant_name, sg_name, rule)
+        end if target_sg
+      end
+
+      def create_new_security_group(new_sg)
+        create_security_group(new_sg)
+        new_sg.rules.each do |rule|
+          create_security_rule(new_sg.tenant_name, new_sg.name, rule)
+        end if new_sg.has_rules?
+      end
+
+      def clean_up_security_group(current_sgs, new_sgs)
+        current_sgs.each do |current_sg|
+          delete_security_group(current_sg) if new_sgs.none? { |new_sg| current_sg.name == new_sg.name }
         end
       end
 
@@ -66,16 +80,22 @@ module Kakine
         current_sgs.find { |current_sg| current_sg.name == new_sg.name }
       end
 
-      def create_new_security_group(new_sg)
-        create_security_group(new_sg)
-        new_sg.rules.each do |rule|
-          create_security_rule(new_sg.tenant_name, new_sg.name, rule)
-        end if new_sg.has_rules?
+      def show_security_groups
+        sgs = Kakine::Resource.get(:openstack).security_groups_hash
+        puts delete_id_column(sgs).to_yaml
       end
 
-      def clean_up_security_group(current_sgs, new_sgs)
-        current_sgs.each do |current_sg|
-          delete_security_group(current_sg) if new_sgs.none? { |new_sg| current_sg.name == new_sg.name }
+      def delete_id_column(sgs)
+        case sgs
+        when Array
+          sgs.map { |sg| delete_id_column(sg) } 
+        when Hash
+          sgs.inject({}) do |hash, (k, v)|
+            hash[k] = delete_id_column(v) if k != "id" 
+            hash
+          end 
+        else
+          sgs
         end
       end
     end

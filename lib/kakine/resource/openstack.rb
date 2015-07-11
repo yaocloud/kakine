@@ -9,22 +9,11 @@ module Kakine
         end
 
         def tenant(tenant_name)
-          @tenant ||= Fog::Identity[:openstack].tenants.detect{|t| t.name == tenant_name}
+          @@tenant ||= Fog::Identity[:openstack].tenants.detect{|t| t.name == tenant_name}
         end
 
         def security_group(tenant_name, security_group_name)
           security_groups_on_tenant(tenant_name).detect{|sg| sg.name == security_group_name}
-        end
-
-        def security_group_rule(security_group, attributes)
-          security_group.security_group_rules.detect do |sg|
-            sg.direction == attributes.direction &&
-            sg.protocol == attributes.protocol &&
-            sg.port_range_max == attributes.port_range_max &&
-            sg.port_range_min == attributes.port_range_min &&
-            sg.ethertype == attributes.ethertype &&
-            ( same_remote_ip?(sg, attributes) || same_remote_group?(sg, attributes) )
-          end
         end
 
         def security_groups_on_tenant(tenant_name)
@@ -45,6 +34,7 @@ module Kakine
         def format_security_group(security_group)
           security_group.security_group_rules.map do |rule|
             rule_hash = {}
+            rule_hash["id"]        = rule.id
             rule_hash["direction"] = rule.direction
             rule_hash["protocol"]  = rule.protocol
             rule_hash["ethertype"] = rule.ethertype
@@ -72,14 +62,6 @@ module Kakine
           else
             { "remote_ip" => rule.remote_ip_prefix }
           end
-        end
-
-        def same_remote_ip?(sg, attributes)
-          attributes.remote_group_id.nil? && sg.remote_ip_prefix == attributes.remote_ip
-        end
-
-        def same_remote_group?(sg, attributes)
-          attributes.remote_ip.nil? && sg.remote_group_id == attributes.remote_group_id
         end
       end
     end

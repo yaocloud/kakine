@@ -1,6 +1,6 @@
 module Kakine
   class SecurityRule
-    attr_reader :direction, :protocol, :port_range_max, :port_range_min, :remote_ip, :remote_group, :ethertype
+    attr_reader :id, :direction, :protocol, :port_range_max, :port_range_min, :remote_ip, :remote_group, :ethertype
 
     def initialize(rule, tenant_name, sg_name)
       @tenant_name = tenant_name
@@ -14,7 +14,7 @@ module Kakine
     end
 
     def ==(target_sg)
-      instance_variables.all? do |val|
+      instance_variables.select{|k| k != :@id }.all? do |val|
         self.instance_variable_get(val) == target_sg.instance_variable_get(val)
       end
     end

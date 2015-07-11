@@ -36,5 +36,4 @@ class TestKakineSecurityGroup < Minitest::Test
     assert(sg_a.has_rules?) 
     refute(sg_b.has_rules?) 
   end
-
 end
