@@ -35,6 +35,16 @@ module Kakine
           }
         end
         
+        def full_rule_icmp_remote_group
+          {
+            "direction"     => "ingress",
+            "protocol"      => "tcp",
+            "ethertype"     => "IPv4",
+            "type"          =>  "10",
+            "code"          =>  "8",
+            "remote_group"  => "test_group"
+          }
+        end
 
         def lost_rules_with_description
           conf = full_rule_security_group
