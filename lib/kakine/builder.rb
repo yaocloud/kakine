@@ -26,7 +26,7 @@ module Kakine
       end
 
       def delete_default_security_rule(tenant_name, sg_name)
-        %w(IPv4 IPv6).map { |v| {"direction"=>"egress", "protocol" => "", "port" => "", "remote_ip" => "", "ethertype"=>v } }.
+        %w(IPv4 IPv6).map { |v| {"direction"=>"egress", "protocol" => nil, "port" => nil, "remote_ip" => nil, "ethertype"=>v } }.
         map{ |rule| SecurityRule.new(rule, tenant_name, sg_name) }.each do |rule|
           delete_security_rule(tenant_name, sg_name, rule)
         end
