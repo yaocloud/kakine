@@ -1,6 +1,7 @@
 require 'singleton'
 module Kakine
   class Adapter
+    @@adapter = nil
     include Singleton
     class << self
       def instance

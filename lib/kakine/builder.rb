@@ -61,18 +61,18 @@ module Kakine
           create_security_rule(new_sg.tenant_name, new_sg.name, rule)
         end if new_sg.has_rules?
       end
-
-      def clean_up_security_rule(new_sg, old_sg)
-        old_sg.rules.each do |rule|
-          delete_security_rule(new_sg.tenant_name, new_sg.name, rule) unless new_sg.find_by_rule(rule)
-        end
-      end
-
+      
       def create_new_rule(new_sg, old_sg)
         new_sg.rules.each do |rule|
           unless old_sg.find_by_rule(rule)
             create_security_rule(new_sg.tenant_name, new_sg.name, rule)
           end
+        end
+      end
+
+      def clean_up_security_rule(new_sg, old_sg)
+        old_sg.rules.each do |rule|
+          delete_security_rule(new_sg.tenant_name, new_sg.name, rule) unless new_sg.find_by_rule(rule)
         end
       end
       
