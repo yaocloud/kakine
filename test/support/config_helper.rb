@@ -4,25 +4,25 @@ module Kakine
       class << self
         def full_rule_security_group
           [
-            "test_rule",
+            "test_full_group",
             {
               "rules" => [
                 full_rule_port_remote_ip
               ],
               "description" => "test_description",
-              "id"          => "test_id"
+              "id"          => "test_id_1"
             }
           ]
         end
         
         def short_rule_security_group 
           [
-            "test_rule",
+            "test_short_group",
             {
               "rules" => [
               ],
               "description" => "test_description",
-              "id"          => "test_id"
+              "id"          => "test_id_1"
             }
           ]
         end
@@ -54,62 +54,29 @@ module Kakine
           conf = full_rule_security_group
           conf[1].delete("rules")
           conf[1].delete("description")
+          conf[0] = "loss_rules_with_descripion_group"
           conf
         end
 
-        def lost_rules
+        def lost_column(col)
           conf = full_rule_security_group
-          conf[1].delete("rules")
-          conf
-        end
-
-        def lost_description
-          conf = full_rule_security_group
-          conf[1].delete("description")
-          conf
-        end
-
-        def lost_port
-          conf = full_rule_security_group
-          conf[1]["rules"][0].delete("port")
+          conf[1].delete(col)
+          conf[0] = "loss_#{col}_group"
           conf
         end
         
-        def lost_port_min
+        def lost_rule_column(col)
           conf = full_rule_security_group
-          conf[1]["rules"][0].delete("port")
-          conf[1]["rules"][0]["port_max"] = 80;
-          conf
-        end
-
-        def lost_port_code
-          conf = full_rule_security_group
-          conf[1]["rules"][0].delete("port")
-          conf[1]["rules"][0]["type"] = 80;
-          conf
-        end
-        
-        def lost_remote
-          conf = full_rule_security_group
-          conf[1]["rules"][0].delete("remote_ip")
-          conf
-        end
-        
-        def lost_direction
-          conf = full_rule_security_group
-          conf[1]["rules"][0].delete("direction")
-          conf
-        end
-        
-        def lost_protocol
-          conf = full_rule_security_group
-          conf[1]["rules"][0].delete("protocol")
-          conf
-        end
-        
-        def lost_ethertype
-          conf = full_rule_security_group
-          conf[1]["rules"][0].delete("ethertype")
+          conf[1]["rules"][0].delete(col)
+          conf[0] = "loss_#{col}_group"
+          case col
+          when "port_min"
+            conf[1]["rules"][0].delete("port")
+            conf[1]["rules"][0]["port_max"] = 80;
+          when "code"
+            conf[1]["rules"][0].delete("port")
+            conf[1]["rules"][0]["type"] = 80;
+          end
           conf
         end
       end

@@ -11,41 +11,41 @@ class TestKakineConfigValidate < Minitest::Test
     end
 
     assert_raises Kakine::Errors::Configure do
-      Kakine::Resource.get(:yaml).validate_attributes(Kakine::Config::Helper.lost_rules)
+      Kakine::Resource.get(:yaml).validate_attributes(Kakine::Config::Helper.lost_column("rules"))
     end
 
     assert_raises Kakine::Errors::Configure do
-      Kakine::Resource.get(:yaml).validate_attributes(Kakine::Config::Helper.lost_description)
+      Kakine::Resource.get(:yaml).validate_attributes(Kakine::Config::Helper.lost_column("description"))
     end
   end
   
   def test_validate_rules
     assert_raises Kakine::Errors::Configure do
-      Kakine::Resource.get(:yaml).validate_rules(Kakine::Config::Helper.lost_port)
+      Kakine::Resource.get(:yaml).validate_rules(Kakine::Config::Helper.lost_rule_column("port"))
     end
 
     assert_raises Kakine::Errors::Configure do
-      Kakine::Resource.get(:yaml).validate_rules(Kakine::Config::Helper.lost_port_min)
+      Kakine::Resource.get(:yaml).validate_rules(Kakine::Config::Helper.lost_rule_column("port_min"))
     end
 
     assert_raises Kakine::Errors::Configure do
-      Kakine::Resource.get(:yaml).validate_rules(Kakine::Config::Helper.lost_port_code)
+      Kakine::Resource.get(:yaml).validate_rules(Kakine::Config::Helper.lost_rule_column("code"))
     end
 
     assert_raises Kakine::Errors::Configure do
-      Kakine::Resource.get(:yaml).validate_rules(Kakine::Config::Helper.lost_remote)
+      Kakine::Resource.get(:yaml).validate_rules(Kakine::Config::Helper.lost_rule_column("remote_ip"))
     end
     
     assert_raises Kakine::Errors::Configure do
-      Kakine::Resource.get(:yaml).validate_rules(Kakine::Config::Helper.lost_direction)
+      Kakine::Resource.get(:yaml).validate_rules(Kakine::Config::Helper.lost_rule_column("direction"))
     end
     
     assert_raises Kakine::Errors::Configure do
-      Kakine::Resource.get(:yaml).validate_rules(Kakine::Config::Helper.lost_protocol)
+      Kakine::Resource.get(:yaml).validate_rules(Kakine::Config::Helper.lost_rule_column("protocol"))
     end
     
     assert_raises Kakine::Errors::Configure do
-      Kakine::Resource.get(:yaml).validate_rules(Kakine::Config::Helper.lost_ethertype)
+      Kakine::Resource.get(:yaml).validate_rules(Kakine::Config::Helper.lost_rule_column("ethertype"))
     end
   end
 end
