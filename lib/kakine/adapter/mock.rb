@@ -32,7 +32,7 @@ module Kakine
         self
       end
 
-      def id
+      def id(sg_name)
         "[Mock] #{sg_name} ID"
       end
     end
