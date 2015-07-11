@@ -46,16 +46,21 @@ module Kakine
       end
 
       def get_group_attributes(attributes)
-        attributes.inject({}){|data,k,v| data[k.to_sym] = v}
+        attributes.inject({}){|data,(k,v)|data[k.to_sym] = v; data }
       end
 
       def get_rule_attributes(security_rule)
         attributes = {}
         %w(protocol port_range_max port_range_min remote_ip ethertype).each do |k|
-          attributes[k] = security_rule.send(k)
+          attributes[k.to_sym] = security_rule.send(k)
         end
-        attributes["remote_ip_prefix"] = attributes.delete("remote_ip") if attributes["remote_ip"]
-        attributes.inject({}){|data,k,v| data[k.to_sym] = v}
+
+        if security_rule.has_security_group?
+          attributes[:remote_group_id] = security_rule.remote_group_id
+        else  
+          attributes[:remote_ip_prefix] = attributes.delete(:remote_ip) if attributes[:remote_ip]
+        end
+        attributes
       end
     end
   end
