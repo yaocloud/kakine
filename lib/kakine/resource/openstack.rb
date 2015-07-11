@@ -72,14 +72,14 @@ module Kakine
             { "remote_ip" => rule.remote_ip_prefix }
           end
         end
-      end
 
-      def same_remote_ip?(sg, attributes)
-        attributes.remote_group_id.nil? && sg.remote_ip_prefix == attributes.remote_ip
-      end
+        def same_remote_ip?(sg, attributes)
+          attributes.remote_group_id.nil? && sg.remote_ip_prefix == attributes.remote_ip
+        end
 
-      def same_remote_group?(sg, attributes)
-        attributes.remote_ip.nil? && sg.remote_group_id == attributes.remote_group_id
+        def same_remote_group?(sg, attributes)
+          attributes.remote_ip.nil? && sg.remote_group_id == attributes.remote_group_id
+        end
       end
     end
   end
