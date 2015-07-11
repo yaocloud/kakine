@@ -8,7 +8,6 @@ module Kakine
       def apply
         current_sgs = Kakine::Resource.get(:openstack).load_security_group
         new_sgs     = Kakine::Resource.get(:yaml).load_security_group
-
         new_sgs.each do |new_sg|
           if already_sg = Kakine::Builder.already_setup(current_sgs, new_sg)
             Kakine::Builder.convergence_security_group(new_sg, already_sg) if new_sg != already_sg

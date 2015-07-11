@@ -28,7 +28,7 @@ module Kakine
         end
 
         def security_groups_on_tenant(tenant_name)
-          Fog::Network[:openstack].security_groups.select{|sg| sg.tenant_id == tenant(tenant_name).id}
+          Fog::Network[:openstack].security_groups.select { |sg| sg.tenant_id == tenant(tenant_name).id }
         end
 
         def security_groups_hash
