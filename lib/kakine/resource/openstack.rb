@@ -24,14 +24,14 @@ module Kakine
           sg_hash = Hash.new { |h,k| h[k] = {} }
 
           security_groups_on_tenant(Kakine::Options.tenant_name).each do |sg|
-            sg_hash[sg.name]["rules"]       = format_security_group(sg)
+            sg_hash[sg.name]["rules"]       = format_security_group_rules(sg)
             sg_hash[sg.name]["id"]          = sg.id
             sg_hash[sg.name]["description"] = sg.description
           end
           sg_hash
         end
 
-        def format_security_group(security_group)
+        def format_security_group_rules(security_group)
           security_group.security_group_rules.map do |rule|
             rule_hash = {}
             rule_hash["id"]        = rule.id
