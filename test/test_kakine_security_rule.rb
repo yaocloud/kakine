@@ -2,6 +2,13 @@ require 'minitest_helper'
 require 'support/config_helper'
 
 class TestKakineSecurityRule < Minitest::Test
+  def setup
+    Kakine::Resource.get(:openstack).stubs(:security_groups_hash).returns(YAML.load_file('test/fixtures/cli/actual.yaml'))
+    Kakine::Resource.get(:openstack).stubs(:tenant).returns(Dummy.new)
+    Kakine::Resource.get(:openstack).stubs(:security_group).returns(Dummy.new)
+    Kakine::Resource.get(:openstack).stubs(:security_group_rule).returns(Dummy.new)
+    Kakine::SecurityGroup.stubs(:tenant_name).returns(Dummy.new)
+  end
   def test_accessor
     rule = Kakine::SecurityRule.new(Kakine::Config::Helper.full_rule_port_remote_ip, "test_rule", "test_tenant") 
     assert_equal(rule.direction, "ingress") 
@@ -14,7 +21,7 @@ class TestKakineSecurityRule < Minitest::Test
     rule = Kakine::SecurityRule.new(Kakine::Config::Helper.full_rule_icmp_remote_group, "test_rule", "test_tenant") 
     assert_equal(rule.port_range_max, "8") 
     assert_equal(rule.port_range_min, "10") 
-    assert_equal(rule.remote_group, "test_group") 
+    assert_equal(rule.remote_group, "bob-b") 
   end
   
   def test_mathing_rule
@@ -24,6 +31,10 @@ class TestKakineSecurityRule < Minitest::Test
 
     assert(rule_a == rule_b)
     refute(rule_a == rule_c)
+  end
 
+  def test_security_group_id
+    rule = Kakine::SecurityRule.new(Kakine::Config::Helper.full_rule_icmp_remote_group, "test_rule", "test_tenant") 
+    assert_equal(rule.remote_group_id, "awesome-id")
   end
 end

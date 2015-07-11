@@ -42,7 +42,7 @@ module Kakine
             "ethertype"     => "IPv4",
             "type"          =>  "10",
             "code"          =>  "8",
-            "remote_group"  => "test_group"
+            "remote_group"  => "bob-b"
           }
         end
 
