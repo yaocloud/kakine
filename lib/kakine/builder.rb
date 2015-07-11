@@ -4,7 +4,7 @@ module Kakine
       def create_security_group(sg)
         attributes = { name: sg.name, description: sg.description, tenant_id: sg.tenant_id }
         security_group_id = Kakine::Adapter.instance.create_security_group(attributes)
-        delete_default_security_rule(sg.tenant_name, sg.name) unless Kakine::Options.dryrun?
+        delete_default_security_rule(sg.tenant_name, sg.name)
         security_group_id
       end
 
@@ -27,56 +27,53 @@ module Kakine
           sg.name == sg_name
         end
 
-        target_sg.rules.each do |rule|
+        target_sg.rules.map do |rule|
           delete_security_rule(tenant_name, sg_name, rule)
         end if target_sg
       end
 
       def create_new_security_group(new_sg)
         create_security_group(new_sg)
-        new_sg.rules.each do |rule|
+        new_sg.rules.map do |rule|
           create_security_rule(new_sg.tenant_name, new_sg.name, rule)
         end if new_sg.has_rules?
       end
 
-      def clean_up_security_group(current_sgs, new_sgs)
-        current_sgs.each do |current_sg|
+      def clean_up_security_group(new_sgs, current_sgs)
+        current_sgs.map do |current_sg|
           delete_security_group(current_sg) if new_sgs.none? { |new_sg| current_sg.name == new_sg.name }
         end
       end
 
-      def convergence_security_group(new_sg, old_sg)
-        if new_sg.description != old_sg.description
-          recreate_security_group(new_sg, old_sg)
+      def convergence_security_group(new_sg, current_sg)
+        if new_sg.description != current_sg.description
+          recreate_security_group(new_sg, current_sg)
         else
-          clean_up_security_rule(new_sg, old_sg)
-          create_new_rule(new_sg, old_sg)
+          clean_up_security_rule(new_sg, current_sg)
+          create_new_rule(new_sg, current_sg)
         end
       end
 
-      def recreate_security_group(new_sg, old_sg)
-        delete_security_group(old_sg)
-        create_security_group(new_sg)
-        new_sg.rules.each do |rule|
-          create_security_rule(new_sg.tenant_name, new_sg.name, rule)
-        end if new_sg.has_rules?
+      def recreate_security_group(new_sg, current_sg)
+        delete_security_group(current_sg)
+        create_new_security_group(new_sg)
       end
       
-      def create_new_rule(new_sg, old_sg)
+      def create_new_rule(new_sg, current_sg)
         new_sg.rules.each do |rule|
-          unless old_sg.find_by_rule(rule)
+          unless current_sg.find_by_rule(rule)
             create_security_rule(new_sg.tenant_name, new_sg.name, rule)
           end
         end
       end
 
-      def clean_up_security_rule(new_sg, old_sg)
-        old_sg.rules.each do |rule|
+      def clean_up_security_rule(new_sg, current_sg)
+        current_sg.rules.map do |rule|
           delete_security_rule(new_sg.tenant_name, new_sg.name, rule) unless new_sg.find_by_rule(rule)
         end
       end
       
-      def already_setup(current_sgs, new_sg)
+      def already_setup(new_sg, current_sgs)
         current_sgs.find { |current_sg| current_sg.name == new_sg.name }
       end
 
