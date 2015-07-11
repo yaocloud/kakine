@@ -79,7 +79,7 @@ module Kakine
 
       def show_security_groups
         sgs = Kakine::Resource.get(:openstack).security_groups_hash
-        puts delete_id_column(sgs).to_yaml
+        delete_id_column(sgs).to_yaml
       end
 
       def delete_id_column(sgs)

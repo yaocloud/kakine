@@ -12,21 +12,24 @@ module Kakine
         end
 
         puts "Create Rule: #{security_group_id} - #{security_rule.direction}: #{attributes}"
+        "Create Rule: #{security_group_id}"
       end
 
       def delete_rule(security_group_rule_id)
         puts "Delete Rule: #{security_group_rule_id}"
+        "Delete Rule: #{security_group_rule_id}"
       end
 
       def create_security_group(attributes)
         data = {}
         attributes.each{|k,v| data[k.to_sym] = v}
         puts "Create Security Group: #{data}"
-        "[Mock] #{attributes[:name]} ID"
+        "Create Security Group: #{attributes[:name]}"
       end
 
       def delete_security_group(security_group_id)
         puts "Delete Security Group: #{security_group_id}"
+        "Delete Security Group: #{security_group_id}"
       end
 
       def security_group(tenant_name, sg_name)
@@ -34,7 +37,7 @@ module Kakine
       end
 
       def id(sg_name)
-        "[Mock] #{sg_name} ID"
+        "#{sg_name}"
       end
     end
   end
