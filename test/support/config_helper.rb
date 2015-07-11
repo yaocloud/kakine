@@ -7,7 +7,7 @@ module Kakine
             "test_rule",
             {
               "rules" => [
-                full_rule
+                full_rule_port_remote_ip
               ],
               "description" => "test_description"
             }
@@ -25,7 +25,7 @@ module Kakine
           ]
         end
 
-        def full_rule
+        def full_rule_port_remote_ip
           {
             "direction" => "ingress",
             "protocol"  => "tcp",
