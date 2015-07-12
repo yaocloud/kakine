@@ -7,6 +7,7 @@ class TestKakineBuilder < Minitest::Test
     Kakine::Options.stubs(:dryrun?).returns(true)
     Kakine::Options.stubs(:tenant_name).returns("test_tenant")
     Kakine::Resource.get(:openstack).stubs(:tenant).returns(Dummy.new)
+    Kakine::Resource.get(:openstack).stubs(:security_group).returns(nil)
   end
 
   def test_create_security_group
