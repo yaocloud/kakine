@@ -1,5 +1,3 @@
-require 'fog'
-
 module Kakine
   class Resource
     class << self

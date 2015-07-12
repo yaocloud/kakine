@@ -1,6 +1,3 @@
-require 'json'
-require 'fog'
-
 module Kakine
   class Adapter
     class Real
