@@ -24,7 +24,7 @@ module Kakine
     end
 
     def same_group?(target_sg)
-      instance_variables.reject{ |k| k == :@rules }.all? do |val|
+      %i(@name @tenant_name @description).all? do |val|
         instance_variable_get(val) == target_sg.instance_variable_get(val)
       end
     end
