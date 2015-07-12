@@ -14,7 +14,7 @@ module Kakine
     end
 
     def ==(target_sg)
-      instance_variables.select{|k| k != :@id }.all? do |val|
+      %i(@direction @protocol @port_range_max @port_range_min @remote_ip @remote_group @ethertype).all? do |val|
         self.instance_variable_get(val) == target_sg.instance_variable_get(val)
       end
     end
