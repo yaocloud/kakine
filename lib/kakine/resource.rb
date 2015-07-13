@@ -20,7 +20,7 @@ module Kakine
       end
 
       def tenant(tenant_name)
-        @tenant ||= Fog::Identity[:openstack].tenants.detect{|t| t.name == tenant_name}
+        @tenant ||= Fog::Compute[:openstack].tenants.detect{|t| t.name == tenant_name}
       end
 
       def security_group(tenant_name, security_group_name)
