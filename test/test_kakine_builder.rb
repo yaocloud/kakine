@@ -70,7 +70,7 @@ class TestKakineBuilder < Minitest::Test
     assert_equal(Kakine::Builder.clean_up_security_rule(new_sg, current_sg), ["Delete Rule: test_id_1"]) 
   end
 
-  def test_show_security_groups
-    assert_equal(Kakine::Builder.show_security_groups, "---\n- - test_full_group\n  - rules:\n    - direction: ingress\n      protocol: tcp\n      ethertype: IPv4\n      port: '443'\n      remote_ip: 10.0.0.0/24\n    description: test_description\n")
+  def test_security_groups
+    assert_equal(Kakine::Builder.security_groups, "---\n- - test_full_group\n  - rules:\n    - direction: ingress\n      protocol: tcp\n      ethertype: IPv4\n      port: '443'\n      remote_ip: 10.0.0.0/24\n    description: test_description\n")
   end
 end

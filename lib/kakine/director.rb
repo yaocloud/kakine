@@ -2,7 +2,7 @@ module Kakine
   class Director
     class << self
       def show_current_security_group
-        puts Kakine::Builder.show_security_groups
+        puts Kakine::Builder.security_groups
       end
 
       def apply

@@ -27,16 +27,12 @@ module Kakine
 
       def convergence_security_group(new_sg, current_sg)
         if new_sg.description != current_sg.description
-          recreate_security_group(new_sg, current_sg)
+          delete_security_group(current_sg)
+          create_new_security_group(new_sg)
         else
           clean_up_security_rule(new_sg, current_sg)
           create_new_rule(new_sg, current_sg)
         end
-      end
-
-      def recreate_security_group(new_sg, current_sg)
-        delete_security_group(current_sg)
-        create_new_security_group(new_sg)
       end
       
       def already_setup_security_group(new_sg, current_sgs)
@@ -77,7 +73,7 @@ module Kakine
         end
       end
 
-      def show_security_groups
+      def security_groups
         sgs = Kakine::Resource.get(:openstack).security_groups_hash
         delete_id_column(sgs).to_yaml
       end
