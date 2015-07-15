@@ -12,7 +12,7 @@ module Kakine
         Kakine::Adapter.instance.delete_security_group(sg.id)
       end
 
-      def create_new_security_group(new_sg)
+      def first_create_security_group(new_sg)
         create_security_group(new_sg)
         new_sg.rules.map do |rule|
           create_security_rule(new_sg.tenant_name, new_sg.name, rule)
@@ -28,10 +28,10 @@ module Kakine
       def convergence_security_group(new_sg, current_sg)
         if new_sg.description != current_sg.description
           delete_security_group(current_sg)
-          create_new_security_group(new_sg)
+          first_create_security_group(new_sg)
         else
           clean_up_security_rule(new_sg, current_sg)
-          create_new_rule(new_sg, current_sg)
+          first_create_rule(new_sg, current_sg)
         end
       end
       
@@ -59,7 +59,7 @@ module Kakine
         end if target_sg
       end
       
-      def create_new_rule(new_sg, current_sg)
+      def first_create_rule(new_sg, current_sg)
         new_sg.rules.map do |rule|
           unless current_sg.find_by_rule(rule)
             create_security_rule(new_sg.tenant_name, new_sg.name, rule)

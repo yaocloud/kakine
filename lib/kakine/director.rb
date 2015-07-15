@@ -12,7 +12,7 @@ module Kakine
           if already_sg = Kakine::Builder.already_setup_security_group(new_sg, current_sgs)
             Kakine::Builder.convergence_security_group(new_sg, already_sg) if new_sg != already_sg
           else
-            Kakine::Builder.create_new_security_group(new_sg)
+            Kakine::Builder.first_create_security_group(new_sg)
           end
         end
 
