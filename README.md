@@ -53,6 +53,7 @@ default:
   openstack_username: "admin"
   openstack_tenant: "admin"
   openstack_api_key: "admin-no-password"
+  openstack_identity_endpoint: "http://your-openstack-endpoint:5000/v2.0"
 ```
 
 run following command.
