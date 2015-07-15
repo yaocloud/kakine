@@ -2,7 +2,7 @@ module Kakine
   class Adapter
     module Base
       def tenants
-        Fog::Identity[:openstack].tenants
+        Fog::Compute[:openstack].tenants
       end
 
       def security_groups
