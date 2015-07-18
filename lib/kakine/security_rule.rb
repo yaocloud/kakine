@@ -31,11 +31,15 @@ module Kakine
     end
 
     def icmp?(rule)
-      [rule['type'] ,rule['code']] if rule.has_key?('type') && rule.has_key?('code')
+      if rule.has_key?('type') && rule.has_key?('code')
+        [rule['type'] ,rule['code']]
+      end
     end
 
     def range?(rule)
-      [rule['port_range_min'] ,rule['port_range_max']] if rule.has_key?('port_range_max') && rule.has_key?('port_range_min')
+      if rule.has_key?('port_range_max') && rule.has_key?('port_range_min')
+        [rule['port_range_min'] ,rule['port_range_max']]
+      end
     end
 
     def has_security_group?
