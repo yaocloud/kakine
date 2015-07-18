@@ -5,7 +5,7 @@ module Kakine
     include Singleton
     class << self
       def instance
-        @@adapter ||= if Kakine::Options.dryrun?
+        @@adapter ||= if Kakine::Option.dryrun?
           Kakine::Adapter::Mock.new
         else
           Kakine::Adapter::Real.new

@@ -41,7 +41,7 @@ module Kakine
       
       def create_security_rule(tenant_name, sg_name, rule)
         sg = Kakine::Resource.get(:openstack).security_group(tenant_name, sg_name)
-        security_group_id =  Kakine::Options.dryrun? && sg.nil? ? Kakine::Adapter.instance.id(sg_name) : sg.id
+        security_group_id =  Kakine::Option.dryrun? && sg.nil? ? Kakine::Adapter.instance.id(sg_name) : sg.id
         Kakine::Adapter.instance.create_rule(security_group_id, rule.direction, rule)
       end
 

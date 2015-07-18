@@ -5,7 +5,7 @@ require 'fog'
 require "kakine/version"
 require 'kakine/cli'
 require 'kakine/builder'
-require 'kakine/options'
+require 'kakine/option'
 require 'kakine/director'
 require 'kakine/adapter'
 require 'kakine/adapter/base'

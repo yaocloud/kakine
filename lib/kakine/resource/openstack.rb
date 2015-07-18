@@ -4,7 +4,7 @@ module Kakine
       class << self
         def load_security_group
           security_groups_hash.map do |sg|
-            Kakine::SecurityGroup.new(Kakine::Options.tenant_name, sg)
+            Kakine::SecurityGroup.new(Kakine::Option.tenant_name, sg)
           end
         end
 
@@ -23,7 +23,7 @@ module Kakine
         def security_groups_hash
           sg_hash = Hash.new { |h,k| h[k] = {} }
 
-          security_groups_on_tenant(Kakine::Options.tenant_name).each do |sg|
+          security_groups_on_tenant(Kakine::Option.tenant_name).each do |sg|
             sg_hash[sg.name]["rules"]       = format_security_group_rules(sg)
             sg_hash[sg.name]["id"]          = sg.id
             sg_hash[sg.name]["description"] = sg.description

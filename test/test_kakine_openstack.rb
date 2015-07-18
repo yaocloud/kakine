@@ -4,8 +4,8 @@ class TestKakineOpenStack < Minitest::Test
   def setup
     ::Fog::Network::OpenStack::SecurityGroup.any_instance.stubs(:security_group_rules).returns([Kakine::OpenStack::Helper.full_rule_port_remote_ip])
     Kakine::Resource.get(:openstack).stubs(:security_groups_on_tenant).returns([Kakine::OpenStack::Helper.security_group])
-    Kakine::Options.stubs(:dryrun?).returns(true)
-    Kakine::Options.stubs(:tenant_name).returns("test_tenant")
+    Kakine::Option.stubs(:dryrun?).returns(true)
+    Kakine::Option.stubs(:tenant_name).returns("test_tenant")
     Kakine::Resource.get(:openstack).stubs(:tenant).returns(Dummy.new)
   end
 

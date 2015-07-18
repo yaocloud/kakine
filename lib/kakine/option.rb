@@ -1,6 +1,6 @@
 require 'singleton'
 module Kakine
-  class Options
+  class Option
     include Singleton
     class << self
       def set_options(options)

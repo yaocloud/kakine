@@ -3,9 +3,9 @@ module Kakine
     class Yaml
       class << self
         def load_security_group
-          load_yaml = yaml(Kakine::Options.yaml_name)
+          load_yaml = yaml(Kakine::Option.yaml_name)
           validate_file_input(load_yaml)
-          load_yaml.map { |sg| Kakine::SecurityGroup.new(Kakine::Options.tenant_name, sg) }
+          load_yaml.map { |sg| Kakine::SecurityGroup.new(Kakine::Option.tenant_name, sg) }
         end
 
         def yaml(filename)

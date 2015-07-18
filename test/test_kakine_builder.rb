@@ -4,8 +4,8 @@ require 'support/config_helper'
 class TestKakineBuilder < Minitest::Test
   def setup
     Kakine::Resource.get(:openstack).stubs(:security_groups_hash).returns([Kakine::Config::Helper.full_rule_security_group])
-    Kakine::Options.stubs(:dryrun?).returns(true)
-    Kakine::Options.stubs(:tenant_name).returns("test_tenant")
+    Kakine::Option.stubs(:dryrun?).returns(true)
+    Kakine::Option.stubs(:tenant_name).returns("test_tenant")
     Kakine::Resource.get(:openstack).stubs(:tenant).returns(Dummy.new)
     Kakine::Resource.get(:openstack).stubs(:security_group).returns(nil)
   end
