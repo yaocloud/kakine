@@ -24,11 +24,11 @@ module Kakine
           sg_name = sg[0]
           case
           when sg[1].nil?
-            raise(Kakine::Errors::Configure, "#{sg_name}:rules and description is required")
+            raise(Kakine::ConfigureError, "#{sg_name}:rules and description is required")
           when !sg[1].key?("rules")
-            raise(Kakine::Errors::Configure, "#{sg_name}:rules is required")
+            raise(Kakine::ConfigureError, "#{sg_name}:rules is required")
           when !sg[1].key?("description")
-            raise(Kakine::Errors::Configure, "#{sg_name}:description is required")
+            raise(Kakine::ConfigureError, "#{sg_name}:description is required")
           end
         end
 
@@ -37,15 +37,15 @@ module Kakine
           sg[1]["rules"].each do |rule|
             case
             when !has_port?(rule)
-              raise(Kakine::Errors::Configure,  "#{sg_name}:rules port(icmp code) is required")
+              raise(Kakine::ConfigureError,  "#{sg_name}:rules port(icmp code) is required")
             when !has_remote?(rule)
-              raise(Kakine::Errors::Configure, "#{sg_name}:rules remote_ip or remote_group required")
+              raise(Kakine::ConfigureError, "#{sg_name}:rules remote_ip or remote_group required")
             when !has_direction?(rule)
-              raise(Kakine::Errors::Configure, "#{sg_name}:rules direction is required")
+              raise(Kakine::ConfigureError, "#{sg_name}:rules direction is required")
             when !has_protocol?(rule)
-              raise(Kakine::Errors::Configure, "#{sg_name}:rules protocol is required")
+              raise(Kakine::ConfigureError, "#{sg_name}:rules protocol is required")
             when !has_ethertype?(rule)
-              raise(Kakine::Errors::Configure, "#{sg_name}:rules ethertype is required")
+              raise(Kakine::ConfigureError, "#{sg_name}:rules ethertype is required")
             end
           end unless sg[1]["rules"].nil?
         end

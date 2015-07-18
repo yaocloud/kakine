@@ -18,7 +18,7 @@ module Kakine
 
         Kakine::Builder.clean_up_security_group(new_sgs, current_sgs)
 
-        rescue Kakine::Errors => e
+        rescue Kakine::Error => e
           puts "[error] #{e}"
       end
     end
