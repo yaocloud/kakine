@@ -10,7 +10,9 @@ bob-b:
     port: 80
     remote_ip: 0.0.0.0/0
     ethertype: IPv4
+    id: "test_rule_id"
   description: bob-b
+  id: "test_group_id"
 bob-c:
   rules:
   - direction: ingress
