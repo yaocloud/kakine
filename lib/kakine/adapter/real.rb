@@ -53,7 +53,7 @@ module Kakine
           attributes[k.to_sym] = security_rule.send(k)
         end
 
-        if security_rule.has_security_group?
+        if security_rule.remote_group
           attributes[:remote_group_id] = security_rule.remote_group_id
         else  
           attributes[:remote_ip_prefix] = attributes.delete(:remote_ip) if attributes[:remote_ip]
