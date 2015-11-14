@@ -1,6 +1,6 @@
 # Kakine
 
-[![Build Status](https://secure.travis-ci.org/hsbt/kakine.png)](https://travis-ci.org/hsbt/kakine)
+[![Build Status](https://travis-ci.org/yaocloud/kakine.svg?branch=master)](https://travis-ci.org/yaocloud/kakine)
 
 Kakine(垣根) is configuration management tool of Security Group on OpenStack.
 
