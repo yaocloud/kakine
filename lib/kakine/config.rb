@@ -8,14 +8,6 @@ module Kakine
       setup_yao
     end
 
-    def self.username
-      @@username
-    end
-
-    def self.management_url
-      @@management_url
-    end
-
     private
 
     def self.load_config
