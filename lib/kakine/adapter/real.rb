@@ -5,7 +5,7 @@ module Kakine
       def create_rule(security_group_id, direction, security_rule)
         begin
           security_rule = symbolized_rule(security_rule)
-          Yao::SecurityGroupRule.create(security_rule.merge({'security_group_id': security_group_id, 'direction': direction}))
+          Yao::SecurityGroupRule.create(security_rule.merge({'security_group_id' => security_group_id, 'direction' => direction}))
         rescue Excon::Errors::Conflict, Excon::Errors::BadRequest => e
           error_message(e.response[:body])
         rescue Kakine::SecurityRuleError => e
