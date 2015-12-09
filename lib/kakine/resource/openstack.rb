@@ -58,7 +58,7 @@ module Kakine
           case
           when rule['remote_group_id']
             response = Kakine::Adapter.instance.get_security_group(rule['remote_group_id'])
-            { "remote_group" => response.data[:body]["security_group"]["name"] }
+            { "remote_group" => response.name }
           else
             { "remote_ip" => rule['remote_ip_prefix'] }
           end

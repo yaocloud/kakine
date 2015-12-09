@@ -1,7 +1,6 @@
 require 'yaml'
 require 'thor'
 require 'json'
-require 'fog'
 require 'yao'
 require "kakine/version"
 require 'kakine/config'

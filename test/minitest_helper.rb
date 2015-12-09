@@ -9,8 +9,6 @@ require 'minitest/autorun'
 require 'mocha/mini_test'
 require 'yao/resources/security_group'
 require 'yao/resources/security_group_rule'
-require 'fog/openstack/models/network/security_group'
-require 'fog/openstack/models/network/security_group_rule'
 
 class Dummy
   def id

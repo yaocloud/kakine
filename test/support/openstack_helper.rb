@@ -8,7 +8,6 @@ module Kakine
             "name" => "test_group_name_1",
             "description"=>"test_description_1"
           }
-          # ::Fog::Network::OpenStack::SecurityGroup.new(sg_param)
           ::Yao::SecurityGroup.new(sg_param)
         end
 
@@ -25,7 +24,6 @@ module Kakine
             "remote_group_id"   => nil,
             "tenant_id"         => "test_tenant"
           }
-          # ::Fog::Network::OpenStack::SecurityGroupRule.new(rule_param)
           ::Yao::SecurityGroupRule.new(rule_param)
         end
 
@@ -42,7 +40,6 @@ module Kakine
             "remote_group_id"   => nil,
             "tenant_id"         => "test_tenant"
           }
-          # ::Fog::Network::OpenStack::SecurityGroupRule.new(rule_param)
           ::Yao::SecurityGroupRule.new(rule_param)
         end
 
@@ -59,7 +56,6 @@ module Kakine
             "remote_group_id"   => nil,
             "tenant_id"         => "test_tenant"
           }
-          # ::Fog::Network::OpenStack::SecurityGroupRule.new(rule_param)
           ::Yao::SecurityGroupRule.new(rule_param)
         end
       end

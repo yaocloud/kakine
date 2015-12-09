@@ -4,8 +4,8 @@ module Kakine
       include Kakine::Adapter::Base
       def create_rule(security_group_id, direction, security_rule)
         begin
-          Fog::Network[:openstack].create_security_group_rule(security_group_id, direction, symbolized_rule(security_rule))
-          # Yao::SecurityGroupRule.create()
+          security_rule = security_rule.merge({'security_group_id': security_group_id, 'direction': direction})
+          Yao::SecurityGroupRule.create(symbolized_rule(security_rule))
         rescue Excon::Errors::Conflict, Excon::Errors::BadRequest => e
           error_message(e.response[:body])
         rescue Kakine::SecurityRuleError => e
@@ -14,17 +14,13 @@ module Kakine
       end
 
       def delete_rule(security_group_rule_id)
-        Fog::Network[:openstack].delete_security_group_rule(security_group_rule_id)
-        # Yao::SecurityGroupRule.destroy(security_group_rule_id)
+        Yao::SecurityGroupRule.destroy(security_group_rule_id)
       end
 
       def create_security_group(attributes)
         begin
-          response = Fog::Network[:openstack].create_security_group(symbolized_group(attributes))
-          response.data[:body]["security_group"]["id"]
-
-          # security_group = Yao::SecurityGroup.create(symbolized_group(attributes))
-          # {"id" => security_group.id}
+          security_group = Yao::SecurityGroup.create(symbolized_group(attributes))
+          {"id" => security_group.id}
         rescue Excon::Errors::Conflict, Excon::Errors::BadRequest => e
           error_message(e.response[:body])
         end
@@ -32,7 +28,6 @@ module Kakine
 
       def delete_security_group(security_group_id)
         begin
-          # Fog::Network[:openstack].delete_security_group(security_group_id)
           Yao::SecurityGroup.destroy(security_group_id)
         rescue Excon::Errors::Conflict, Excon::Errors::BadRequest => e
           error_message(e.response[:body])
