@@ -23,5 +23,3 @@ module Kakine
   class ConfigureError < Error; end
   class SecurityRuleError < Error; end
 end
-
-Kakine::Config.setup unless ENV['RACK_ENV'] == 'test'

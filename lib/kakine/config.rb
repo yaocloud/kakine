@@ -24,7 +24,6 @@ module Kakine
       @@tenant         = config['tenant']
       @@username       = config['username']
       @@password       = config['password']
-      @@management_url = config['management_url']
       true
     end
 
