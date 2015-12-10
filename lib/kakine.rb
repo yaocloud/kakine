@@ -1,8 +1,9 @@
 require 'yaml'
 require 'thor'
 require 'json'
-require 'fog'
+require 'yao'
 require "kakine/version"
+require 'kakine/config'
 require 'kakine/cli'
 require 'kakine/builder'
 require 'kakine/option'
@@ -22,3 +23,5 @@ module Kakine
   class ConfigureError < Error; end
   class SecurityRuleError < Error; end
 end
+
+Kakine::Config.setup unless ENV['RACK_ENV'] == 'test'

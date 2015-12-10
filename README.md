@@ -44,16 +44,14 @@ rails:
       remote_ip: 0.0.0.0/0
 ```
 
-You need to put fog configuration to home directory.
+You need to put a configuration file to home directory.
 
 ```sh
-% cat ~/.fog
-default:
-  openstack_auth_url: "http://your-openstack-endpoint/v2.0/tokens"
-  openstack_username: "admin"
-  openstack_tenant: "admin"
-  openstack_api_key: "admin-no-password"
-  openstack_identity_endpoint: "http://your-openstack-endpoint:5000/v2.0"
+% cat ~/.kakine
+auth_url: "http://your-openstack-endpoint/v2.0"
+username: "admin"
+tenant: "admin"
+password: "admin"
 ```
 
 run following command.

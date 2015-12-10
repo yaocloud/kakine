@@ -32,12 +32,12 @@ module Kakine
         end
 
         def format_security_group_rules(security_group)
-          security_group.security_group_rules.map do |rule|
+          security_group.rules.map do |rule|
             rule_hash = {}
-            rule_hash["id"]        = rule.id
-            rule_hash["direction"] = rule.direction
-            rule_hash["protocol"]  = rule.protocol
-            rule_hash["ethertype"] = rule.ethertype
+            rule_hash["id"]        = rule['id']
+            rule_hash["direction"] = rule['direction']
+            rule_hash["protocol"]  = rule['protocol']
+            rule_hash["ethertype"] = rule['ethertype']
             rule_hash.merge!(port_hash(rule))
             rule_hash.merge!(remote_hash(rule))
           end
@@ -45,22 +45,22 @@ module Kakine
 
         def port_hash(rule)
           case
-          when rule.protocol == "icmp"
-            { "type" => rule.port_range_min, "code" => rule.port_range_max }
-          when rule.port_range_max == rule.port_range_min
-            { "port" => rule.port_range_max }
+          when rule['protocol'] == "icmp"
+            { "type" => rule['port_range_min'], "code" => rule['port_range_max'] }
+          when rule['port_range_max'] == rule['port_range_min']
+            { "port" => rule['port_range_max'] }
           else
-            { "port_range_min" => rule.port_range_min, "port_range_max" => rule.port_range_max }
+            { "port_range_min" => rule['port_range_min'], "port_range_max" => rule['port_range_max'] }
           end
         end
 
         def remote_hash(rule)
           case
-          when rule.remote_group_id
-            response = Kakine::Adapter.instance.get_security_group(rule.remote_group_id)
-            { "remote_group" => response.data[:body]["security_group"]["name"] }
+          when rule['remote_group_id']
+            response = Kakine::Adapter.instance.get_security_group(rule['remote_group_id'])
+            { "remote_group" => response.name }
           else
-            { "remote_ip" => rule.remote_ip_prefix }
+            { "remote_ip" => rule['remote_ip_prefix'] }
           end
         end
       end
