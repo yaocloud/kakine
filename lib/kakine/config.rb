@@ -3,10 +3,9 @@ require 'yaml'
 
 module Kakine
   class Config
-    @@auth_url       = nil
-    @@tenant_name    = nil
-    @@username       = nil
-    @@password       = nil
+    OS_PARAMS = %w[auth_url tenant_name username password]
+
+    @@config = {}
 
     def self.setup
       load_config
@@ -18,39 +17,38 @@ module Kakine
     private
 
     def self.load_config
-      config_file = File.join(Dir.home, '.kakine')
-      return false unless File.exists?(config_file)
+      config =
+        begin
+          YAML.load_file(File.join(Dir.home, '.kakine'))
+        ensure Errno::ENOENT
+          return
+        end
 
-      config = YAML.load_file(config_file)
-
-      @@auth_url       = config['auth_url']
-      @@tenant_name    = config['tenant_name'] || config['tenant']  # for compatibility
-      @@username       = config['username']
-      @@password       = config['password']
-      true
+      config['tenant_name'] ||= config.delete('tenant')  # for compatibility
+      @@config.merge!(config)
     end
 
     def self.load_env
-      @@auth_url       = ENV['OS_AUTH_URL'] if ENV['OS_AUTH_URL']
-      @@tenant_name    = ENV['OS_TENANT_NAME'] if ENV['OS_TENANT_NAME']
-      @@username       = ENV['OS_USERNAME'] if ENV['OS_USERNAME']
-      @@password       = ENV['OS_PASSWORD'] if ENV['OS_PASSWORD']
+      OS_PARAMS.each do |param|
+        env = "OS_#{param.upcase}"
+        @@config[param] = ENV[env] if ENV[env]
+      end
     end
 
     def self.validate_config
-      %w[auth_url tenant_name username password].each do |conf_item|
-        unless class_variable_get("@@#{conf_item}")
-          raise "Configuration '#{conf_item}' is missing. Check your ~/.kakine or export OS_#{conf_item.upcase}"
+      OS_PARAMS.each do |param|
+        unless @@config[param]
+          raise "Configuration '#{param}' is missing. Check your ~/.kakine or export OS_#{param.upcase}."
         end
       end
     end
 
     def self.setup_yao
       Yao.configure do
-        auth_url    @@auth_url
-        tenant_name @@tenant_name
-        username    @@username
-        password    @@password
+        auth_url    @@config['auth_url']
+        tenant_name @@config['tenant_name']
+        username    @@config['username']
+        password    @@config['password']
       end
     end
   end
