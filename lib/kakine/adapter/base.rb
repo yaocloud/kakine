@@ -1,5 +1,5 @@
 module Kakine
-  class Adapter
+  module Adapter
     module Base
       def tenants
         Yao::Tenant.list

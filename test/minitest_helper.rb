@@ -1,5 +1,4 @@
-require "bundler"
-Bundler.require
+require "bundler/setup"
 
 ENV['RACK_ENV'] = 'test'
 

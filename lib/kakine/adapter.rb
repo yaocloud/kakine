@@ -1,15 +1,13 @@
-require 'singleton'
 module Kakine
-  class Adapter
-    @@adapter = nil
-    include Singleton
+  module Adapter
     class << self
       def instance
-        @@adapter ||= if Kakine::Option.dryrun?
-          Kakine::Adapter::Mock.new
-        else
-          Kakine::Adapter::Real.new
-        end
+        @@adapter ||=
+          if Kakine::Option.dryrun?
+            Kakine::Adapter::Mock.new
+          else
+            Kakine::Adapter::Real.new
+          end
       end
     end
   end
