@@ -1,5 +1,5 @@
 module Kakine
-  class Adapter
+  module Adapter
     class Mock
       include Kakine::Adapter::Base
       def create_rule(security_group_id, direction, security_rule)
