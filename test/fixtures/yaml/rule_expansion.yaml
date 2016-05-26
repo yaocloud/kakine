@@ -1,0 +1,51 @@
+sg_nil:
+  rules: []
+  description: no rules
+
+sg_port:
+  rules:
+    - direction: ingress
+      ethertype: IPv4
+      protocol: tcp
+      port: [22, 80, 443]
+      remote_ip: 192.168.10.0/24
+  description: expansion by port
+
+sg_remote_ip:
+  rules:
+    - direction: ingress
+      ethertype: IPv4
+      protocol: tcp
+      port: 22
+      remote_ip:
+        - 192.168.10.10
+        - 192.168.10.11
+  description: expansion by remote_ip
+
+sg_port_remote_ip:
+  rules:
+    - direction: ingress
+      ethertype: IPv4
+      protocol: tcp
+      port: [22, 80, 443]
+      remote_ip:
+        - 192.168.10.10
+        - 192.168.10.11
+  description: expansion by port and remote_ip
+
+
+_common_:
+  addrs:
+    - &net1 [192.168.10.20, 192.168.10.22]
+
+sg_remote_ip_nested:
+  rules:
+    - direction: ingress
+      ethertype: IPv4
+      protocol: tcp
+      port: 22
+      remote_ip:
+        - 192.168.10.10
+        - 192.168.10.11
+        - *net1
+  description: expansion by nested remote_ip

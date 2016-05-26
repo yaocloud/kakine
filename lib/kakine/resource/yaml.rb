@@ -3,13 +3,20 @@ module Kakine
     class Yaml
       class << self
         def load_security_group
-          load_yaml = yaml(Kakine::Option.yaml_name)
-          validate_file_input(load_yaml)
-          load_yaml.map { |sg| Kakine::SecurityGroup.new(Kakine::Option.tenant_name, sg) }
+          config = load_file(Kakine::Option.yaml_name)
+          config.map {|sg| Kakine::SecurityGroup.new(Kakine::Option.tenant_name, sg) }
+        end
+
+        def load_file(filename)
+          data = yaml(filename).reject {|k, _| k.start_with?('_') && k.end_with?('_') }
+          validate_file_input(data)
+          data.each do |name, params|
+            params['rules'] = perform_expansion(params['rules']) if params['rules']
+          end
         end
 
         def yaml(filename)
-          YAML.load_file(filename).to_hash.reject {|k, _| k.start_with?('_') && k.end_with?('_') }
+          YAML.load_file(filename).to_hash
         end
 
         def validate_file_input(load_sg)
@@ -70,6 +77,27 @@ module Kakine
 
         def has_ethertype?(rule)
           rule.key?("ethertype")
+        end
+
+        # [{key => [val0, val1], ...}] to [{key => val0, ...}, {key => val1, ...}]
+        def expand_rules(rules, key)
+          rules.flat_map do |rule|
+            if rule[key].respond_to?(:to_ary)
+              rule[key].to_ary.flatten.map do |val|
+                rule.dup.tap {|rule| rule[key] = val }
+              end
+            else
+              rule
+            end
+          end
+        end
+
+        def perform_expansion(rules)
+          %w(remote_ip port).each do |key|
+            rules = expand_rules(rules, key)
+          end
+
+          rules
         end
       end
     end

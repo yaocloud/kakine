@@ -46,6 +46,18 @@ rails:
       remote_ip: 0.0.0.0/0
 ```
 
+`port`s and `remote_ip`s may be specified as arrays, in which case the rule is expanded to set of rules with all the combinations of them.
+```yaml
+app:
+  rules:
+    - direction: ingress
+      protocol: tcp
+      port: [80, 443]
+      remote_ip:
+        - 192.0.2.0/24
+        - 198.51.100.0/24
+```
+
 
 Top-level keys whose name both starts and ends with underscores (eg. `_common_`, `_default_`) are considered **meta sections** and do not correspond to security groups.
 These sections are useful to define values that commonly appears throughout the file, used with YAML's anchors and references.
