@@ -20,7 +20,7 @@ module Kakine
       config =
         begin
           YAML.load_file(File.join(Dir.home, '.kakine'))
-        ensure Errno::ENOENT
+        rescue Errno::ENOENT
           return
         end
 
