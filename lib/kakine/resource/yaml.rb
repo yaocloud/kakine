@@ -9,7 +9,7 @@ module Kakine
         end
 
         def yaml(filename)
-          YAML.load_file(filename).to_hash
+          YAML.load_file(filename).to_hash.reject {|k, _| k.start_with?('_') && k.end_with?('_') }
         end
 
         def validate_file_input(load_sg)
