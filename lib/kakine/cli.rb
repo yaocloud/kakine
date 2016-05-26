@@ -1,5 +1,3 @@
-require 'kakine'
-
 module Kakine
   class CLI < Thor
 
