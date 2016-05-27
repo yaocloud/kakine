@@ -22,7 +22,9 @@ Or install it yourself as:
 
 ## Usage
 
-You can define Security Group configuration for OpenStack via YAML format. Like following syntax.
+### Syntax
+
+You can define Security Group configuration for OpenStack in YAML format as the following example.
 
 ```yaml
 app:
@@ -44,6 +46,30 @@ rails:
       remote_ip: 0.0.0.0/0
 ```
 
+
+Top-level keys whose name both starts and ends with underscores (eg. `_common_`, `_default_`) are considered **meta sections** and do not correspond to security groups.
+These sections are useful to define values that commonly appears throughout the file, used with YAML's anchors and references.
+
+```yaml
+_common_:
+  - &net1 192.0.2.0/24
+  - &net2 198.51.100.0/24
+
+restricted_web:
+  rules:
+  - direction: ingress
+    protocol: tcp
+    port: 80
+    remote_ip: *net1
+  - direction: ingress
+    protocol: tcp
+    port: 80
+    remote_ip: *net2
+  description: Restricted HTTP access
+```
+
+### Authentication configuration
+
 You need to put a configuration file to home directory.
 
 ```sh
@@ -53,6 +79,8 @@ username: "admin"
 tenant: "admin"
 password: "admin"
 ```
+
+### Commands
 
 run following command.
 
