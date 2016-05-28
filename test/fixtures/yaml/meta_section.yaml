@@ -1,0 +1,18 @@
+_common_:
+  addrs:
+    - &ip1 192.168.10.5
+    - &ip2 192.168.10.6
+
+web:
+  rules:
+    - direction: ingress
+      ethertype: IPv4
+      protocol: tcp
+      port: 80
+      remote_ip: &ip1
+    - direction: ingress
+      ethertype: IPv4
+      protocol: tcp
+      port: 80
+      remote_ip: &ip2
+  description: Allow access to web
