@@ -12,7 +12,7 @@ module Kakine
     end
 
     def tenant_id
-      Kakine::Resource.get(:openstack).tenant(@tenant_name).id
+      Yao.current_tenant_id
     end
 
     def ==(target_sg)

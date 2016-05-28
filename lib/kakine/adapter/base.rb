@@ -1,10 +1,6 @@
 module Kakine
   module Adapter
     module Base
-      def tenants
-        Yao::Tenant.list
-      end
-
       def security_groups
         Yao::SecurityGroup.list
       end
