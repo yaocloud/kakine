@@ -46,7 +46,7 @@ module Kakine
     def self.setup_yao
       Yao.configure do
         auth_url    @@config['auth_url']
-        tenant_name @@config['tenant_name']
+        tenant_name Kakine::Option.tenant_name
         username    @@config['username']
         password    @@config['password']
       end
