@@ -3,7 +3,7 @@ require 'yaml'
 
 module Kakine
   class Config
-    OS_PARAMS = %w[auth_url tenant_name username password]
+    OS_PARAMS = %w[auth_url username password]
 
     @@config = {}
 
@@ -24,7 +24,6 @@ module Kakine
           return
         end
 
-      config['tenant_name'] ||= config.delete('tenant')  # for compatibility
       @@config.merge!(config)
     end
 
@@ -46,7 +45,7 @@ module Kakine
     def self.setup_yao
       Yao.configure do
         auth_url    @@config['auth_url']
-        tenant_name @@config['tenant_name']
+        tenant_name Kakine::Option.tenant_name
         username    @@config['username']
         password    @@config['password']
       end

@@ -88,7 +88,6 @@ You need to put a configuration file to home directory.
 % cat ~/.kakine
 auth_url: "http://your-openstack-endpoint/v2.0"
 username: "admin"
-tenant: "admin"
 password: "admin"
 ```
 

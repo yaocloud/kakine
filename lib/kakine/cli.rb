@@ -4,7 +4,7 @@ module Kakine
     option :tenant, type: :string, aliases: '-t'
     desc 'show', 'show Security Groups specified tenant'
     def show
-      Kakine::Option.set_options(options)
+      setup(options)
       Kakine::Director.show_current_security_group
     end
 
@@ -13,8 +13,15 @@ module Kakine
     option :filename, type: :string, aliases: "-f"
     desc 'apply', "apply local configuration into OpenStack"
     def apply
-      Kakine::Option.set_options(options)
+      setup(options)
       Kakine::Director.apply
+    end
+
+    no_commands do
+      def setup(options)
+        Kakine::Option.set_options(options)
+        Kakine::Config.setup unless ENV['RACK_ENV'] == 'test'
+      end
     end
   end
 end

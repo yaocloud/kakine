@@ -8,16 +8,12 @@ module Kakine
           end
         end
 
-        def tenant(tenant_name)
-          @@tenant ||= Kakine::Adapter.instance.tenants.detect{|t| t.name == tenant_name}
-        end
-
         def security_group(tenant_name, security_group_name)
           security_groups_on_tenant(tenant_name).detect{|sg| sg.name == security_group_name}
         end
 
         def security_groups_on_tenant(tenant_name)
-          Kakine::Adapter.instance.security_groups.select { |sg| sg.tenant_id == tenant(tenant_name).id }
+          Kakine::Adapter.instance.security_groups.select { |sg| sg.tenant_id == Yao.current_tenant_id }
         end
 
         def security_groups_hash
