@@ -49,3 +49,12 @@ sg_remote_ip_nested:
         - 192.168.10.11
         - *net1
   description: expansion by nested remote_ip
+
+sg_protocol:
+  rules:
+  - direction: ingress
+    protocol: [tcp, udp]
+    ethertype: IPv4
+    port: 53
+    remote_ip: 0.0.0.0/0
+  description: expansion by protocol
