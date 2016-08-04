@@ -20,6 +20,8 @@ class TestKakineYaml < Minitest::Test
     assert_equal 6, yaml['sg_port_remote_ip']['rules'].count
 
     assert_equal 4, yaml['sg_remote_ip_nested']['rules'].count
+
+    assert_equal 2, yaml['sg_protocol']['rules'].count
   end
 
   def test_expand_rules

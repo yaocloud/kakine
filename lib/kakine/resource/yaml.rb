@@ -93,7 +93,7 @@ module Kakine
         end
 
         def perform_expansion(rules)
-          %w(remote_ip port).each do |key|
+          %w(remote_ip port protocol).each do |key|
             rules = expand_rules(rules, key)
           end
 
