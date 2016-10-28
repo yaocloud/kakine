@@ -6,8 +6,8 @@ module Kakine
         begin
           security_rule = symbolized_rule(security_rule)
           Yao::SecurityGroupRule.create(security_rule.merge({'security_group_id' => security_group_id, 'direction' => direction}))
-        rescue Excon::Errors::Conflict, Excon::Errors::BadRequest => e
-          error_message(e.response[:body])
+        rescue Yao::Conflict, Yao::BadRequest => e
+          error_message(e.message)
         rescue Kakine::SecurityRuleError => e
           puts e
         end
@@ -21,16 +21,16 @@ module Kakine
         begin
           security_group = Yao::SecurityGroup.create(symbolized_group(attributes))
           {"id" => security_group.id}
-        rescue Excon::Errors::Conflict, Excon::Errors::BadRequest => e
-          error_message(e.response[:body])
+        rescue Yao::Conflict, Yao::BadRequest => e
+          error_message(e.message)
         end
       end
 
       def delete_security_group(security_group_id)
         begin
           Yao::SecurityGroup.destroy(security_group_id)
-        rescue Excon::Errors::Conflict, Excon::Errors::BadRequest => e
-          error_message(e.response[:body])
+        rescue Yao::Conflict, Yao::BadRequest => e
+          error_message(e.message)
         end
       end
 
