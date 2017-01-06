@@ -59,6 +59,10 @@ module Kakine
         else
           attributes[:remote_ip_prefix] = attributes.delete(:remote_ip) if attributes[:remote_ip]
         end
+
+        # Unrecognized attribute
+        attributes.delete(:remote_ip)
+
         attributes
       end
     end
