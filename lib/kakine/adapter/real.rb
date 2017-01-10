@@ -50,15 +50,16 @@ module Kakine
 
       def symbolized_rule(security_rule)
         attributes = {}
-        %w(protocol port_range_max port_range_min remote_ip ethertype).each do |k|
+        %w(protocol port_range_max port_range_min ethertype).each do |k|
           attributes[k.to_sym] = security_rule.send(k)
         end
 
         if security_rule.remote_group
           attributes[:remote_group_id] = security_rule.remote_group_id
-        else
-          attributes[:remote_ip_prefix] = attributes.delete(:remote_ip) if attributes[:remote_ip]
+        elsif security_rule.remote_ip
+          attributes[:remote_ip_prefix] = security_rule.remote_ip
         end
+
         attributes
       end
     end
