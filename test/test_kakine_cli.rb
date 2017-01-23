@@ -87,4 +87,11 @@ class TestKakineCLI < Minitest::Test
     Kakine::CLI.new.invoke(:apply, [], {dryrun: true})
   end
 
+  def test_convert_terraform
+    Kakine::Resource.get(:yaml).stubs(:yaml).returns(YAML.load_file('test/fixtures/simple.yaml'))
+
+    tempfile = Tempfile.new('')
+    Kakine::CLI.new.invoke(:convert, [], {format: 'terraform', output: tempfile.path})
+    refute Pathname.new(tempfile.path).size.zero?
+  end
 end

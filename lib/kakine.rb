@@ -17,6 +17,8 @@ require 'kakine/resource/openstack'
 require 'kakine/resource/yaml'
 require 'kakine/security_group'
 require 'kakine/security_rule'
+require 'kakine/exporter'
+require 'kakine/exporter/terraform'
 
 module Kakine
   class Error < StandardError; end

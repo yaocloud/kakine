@@ -17,6 +17,18 @@ module Kakine
       Kakine::Director.apply
     end
 
+    option :tenant, type: :string, aliases: "-t"
+    option :filename, type: :string, aliases: "-f"
+    option :format, type: :string, aliases: '-F'
+    option :output, type: :string, aliases: '-o'
+    desc 'convert', 'convert Security Groups into other format'
+    def convert
+      format = options[:format] or fail '--format is required'
+      output = options[:output]
+      Kakine::Option.set_options(options)
+      Kakine::Director.convert(format, output)
+    end
+
     no_commands do
       def setup(options)
         Kakine::Option.set_options(options)

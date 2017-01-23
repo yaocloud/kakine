@@ -18,8 +18,20 @@ module Kakine
 
         Kakine::Builder.clean_up_security_group(new_sgs, current_sgs)
 
-        rescue Kakine::Error => e
-          puts "[error] #{e}"
+      rescue Kakine::Error => e
+        puts "[error] #{e}"
+      end
+
+      def convert(format, output = nil)
+        sgs = Kakine::Resource.get(:yaml).load_security_group
+
+        file = output ? open(output, 'w') : $stdout.dup
+        begin
+          exporter = Kakine::Exporter.get(format).new(file)
+          exporter.export(sgs)
+        ensure
+          file.close
+        end
       end
     end
   end
