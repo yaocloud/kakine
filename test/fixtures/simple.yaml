@@ -1,0 +1,8 @@
+www:
+  description: Allow HTTP/HTTPS
+  rules:
+  - direction: ingress
+    ethertype: IPv4
+    port: [80, 443]
+    protocol: tcp
+    remote_ip: 192.0.2.0/24
