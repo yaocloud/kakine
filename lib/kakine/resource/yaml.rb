@@ -11,7 +11,7 @@ module Kakine
           data = yaml(filename).reject {|k, _| k.start_with?('_') && k.end_with?('_') }
           validate_file_input(data)
           data.each do |name, params|
-            params['rules'] = perform_expansion(params['rules']) if params['rules']
+            params['rules'] = perform_desugar(perform_expansion(params['rules'])) if params['rules']
           end
         end
 
@@ -98,6 +98,20 @@ module Kakine
           end
 
           rules
+        end
+
+        def perform_desugar(rules)
+          rules.map do |rule|
+            if rule['port'].is_a?(String) && rule['port'] =~ /\A(?<min>\d+)-(?<max>\d+)\z/
+              rule.dup.tap do |rule|
+                rule.delete('port')
+                rule['port_range_min'] = $~[:min].to_i
+                rule['port_range_max'] = $~[:max].to_i
+              end
+            else
+              rule
+            end
+          end
         end
       end
     end
