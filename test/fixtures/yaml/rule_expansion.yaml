@@ -58,3 +58,12 @@ sg_protocol:
     port: 53
     remote_ip: 0.0.0.0/0
   description: expansion by protocol
+
+sg_port_range:
+  rules:
+    - direction: ingress
+      protocol: tcp
+      ethertype: IPv4
+      port: [20-21, 22]
+      remote_ip: 0.0.0.0/0
+  description: expansion by port with range notation

@@ -24,6 +24,15 @@ class TestKakineYaml < Minitest::Test
     assert_equal 2, yaml['sg_protocol']['rules'].count
   end
 
+  def test_rule_expansion
+    yaml = Kakine::Resource::Yaml.load_file('test/fixtures/yaml/rule_expansion.yaml')
+
+    assert_equal 2, yaml['sg_port_range']['rules'].count
+    assert_equal 20, yaml['sg_port_range']['rules'][0]['port_range_min']
+    assert_equal 21, yaml['sg_port_range']['rules'][0]['port_range_max']
+    assert_equal 22, yaml['sg_port_range']['rules'][1]['port']
+  end
+
   def test_expand_rules
     # empty input
     assert_equal [], Kakine::Resource::Yaml.expand_rules([], 'key')
