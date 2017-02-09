@@ -22,6 +22,11 @@ module Kakine
             'openstack_networking_secgroup_v2' => generate_security_groups(security_groups),
             'openstack_networking_secgroup_rule_v2' => generate_security_group_rules(security_groups),
           },
+          output: {
+            security_groups: {
+              'value' => [ generate_output_security_groups(security_groups) ]
+            }
+          }
         }
       end
 
@@ -49,6 +54,12 @@ module Kakine
               security_group_id: "${openstack_networking_secgroup_v2.#{sanitize(security_group.name)}.id}",
             )
           end
+        end
+      end
+
+      def generate_output_security_groups(security_groups)
+        security_groups.each.with_object({}) do |security_group, resources|
+          resources[sanitize(security_group.name)] = "${openstack_networking_secgroup_v2.#{sanitize(security_group.name)}.id}"
         end
       end
 
