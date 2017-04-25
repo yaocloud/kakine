@@ -1,5 +1,5 @@
 module Kakine
-  class Builder 
+  class Builder
     class << self
       def create_security_group(sg)
         attributes = { name: sg.name, description: sg.description, tenant_id: sg.tenant_id }
@@ -26,7 +26,7 @@ module Kakine
       end
 
       def convergence_security_group(new_sg, current_sg)
-        if new_sg.description != current_sg.description
+        if new_sg.name != 'default' && new_sg.description != current_sg.description
           delete_security_group(current_sg)
           first_create_security_group(new_sg)
         else
@@ -34,11 +34,11 @@ module Kakine
           first_create_rule(new_sg, current_sg)
         end
       end
-      
+
       def already_setup_security_group(new_sg, current_sgs)
         current_sgs.find { |current_sg| current_sg.name == new_sg.name }
       end
-      
+
       def create_security_rule(tenant_name, sg_name, rule)
         sg = Kakine::Resource.get(:openstack).security_group(tenant_name, sg_name)
         security_group_id =  Kakine::Option.dryrun? && sg.nil? ? Kakine::Adapter.instance.id(sg_name) : sg.id
@@ -58,7 +58,7 @@ module Kakine
           delete_security_rule(tenant_name, sg_name, rule)
         end if target_sg
       end
-      
+
       def first_create_rule(new_sg, current_sg)
         new_sg.rules.map do |rule|
           unless current_sg.find_by_rule(rule)
@@ -81,12 +81,12 @@ module Kakine
       def delete_id_column(sgs)
         case sgs
         when Array
-          sgs.map { |sg| delete_id_column(sg) } 
+          sgs.map { |sg| delete_id_column(sg) }
         when Hash
           sgs.inject({}) do |hash, (k, v)|
-            hash[k] = delete_id_column(v) if k != "id" 
+            hash[k] = delete_id_column(v) if k != "id"
             hash
-          end 
+          end
         else
           sgs
         end

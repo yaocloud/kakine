@@ -55,6 +55,26 @@ class TestKakineBuilder < Minitest::Test
     assert_equal(Kakine::Builder.convergence_security_group(icmp_sg, current_sg), ["Create Rule: icmp_group"])
   end
 
+  def test_convergence_security_group_change_description
+    current_sg = Kakine::SecurityGroup.new("test_tenant", Kakine::TestHelper.full_rule_security_group_with_description("description_2"))
+    new_sg = Kakine::SecurityGroup.new("test_tenant", Kakine::TestHelper.full_rule_security_group_with_description("description_1"))
+
+    Kakine::Builder.expects(:delete_security_group).with(current_sg)
+    Kakine::Builder.expects(:create_security_group).with(new_sg)
+
+    Kakine::Builder.convergence_security_group(new_sg, current_sg)
+  end
+
+  def test_convergence_security_group_change_description_default
+    current_sg = Kakine::SecurityGroup.new("test_tenant", Kakine::TestHelper.default_security_group_with_description("description_2"))
+    new_sg = Kakine::SecurityGroup.new("test_tenant", Kakine::TestHelper.default_security_group_with_description("description_1"))
+
+    Kakine::Builder.expects(:delete_security_group).never
+    Kakine::Builder.expects(:create_security_group).never
+
+    Kakine::Builder.convergence_security_group(new_sg, current_sg)
+  end
+
   def test_already_setup_security_group
     current_sgs = []
     current_sgs << Kakine::SecurityGroup.new("test_tenant", Kakine::TestHelper.full_rule_security_group)

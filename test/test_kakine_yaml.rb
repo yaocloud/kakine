@@ -1,6 +1,28 @@
 require 'minitest_helper'
 
 class TestKakineYaml < Minitest::Test
+  def test_validate_decription_existance
+    data = {
+      'http' => {
+        'rules' => [],
+      }
+    }
+
+    assert_raises Kakine::ConfigureError do
+      Kakine::Resource::Yaml.validate_file_input(data)
+    end
+  end
+
+  def test_validate_decription_existance_default
+    data = {
+      'default' => {
+        'rules' => [],
+      }
+    }
+
+    Kakine::Resource::Yaml.validate_file_input(data)
+  end
+
   def test_meta_section
     yaml = Kakine::Resource::Yaml.load_file('test/fixtures/yaml/meta_section.yaml')
 

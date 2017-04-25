@@ -2,18 +2,34 @@ module Kakine
   module TestHelper
     class << self
 
+      def default_security_group_with_description(description = 'default')
+        [
+          "default",
+          {
+            "rules" => [
+            ],
+            "description" => description,
+            "id"          => "test_id_3",
+          }
+        ]
+      end
+
       def full_rule_security_group
         full_security_group(full_rule_port_remote_ip, "test_full_group")
       end
 
-      def full_security_group(rule, name)
+      def full_rule_security_group_with_description(description)
+        full_security_group(full_rule_port_remote_ip, "test_full_group", description)
+      end
+
+      def full_security_group(rule, name, description = 'test_description')
         [
           name,
           {
             "rules" => [
               rule
             ],
-            "description" => "test_description",
+            "description" => description,
             "id"          => "test_id_1"
           }
         ]
