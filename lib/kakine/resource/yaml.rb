@@ -34,7 +34,7 @@ module Kakine
             raise(Kakine::ConfigureError, "#{sg_name}:rules and description is required")
           when !sg[1].key?("rules")
             raise(Kakine::ConfigureError, "#{sg_name}:rules is required")
-          when !sg[1].key?("description")
+          when sg_name != 'default' && !sg[1].key?("description")
             raise(Kakine::ConfigureError, "#{sg_name}:description is required")
           end
         end
