@@ -91,6 +91,14 @@ username: "admin"
 password: "admin"
 ```
 
+also, you can set some options.
+
+```
+client_cert: "/path/to/cert.pem"
+client_key: "/path/to/key.pem"
+region_name: "YourRegion"
+```
+
 ### Commands
 
 run following command.
