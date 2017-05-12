@@ -48,6 +48,9 @@ module Kakine
         tenant_name Kakine::Option.tenant_name
         username    @@config['username']
         password    @@config['password']
+        client_cert @@config['client_cert']
+        client_key  @@config['client_key']
+        region_name @@config['region_name']
       end
     end
   end
