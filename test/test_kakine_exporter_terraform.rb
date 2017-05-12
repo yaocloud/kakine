@@ -91,6 +91,16 @@ class TestKakineExporterTerraform < Minitest::Test
             'security_group_id' => '${openstack_networking_secgroup_v2.www.id}'
           }
         }
+      },
+      'output' => {
+        'security_groups' => {
+          'value' => [
+            {
+              'default' => '${openstack_networking_secgroup_v2.default.id}',
+              'www' => '${openstack_networking_secgroup_v2.www.id}'
+            }
+          ]
+        }
       }
     }
 

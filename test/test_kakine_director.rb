@@ -13,6 +13,10 @@ class TestKakineDirector < Minitest::Test
       assert_equal 1, json['resource']['openstack_networking_secgroup_v2'].size
       assert_kind_of Hash, json['resource']['openstack_networking_secgroup_rule_v2']
       assert_equal 2, json['resource']['openstack_networking_secgroup_rule_v2'].size
+      assert_kind_of Hash, json['output']['security_groups']
+      assert_equal 1, json['output']['security_groups'].size
+      assert_kind_of Array, json['output']['security_groups']['value']
+      assert_equal 1, json['output']['security_groups']['value'].size
     ensure
       $stdout = STDOUT
     end
@@ -30,6 +34,10 @@ class TestKakineDirector < Minitest::Test
       assert_equal 1, json['resource']['openstack_networking_secgroup_v2'].size
       assert_kind_of Hash, json['resource']['openstack_networking_secgroup_rule_v2']
       assert_equal 2, json['resource']['openstack_networking_secgroup_rule_v2'].size
+      assert_kind_of Hash, json['output']['security_groups']
+      assert_equal 1, json['output']['security_groups'].size
+      assert_kind_of Array, json['output']['security_groups']['value']
+      assert_equal 1, json['output']['security_groups']['value'].size
     ensure
       out.close!
     end
