@@ -44,13 +44,13 @@ module Kakine
 
     def self.setup_yao
       Yao.configure do
-        auth_url    @@config['auth_url']
-        tenant_name Kakine::Option.tenant_name
-        username    @@config['username']
-        password    @@config['password']
-        client_cert @@config['client_cert']
-        client_key  @@config['client_key']
-        region_name @@config['region_name']
+        auth_url             @@config['auth_url']
+        tenant_name          Kakine::Option.tenant_name
+        username             @@config['username']
+        password             @@config['password']
+        client_cert          @@config['client_cert']
+        client_key           @@config['client_key']
+        region_name          @@config['region_name']
         identity_api_version @@config['identity_api_version']
         user_domain_name     @@config['user_domain_name']
         project_domain_name  @@config['project_domain_name']
